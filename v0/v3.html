@@ -3,16 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>PS4 JB</title>
+<title>PS4 JB - GamerHack</title>
 
 <style>
 * {
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -21,192 +19,91 @@ body {
 
 body {
     min-height: 100vh;
+    background: #080e18;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+
     display: flex;
     justify-content: center;
     align-items: center;
-
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            #174b91 0%,
-            #102d59 22%,
-            #08172d 48%,
-            #030914 100%
-        );
-
-    overflow-x: hidden;
 }
-
-/* =========================
-   FUNDO PS4
-========================= */
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            115deg,
-            transparent 0%,
-            rgba(255,255,255,.025) 45%,
-            transparent 55%
-        );
-
-    pointer-events: none;
-}
-
-body::after {
-    content: "";
-
-    position: fixed;
-
-    width: 700px;
-    height: 700px;
-
-    left: 50%;
-    top: -450px;
-
-    transform: translateX(-50%);
-
-    border-radius: 50%;
-
-    background: rgba(0, 130, 255, .12);
-
-    filter: blur(80px);
-
-    pointer-events: none;
-}
-
-/* =========================
-   CONTAINER
-========================= */
 
 .wrapper {
-    position: relative;
-    z-index: 2;
-
     width: 100%;
-    max-width: 1050px;
-
-    padding: 45px 20px 30px;
-
+    max-width: 900px;
+    padding: 35px 20px;
     text-align: center;
 }
 
-/* =========================
-   CABEÇALHO
-========================= */
+/* CABEÇALHO */
 
 .header {
-    margin-bottom: 42px;
+    margin-bottom: 35px;
 }
 
-.header .small {
-    margin-bottom: 8px;
-
-    color: #8eb8ed;
-
+.small {
+    color: #6fa8e8;
     font-size: 12px;
-    font-weight: 600;
-
-    letter-spacing: 5px;
+    font-weight: bold;
+    letter-spacing: 4px;
     text-transform: uppercase;
+    margin-bottom: 8px;
 }
 
-.header h1 {
+h1 {
     margin: 0;
-
-    font-size: clamp(40px, 6vw, 58px);
-
+    font-size: 46px;
     font-weight: 300;
-    letter-spacing: 8px;
-
-    color: #fff;
-
-    text-shadow:
-        0 0 15px rgba(0, 140, 255, .35),
-        0 0 35px rgba(0, 100, 255, .15);
+    letter-spacing: 7px;
 }
 
 .header p {
-    margin: 15px 0 0;
-
-    color: #9bb1cc;
-
+    margin: 12px 0 0;
+    color: #8999ae;
     font-size: 14px;
 }
 
 .line {
-    width: 100px;
+    width: 70px;
     height: 2px;
-
-    margin: 21px auto 0;
-
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #4da3ff,
-        transparent
-    );
-
-    box-shadow: 0 0 12px rgba(50,150,255,.7);
+    margin: 18px auto 0;
+    background: #398de8;
 }
 
-/* =========================
-   CARDS
-========================= */
+/* CARD */
 
 .container {
     display: flex;
     justify-content: center;
-    gap: 24px;
 }
 
 .card {
     position: relative;
 
     width: 310px;
-    min-height: 315px;
+    min-height: 290px;
+
+    padding: 28px 20px 24px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    padding: 30px 22px 25px;
-
-    border-radius: 6px;
-
     text-decoration: none;
-    color: white;
+    color: #fff;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.085),
-            rgba(255,255,255,.025)
-        );
+    background: #111b29;
 
-    border: 1px solid rgba(120,180,255,.16);
+    border: 1px solid #263c58;
+    border-radius: 10px;
 
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.45),
-        inset 0 1px 0 rgba(255,255,255,.08);
-
-    overflow: hidden;
-
-    transition:
-        transform .25s ease,
-        border-color .25s ease,
-        box-shadow .25s ease,
-        background .25s ease;
+    transition: transform .15s ease, border-color .15s ease;
 }
 
-/* brilho no topo */
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #398de8;
+}
 
 .card::before {
     content: "";
@@ -214,376 +111,117 @@ body::after {
     position: absolute;
 
     top: 0;
-    left: 0;
+    left: 15%;
 
-    width: 100%;
+    width: 70%;
     height: 2px;
 
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #278cff,
-        transparent
-    );
-
-    opacity: .65;
+    background: #398de8;
 }
 
-/* brilho interno */
-
-.card::after {
-    content: "";
-
-    position: absolute;
-
-    width: 230px;
-    height: 230px;
-
-    top: -150px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    border-radius: 50%;
-
-    background: rgba(0,120,255,.12);
-
-    filter: blur(15px);
-
-    pointer-events: none;
-}
-
-/* =========================
-   HOVER
-========================= */
-
-.card:hover {
-    transform: translateY(-8px) scale(1.015);
-
-    border-color: rgba(70,160,255,.65);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(35,115,200,.16),
-            rgba(255,255,255,.045)
-        );
-
-    box-shadow:
-        0 25px 60px rgba(0,0,0,.55),
-        0 0 35px rgba(0,120,255,.15);
-}
-
-/* =========================
-   IMAGENS
-========================= */
+/* IMAGEM */
 
 .card img {
-    position: relative;
-    z-index: 2;
-
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
 
     object-fit: contain;
 
-    margin-bottom: 20px;
-
-    filter:
-        drop-shadow(0 10px 15px rgba(0,0,0,.45));
-
-    transition:
-        transform .3s ease,
-        filter .3s ease;
+    margin-bottom: 18px;
 }
 
-.card:hover img {
-    transform: scale(1.1) translateY(-5px);
-
-    filter:
-        drop-shadow(0 8px 25px rgba(0,130,255,.5));
-}
-
-/* =========================
-   NOME
-========================= */
+/* TÍTULO */
 
 .card h2 {
-    position: relative;
-    z-index: 2;
-
     margin: 0;
 
     font-size: 21px;
     font-weight: 400;
-
     letter-spacing: 1px;
 }
 
-/* =========================
-   FIRMWARE
-========================= */
+/* FIRMWARE */
 
 .version {
-    position: relative;
-    z-index: 2;
+    display: inline-block;
 
-    margin-top: 14px;
+    margin-top: 13px;
+    padding: 7px 12px;
 
-    padding: 7px 14px;
+    background: #172537;
+    border: 1px solid #263b55;
 
-    border-radius: 3px;
+    border-radius: 4px;
 
-    background: rgba(255,255,255,.055);
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    color: #a9bad0;
-
+    color: #a8b9cc;
     font-size: 12px;
 }
 
-/* =========================
-   SELECIONAR
-========================= */
+/* BOTÃO */
 
 .select {
-    position: relative;
-    z-index: 2;
-
     margin-top: auto;
-    padding-top: 25px;
+    padding-top: 22px;
 
-    color: #74b5ff;
+    color: #65aaff;
 
     font-size: 10px;
-    font-weight: 600;
-
-    letter-spacing: 2px;
-
-    transition:
-        color .2s ease,
-        letter-spacing .2s ease;
+    font-weight: bold;
+    letter-spacing: 1.5px;
 }
 
-.card:hover .select {
-    color: #fff;
-    letter-spacing: 2.5px;
-}
-
-/* =========================
-   CARD PRINCIPAL
-========================= */
-
-.card.auto {
-    border-color: rgba(50,145,255,.30);
-}
-
-.card.auto .select {
-    color: #4fa3ff;
-}
-
-/* =========================
-   RODAPÉ
-========================= */
+/* RODAPÉ */
 
 .footer {
-    margin-top: 35px;
+    margin-top: 28px;
 
-    color: #526781;
+    color: #50647d;
 
     font-size: 9px;
-
-    letter-spacing: 4px;
-
-    font-weight: 600;
+    font-weight: bold;
+    letter-spacing: 3px;
 }
 
-/* =========================
-   ANIMAÇÃO
-========================= */
+/* TABLET */
 
-.header {
-    animation: headerIn .7s ease both;
-}
-
-.card {
-    animation: cardIn .7s ease both;
-}
-
-.card:nth-child(2) {
-    animation-delay: .12s;
-}
-
-.footer {
-    animation: cardIn .8s .2s ease both;
-}
-
-@keyframes headerIn {
-    from {
-        opacity: 0;
-        transform: translateY(-18px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes cardIn {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =========================
-   TABLET
-========================= */
-
-@media (max-width: 700px) {
-
-    body {
-        align-items: flex-start;
-    }
+@media (max-width: 600px) {
 
     .wrapper {
-        padding: 40px 15px 25px;
+        padding: 30px 15px;
     }
 
-    .container {
-        gap: 14px;
+    h1 {
+        font-size: 36px;
+        letter-spacing: 5px;
     }
 
     .card {
-        width: calc(50% - 7px);
-        min-height: 285px;
-
-        padding: 25px 12px 20px;
+        width: 290px;
+        min-height: 275px;
     }
 
     .card img {
-        width: 90px;
-        height: 90px;
-    }
-
-    .card h2 {
-        font-size: 17px;
-    }
-
-    .version {
-        font-size: 10px;
-        text-align: center;
-    }
-
-    .select {
-        font-size: 8px;
-        letter-spacing: 1.3px;
+        width: 85px;
+        height: 85px;
     }
 }
 
-/* =========================
-   CELULAR
-========================= */
+/* CELULAR */
 
-@media (max-width: 500px) {
+@media (max-width: 350px) {
 
-    .wrapper {
-        padding-top: 30px;
-    }
-
-    .header {
-        margin-bottom: 30px;
-    }
-
-    .header .small {
-        font-size: 9px;
-        letter-spacing: 4px;
-    }
-
-    .header h1 {
-        font-size: 33px;
-        letter-spacing: 4px;
-    }
-
-    .header p {
-        padding: 0 10px;
-
-        font-size: 12px;
-
-        line-height: 1.5;
-    }
-
-    .container {
-        gap: 12px;
+    h1 {
+        font-size: 29px;
     }
 
     .card {
-        width: calc(50% - 6px);
-        min-height: 260px;
-
-        padding: 22px 8px 18px;
+        width: 270px;
+        min-height: 255px;
     }
 
     .card img {
         width: 75px;
         height: 75px;
-
-        margin-bottom: 16px;
-    }
-
-    .card h2 {
-        font-size: 14px;
-    }
-
-    .version {
-        max-width: 100%;
-
-        padding: 6px;
-
-        font-size: 9px;
-    }
-
-    .select {
-        font-size: 7px;
-        letter-spacing: 1px;
-    }
-
-    .footer {
-        margin-top: 28px;
-
-        font-size: 8px;
-        letter-spacing: 2px;
-    }
-}
-
-/* =========================
-   CELULAR PEQUENO
-========================= */
-
-@media (max-width: 350px) {
-
-    .header h1 {
-        font-size: 28px;
-    }
-
-    .card {
-        min-height: 245px;
-    }
-
-    .card img {
-        width: 68px;
-        height: 68px;
-    }
-
-    .card h2 {
-        font-size: 13px;
     }
 }
 </style>
@@ -609,34 +247,7 @@ body::after {
 
     </header>
 
-
     <main class="container">
-
-        <!-- RAW GAME -->
-
-        <a class="card auto" href="/v1/index.html">
-
-            <img
-                src="raw_game.png"
-                alt="Raw Games"
-            >
-
-            <h2>
-                Fork Raw Game
-            </h2>
-
-            <span class="version">
-                Firmware: 11.00 – 13.00
-            </span>
-
-            <span class="select">
-                MODO OFFLINE (EM CACHE) →
-            </span>
-
-        </a>
-
-
-        <!-- GAMERHACK -->
 
         <a class="card" href="/v2/index.html">
 
@@ -661,21 +272,11 @@ body::after {
 
     </main>
 
-
     <footer class="footer">
         SELECIONE SEU EXPLOIT
     </footer>
 
 </div>
-
-
-<script
-    type="module"
-    src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495"
-    integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg=="
-    data-cf-beacon='{"version":"2024.11.0","token":"0c264a1f4b5340b2b27e0664252208f0","r":1,"spa":2}'
-    crossorigin="anonymous">
-</script>
 
 </body>
 </html>
