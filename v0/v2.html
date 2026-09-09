@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PS4 JB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        radial-gradient(circle at 50% -10%, rgba(0, 120, 255, .20), transparent 38%),
+        radial-gradient(circle at 10% 90%, rgba(0, 90, 255, .08), transparent 35%),
+        linear-gradient(145deg, #080d15, #0b111c 50%, #060a10);
+
+    overflow-x: hidden;
+}
+
+/* brilho de fundo */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 20%,
+            rgba(255,255,255,.025) 50%,
+            transparent 80%
+        );
+
+    pointer-events: none;
+}
+
+/* Página */
+
+.wrapper {
+    width: 100%;
+    max-width: 1000px;
+    padding: 50px 22px 35px;
+    text-align: center;
+}
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+.header {
+    margin-bottom: 42px;
+}
+
+.header .small {
+    color: #71829b;
+    font-size: 12px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.header h1 {
+    margin: 0;
+
+    font-size: clamp(38px, 6vw, 58px);
+    letter-spacing: 8px;
+    font-weight: 900;
+
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #dbe8ff 45%,
+        #7ba7ff 100%
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow: 0 0 35px rgba(0, 110, 255, .18);
+}
+
+.header p {
+    margin: 15px 0 0;
+
+    color: #8492a7;
+    font-size: 14px;
+}
+
+.line {
+    width: 80px;
+    height: 3px;
+
+    margin: 20px auto 0;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #2f82ff,
+        transparent
+    );
+
+    border-radius: 20px;
+
+    box-shadow: 0 0 15px rgba(47,130,255,.55);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+}
+
+/* Card */
+
+.card {
+    position: relative;
+
+    width: 300px;
+    min-height: 300px;
+
+    padding: 32px 22px 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 22px;
+
+    text-decoration: none;
+    color: white;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.06);
+
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease,
+        background .3s ease;
+}
+
+/* brilho interno */
+
+.card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    top: -140px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: radial-gradient(
+        circle,
+        rgba(40,130,255,.20),
+        transparent 70%
+    );
+
+    pointer-events: none;
+
+    transition: .3s ease;
+}
+
+/* linha superior */
+
+.card::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 15%;
+
+    width: 70%;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(100,160,255,.55),
+        transparent
+    );
+}
+
+/* Hover */
+
+.card:hover {
+    transform: translateY(-10px);
+
+    border-color: rgba(70,145,255,.40);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.10),
+            rgba(255,255,255,.035)
+        );
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.50),
+        0 0 35px rgba(0,100,255,.10),
+        inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.card:hover::before {
+    width: 300px;
+    height: 300px;
+
+    background: radial-gradient(
+        circle,
+        rgba(30,120,255,.28),
+        transparent 70%
+    );
+}
+
+/* =========================
+   IMAGENS
+========================= */
+
+.card img {
+    position: relative;
+    z-index: 1;
+
+    width: 105px;
+    height: 105px;
+
+    object-fit: contain;
+
+    margin-bottom: 20px;
+
+    filter:
+        drop-shadow(0 8px 15px rgba(0,0,0,.35));
+
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        filter .35s ease;
+}
+
+.card:hover img {
+    transform: scale(1.10) translateY(-5px);
+
+    filter:
+        drop-shadow(0 10px 25px rgba(0,100,255,.30));
+}
+
+/* =========================
+   NOME
+========================= */
+
+.card h2 {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    font-size: 21px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+/* =========================
+   VERSÃO
+========================= */
+
+.version {
+    position: relative;
+    z-index: 2;
+
+    display: inline-block;
+
+    margin-top: 13px;
+    padding: 7px 13px;
+
+    border-radius: 30px;
+
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.07);
+
+    color: #aab7ca;
+
+    font-size: 12px;
+}
+
+/* =========================
+   BOTÃO
+========================= */
+
+.select {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: auto;
+    padding-top: 22px;
+
+    color: #6f8098;
+
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+
+    transition:
+        color .25s ease,
+        transform .25s ease;
+}
+
+.card:hover .select {
+    color: #fff;
+    transform: translateX(3px);
+}
+
+/* =========================
+   DESTAQUE DO PRIMEIRO CARD
+========================= */
+
+.card.auto {
+    border-color: rgba(50,130,255,.20);
+}
+
+.card.auto .select {
+    color: #6fa6ff;
+}
+
+.card.auto:hover {
+    border-color: rgba(70,150,255,.50);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.50),
+        0 0 40px rgba(0,110,255,.14);
+}
+
+/* =========================
+   RODAPÉ
+========================= */
+
+.footer {
+    margin-top: 35px;
+
+    color: #4f5e73;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: bold;
+}
+
+/* =========================
+   ANIMAÇÃO INICIAL
+========================= */
+
+.header {
+    animation: fadeDown .7s ease both;
+}
+
+.card {
+    animation: fadeUp .7s ease both;
+}
+
+.card:nth-child(2) {
+    animation-delay: .12s;
+}
+
+.footer {
+    animation: fadeUp .8s .2s ease both;
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   TABLETS
+========================= */
+
+@media (max-width: 700px) {
+
+    body {
+        align-items: flex-start;
+    }
+
+    .wrapper {
+        padding: 45px 16px 30px;
+    }
+
+    .header {
+        margin-bottom: 32px;
+    }
+
+    .header h1 {
+        letter-spacing: 5px;
+    }
+
+    .container {
+        gap: 14px;
+    }
+
+    .card {
+        width: calc(50% - 7px);
+        min-height: 275px;
+        padding: 25px 12px 20px;
+    }
+
+    .card img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .card h2 {
+        font-size: 17px;
+        letter-spacing: 1px;
+    }
+
+    .version {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+
+    .select {
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+}
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 500px) {
+
+    .wrapper {
+        padding-top: 35px;
+    }
+
+    .header .small {
+        font-size: 10px;
+        letter-spacing: 4px;
+    }
+
+    .header h1 {
+        font-size: 34px;
+        letter-spacing: 4px;
+    }
+
+    .header p {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 0 15px;
+    }
+
+    .container {
+        flex-wrap: wrap;
+    }
+
+    .card {
+        width: calc(50% - 7px);
+        min-height: 255px;
+    }
+
+    .card img {
+        width: 78px;
+        height: 78px;
+        margin-bottom: 16px;
+    }
+
+    .card h2 {
+        font-size: 15px;
+    }
+
+    .version {
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    .select {
+        font-size: 8px;
+    }
+}
+
+/* =========================
+   CELULARES PEQUENOS
+========================= */
+
+@media (max-width: 350px) {
+
+    .header h1 {
+        font-size: 29px;
+    }
+
+    .card {
+        min-height: 240px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .card img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .card h2 {
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <header class="header">
+
+        <div class="small">
+            PlayStation 4
+        </div>
+
+        <h1>JAILBREAK</h1>
+
+        <p>
+            Selecione o exploit compatível com o seu firmware.
+        </p>
+
+        <div class="line"></div>
+
+    </header>
+
+
+    <main class="container">
+
+        <!-- RAW GAME -->
+
+        <a class="card auto" href="/v1/index.html">
+
+            <img
+                src="raw_game.png"
+                alt="Raw Games"
+            >
+
+            <h2>
+                Fork Raw Game
+            </h2>
+
+            <span class="version">
+                Firmware: 11.00 – 13.00
+            </span>
+
+            <span class="select">
+                MODO OFFLINE (EM CACHE) →
+            </span>
+
+        </a>
+
+
+        <!-- GAMERHACK -->
+
+        <a class="card" href="/v2/index.html">
+
+            <img
+                src="gamerhack.png"
+                alt="GamerHack"
+            >
+
+            <h2>
+                Fork GamerHack
+            </h2>
+
+            <span class="version">
+                Firmware: 5.05 – 13.00
+            </span>
+
+            <span class="select">
+                MODO OFFLINE (EM CACHE) →
+            </span>
+
+        </a>
+
+    </main>
+
+
+    <footer class="footer">
+        SELECIONE SEU EXPLOIT
+    </footer>
+
+</div>
+
+<script
+    type="module"
+    src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495"
+    integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg=="
+    data-cf-beacon='{"version":"2024.11.0","token":"0c264a1f4b5340b2b27e0664252208f0","r":1,"spa":2}'
+    crossorigin="anonymous">
+</script>
+
+</body>
+</html>
