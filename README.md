@@ -16,6 +16,7 @@ console's browser.
   `lapse` and `poops` are public PS4/PS5 community research. The kernel patch
   blobs come from published patch sources.
 - **[rawgame4 team](https://github.com/rawgame4/rawgame4.github.io)** — the PS4 port, the kernel chains, the offset tables and the delivery layer.
+- **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)** — the PS4 port, the kernel chains, the offset tables and the delivery layer.
 
 ## Disclaimer
 
