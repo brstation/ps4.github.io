@@ -5,7 +5,7 @@ console's browser.
 
 ## Usage
 
-1. Open the browser on your PS4 and go to https://ps4.dpdns.org
+Open the browser on your PS4 and go to https://ps4.dpdns.org
 
 ## Credits
 
