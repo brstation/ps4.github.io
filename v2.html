@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PS4 JB</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: radial-gradient(circle at top, #263244 0%, #151a22 45%, #0d1117 100%);
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Página */
+.wrapper {
+    width: 100%;
+    max-width: 1050px;
+    padding: 35px 20px;
+    text-align: center;
+}
+
+/* Cabeçalho */
+.header {
+    margin-bottom: 35px;
+}
+
+.header .small {
+    color: #8f9aaa;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 42px;
+    letter-spacing: 6px;
+    font-weight: 800;
+}
+
+.header p {
+    margin: 12px 0 0;
+    color: #aeb7c4;
+    font-size: 15px;
+}
+
+/* Linha decorativa */
+.line {
+    width: 70px;
+    height: 3px;
+    margin: 18px auto 0;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+/* Idioma */
+.language {
+    margin-top: 18px;
+}
+
+.language button {
+    border: 0;
+    background: transparent;
+    color: #697586;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 5px 7px;
+}
+
+.language button.active {
+    color: #ffffff;
+}
+
+/* Cards */
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    position: relative;
+    width: 260px;
+    min-height: 245px;
+    padding: 28px 20px 22px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    text-decoration: none;
+    color: white;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    overflow: hidden;
+}
+
+/* Brilho */
+.card::before {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: -90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.035);
+    border-radius: 50%;
+}
+
+/* Hover */
+.card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+/* Imagem */
+.card img {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    margin-bottom: 14px;
+    transition: transform 0.2s ease;
+}
+
+.card:hover img {
+    transform: scale(1.12) translateY(-3px);
+}
+
+/* Nome */
+.card h2 {
+    position: relative;
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+}
+
+/* Versão */
+.version {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #bfc8d4;
+    font-size: 13px;
+}
+
+/* Botão */
+.select {
+    position: relative;
+    display: block;
+    margin-top: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #8f9aaa;
+    transition: color 0.2s ease;
+}
+
+.card:hover .select {
+    color: white;
+}
+
+/* Rodapé */
+.footer {
+    margin-top: 32px;
+    color: #697586;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* Clique */
+.card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Telas padrão */
+@media (max-width: 850px) {
+
+    body {
+        align-items: flex-start;
+    }
+
+    .wrapper {
+        padding: 45px 16px 30px;
+    }
+
+    .header {
+        margin-bottom: 30px;
+    }
+
+    .header h1 {
+        font-size: 34px;
+        letter-spacing: 4px;
+    }
+
+    .header p {
+        font-size: 14px;
+    }
+
+    .container {
+        gap: 12px;
+    }
+
+    .card {
+        width: calc(50% - 6px);
+        min-height: 225px;
+        padding: 23px 10px 18px;
+    }
+
+    .card img {
+        width: 82px;
+        height: 82px;
+    }
+
+    .card h2 {
+        font-size: 19px;
+    }
+
+    .version {
+        font-size: 11px;
+        padding: 5px 7px;
+    }
+
+    .select {
+        font-size: 10px;
+    }
+}
+
+/* Telas menores */
+@media (max-width: 600px) {
+
+    .container {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .card {
+        width: calc(50% - 8px);
+    }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 350px) {
+
+    .header h1 {
+        font-size: 29px;
+    }
+
+    .card {
+        min-height: 210px;
+    }
+
+    .card img {
+        width: 72px;
+        height: 72px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<header class="header">
+
+```
+<div class="small" data-i18n="platform">
+    PlayStation 4
+</div>
+
+<h1>JAILBREAK</h1>
+
+<p data-i18n="description">
+    Selecione o exploit compatível com a versão de firmware do seu PS4.
+</p>
+
+<div class="line"></div>
+
+<div class="language">
+    <button id="pt" onclick="setLanguage('pt')">PT</button>
+    <span>•</span>
+    <button id="en" onclick="setLanguage('en')">EN</button>
+</div>
+```
+
+</header>
+
+<main class="container">
+
+```
+<!-- RAW GAME -->
+<a class="card" href="/raw/index.html">
+
+    <img src="raw_game.png" alt="Raw Games">
+
+    <h2>Fork Raw Game</h2>
+
+    <span class="version" data-i18n="firmwareRaw">
+        Firmware: 11.00 – 13.00
+    </span>
+
+    <span class="select" data-i18n="offline">
+        MODO OFFLINE (EM CACHE)
+    </span>
+
+</a>
+
+
+<!-- GAMERHACK -->
+<a class="card" href="/gh/index.html">
+
+    <img src="gamerhack.png" alt="GamerHack">
+
+    <h2>Fork GamerHack</h2>
+
+    <span class="version" data-i18n="firmwareGH">
+        Firmware: 5.05 – 13.00
+    </span>
+
+    <span class="select" data-i18n="offline">
+        MODO OFFLINE (EM CACHE)
+    </span>
+
+</a>
+```
+
+</main>
+
+<footer class="footer" data-i18n="footer">
+    SELECIONE SEU EXPLOIT
+</footer>
+
+</div>
+
+<script>
+
+/* Traduções */
+const translations = {
+
+    pt: {
+        platform: "PlayStation 4",
+        description: "Selecione o exploit compatível com a versão de firmware do seu PS4.",
+        firmwareRaw: "Firmware: 11.00 – 13.00",
+        firmwareGH: "Firmware: 5.05 – 13.00",
+        offline: "MODO OFFLINE (EM CACHE)",
+        footer: "SELECIONE SEU EXPLOIT"
+    },
+
+    en: {
+        platform: "PlayStation 4",
+        description: "Select the exploit compatible with your PS4 firmware version.",
+        firmwareRaw: "Firmware: 11.00 – 13.00",
+        firmwareGH: "Firmware: 5.05 – 13.00",
+        offline: "OFFLINE MODE (CACHED)",
+        footer: "SELECT YOUR EXPLOIT"
+    }
+
+};
+
+
+/* Detecta o idioma do navegador */
+function detectLanguage() {
+
+    /* Se o usuário já escolheu manualmente */
+    const saved = localStorage.getItem("language");
+
+    if (saved === "pt" || saved === "en") {
+        return saved;
+    }
+
+    /*
+     * navigator.language retorna algo como:
+     * pt-BR
+     * pt-PT
+     * en-US
+     * en-GB
+     */
+
+    const browserLanguage = (
+        navigator.language ||
+        navigator.userLanguage ||
+        "en"
+    ).toLowerCase();
+
+    /*
+     * Qualquer idioma português
+     * recebe português.
+     *
+     * Todo o resto recebe inglês.
+     */
+    if (browserLanguage.startsWith("pt")) {
+        return "pt";
+    }
+
+    return "en";
+}
+
+
+/* Aplica o idioma */
+function setLanguage(language) {
+
+    const texts = translations[language];
+
+    document.documentElement.lang = language;
+
+    document.querySelectorAll("[data-i18n]").forEach(function(element) {
+
+        const key = element.getAttribute("data-i18n");
+
+        if (texts[key]) {
+            element.textContent = texts[key];
+        }
+
+    });
+
+    /* Marca o idioma selecionado */
+    document.getElementById("pt").classList.toggle(
+        "active",
+        language === "pt"
+    );
+
+    document.getElementById("en").classList.toggle(
+        "active",
+        language === "en"
+    );
+
+    /* Salva a escolha */
+    localStorage.setItem("language", language);
+}
+
+
+/* Inicialização */
+setLanguage(detectLanguage());
+
+</script>
+
+</body>
+</html>
