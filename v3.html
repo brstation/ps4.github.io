@@ -8,11 +8,13 @@
 <title>PS4 JB</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -20,16 +22,18 @@ html, body {
 }
 
 body {
-    background: radial-gradient(circle at top, #263244 0%, #151a22 45%, #0d1117 100%);
-    color: white;
+    background: #0d1117;
+    color: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
     min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 /* Página */
+
 .wrapper {
     width: 100%;
     max-width: 1050px;
@@ -38,6 +42,7 @@ body {
 }
 
 /* Cabeçalho */
+
 .header {
     margin-bottom: 35px;
 }
@@ -54,7 +59,7 @@ body {
     margin: 0;
     font-size: 42px;
     letter-spacing: 6px;
-    font-weight: 800;
+    font-weight: bold;
 }
 
 .header p {
@@ -63,16 +68,17 @@ body {
     font-size: 15px;
 }
 
-/* Linha decorativa */
+/* Linha */
+
 .line {
     width: 70px;
     height: 3px;
     margin: 18px auto 0;
     background: #ffffff;
-    border-radius: 10px;
 }
 
 /* Idioma */
+
 .language {
     margin-top: 18px;
     min-height: 50px;
@@ -80,6 +86,7 @@ body {
 
 .language button {
     display: inline-block;
+
     width: 70px;
     height: 50px;
 
@@ -107,6 +114,7 @@ body {
 }
 
 /* Cards */
+
 .container {
     display: flex;
     justify-content: center;
@@ -115,109 +123,115 @@ body {
 
 .card {
     position: relative;
+
     width: 260px;
     min-height: 245px;
-    padding: 28px 20px 22px;
-    background: rgba(255,255,255,0.055);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 18px;
-    text-decoration: none;
-    color: white;
 
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    padding: 28px 20px 22px;
+
+    background: #171d25;
+    border: 1px solid #2b333e;
+    border-radius: 18px;
+
+    text-decoration: none;
+    color: #ffffff;
 
     overflow: hidden;
 }
 
-/* Brilho */
+/* Brilho simples */
+
 .card::before {
     content: "";
     position: absolute;
+
     width: 180px;
     height: 180px;
+
     top: -90px;
     left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.035);
+
+    margin-left: -90px;
+
+    background: #1c232c;
     border-radius: 50%;
 }
 
-/* Hover */
-.card:hover {
-    transform: translateY(-8px);
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(255,255,255,0.25);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
-}
-
 /* Imagem */
+
 .card img {
     position: relative;
+
     width: 96px;
     height: 96px;
+
     object-fit: contain;
     margin-bottom: 14px;
-    transition: transform 0.2s ease;
-}
-
-.card:hover img {
-    transform: scale(1.12) translateY(-3px);
 }
 
 /* Nome */
+
 .card h2 {
     position: relative;
+
     margin: 0;
+
     font-size: 22px;
     letter-spacing: 2px;
 }
 
 /* Versão */
+
 .version {
     position: relative;
+
     display: inline-block;
+
     margin-top: 10px;
     padding: 6px 12px;
+
     border-radius: 20px;
-    background: rgba(255,255,255,0.08);
+
+    background: #242b35;
     color: #bfc8d4;
+
     font-size: 13px;
 }
 
-/* Botão */
+/* Texto */
+
 .select {
     position: relative;
+
     display: block;
+
     margin-top: 18px;
+
     font-size: 12px;
     font-weight: bold;
     letter-spacing: 1px;
-    color: #8f9aaa;
-    transition: color 0.2s ease;
-}
 
-.card:hover .select {
-    color: white;
+    color: #8f9aaa;
 }
 
 /* Rodapé */
+
 .footer {
     margin-top: 32px;
+
     color: #697586;
     font-size: 12px;
     letter-spacing: 1px;
 }
 
 /* Clique */
+
 .card:active {
-    transform: translateY(-2px) scale(0.98);
+    transform: none;
 }
 
-/* Telas padrão */
+/* Telas menores */
+
 @media (max-width: 850px) {
 
     body {
@@ -270,7 +284,8 @@ body {
     }
 }
 
-/* Telas menores */
+/* Celulares */
+
 @media (max-width: 600px) {
 
     .container {
@@ -284,6 +299,7 @@ body {
 }
 
 /* Telas muito pequenas */
+
 @media (max-width: 350px) {
 
     .header h1 {
@@ -299,6 +315,7 @@ body {
         height: 72px;
     }
 }
+
 </style>
 
 </head>
@@ -308,7 +325,6 @@ body {
 <div class="wrapper">
 
 <header class="header">
-
 
 <div class="small" data-i18n="platform">
     PlayStation 4
@@ -328,13 +344,13 @@ body {
     <button id="en" onclick="setLanguage('en')">EN</button>
 </div>
 
-
 </header>
+
 
 <main class="container">
 
-
 <!-- RAW GAME -->
+
 <a class="card" href="/raw/index.html">
 
     <img src="raw_game.png" alt="Raw Games">
@@ -353,6 +369,7 @@ body {
 
 
 <!-- GAMERHACK -->
+
 <a class="card" href="/gh/index.html">
 
     <img src="gamerhack.png" alt="GamerHack">
@@ -369,7 +386,9 @@ body {
 
 </a>
 
+
 <!-- PSPULSE -->
+
 <a class="card" href="/pspulse/index.html">
 
     <img src="pspulse.png" alt="PSPulse">
@@ -388,16 +407,19 @@ body {
 
 </main>
 
+
 <footer class="footer" data-i18n="footer">
     SELECIONE SEU EXPLOIT
 </footer>
 
 </div>
 
+
 <script>
 
 /* Traduções */
-const translations = {
+
+var translations = {
 
     pt: {
         platform: "PlayStation 4",
@@ -422,37 +444,24 @@ const translations = {
 };
 
 
-/* Detecta o idioma do navegador */
+/* Detecta o idioma */
+
 function detectLanguage() {
 
-    /* Se o usuário já escolheu manualmente */
-    const saved = localStorage.getItem("language");
+    var saved = localStorage.getItem("language");
 
     if (saved === "pt" || saved === "en") {
         return saved;
     }
 
-    /*
-     * navigator.language retorna algo como:
-     * pt-BR
-     * pt-PT
-     * en-US
-     * en-GB
-     */
-
-    const browserLanguage = (
+    var browserLanguage =
         navigator.language ||
         navigator.userLanguage ||
-        "en"
-    ).toLowerCase();
+        "en";
 
-    /*
-     * Qualquer idioma português
-     * recebe português.
-     *
-     * Todo o resto recebe inglês.
-     */
-    if (browserLanguage.startsWith("pt")) {
+    browserLanguage = browserLanguage.toLowerCase();
+
+    if (browserLanguage.indexOf("pt") === 0) {
         return "pt";
     }
 
@@ -461,39 +470,37 @@ function detectLanguage() {
 
 
 /* Aplica o idioma */
+
 function setLanguage(language) {
 
-    const texts = translations[language];
+    var texts = translations[language];
 
     document.documentElement.lang = language;
 
-    document.querySelectorAll("[data-i18n]").forEach(function(element) {
+    var elements = document.querySelectorAll("[data-i18n]");
 
-        const key = element.getAttribute("data-i18n");
+    for (var i = 0; i < elements.length; i++) {
+
+        var key = elements[i].getAttribute("data-i18n");
 
         if (texts[key]) {
-            element.textContent = texts[key];
+            elements[i].innerHTML = texts[key];
         }
 
-    });
+    }
 
-    /* Marca o idioma selecionado */
-    document.getElementById("pt").classList.toggle(
-        "active",
-        language === "pt"
-    );
+    document.getElementById("pt").className =
+        language === "pt" ? "active" : "";
 
-    document.getElementById("en").classList.toggle(
-        "active",
-        language === "en"
-    );
+    document.getElementById("en").className =
+        language === "en" ? "active" : "";
 
-    /* Salva a escolha */
     localStorage.setItem("language", language);
 }
 
 
 /* Inicialização */
+
 setLanguage(detectLanguage());
 
 </script>
