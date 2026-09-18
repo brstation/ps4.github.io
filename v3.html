@@ -2,6 +2,7 @@
 
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,9 +10,9 @@
 
 <style>
 
-* {
-    box-sizing: border-box;
-}
+/* =========================
+   BASE
+   ========================= */
 
 html,
 body {
@@ -22,304 +23,372 @@ body {
 }
 
 body {
-    background: #0d1117;
+    background: #0f141b;
     color: #ffffff;
+
     font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Página */
-
-.wrapper {
-    width: 100%;
-    max-width: 1050px;
-    padding: 35px 20px;
     text-align: center;
 }
 
-/* Cabeçalho */
+
+/* =========================
+   PAGINA
+   ========================= */
+
+.wrapper {
+    width: 100%;
+    max-width: 1000px;
+
+    margin: 0 auto;
+    padding: 45px 20px 30px;
+}
+
+
+/* =========================
+   CABECALHO
+   ========================= */
 
 .header {
     margin-bottom: 35px;
 }
 
-.header .small {
-    color: #8f9aaa;
+.small {
+    margin-bottom: 8px;
+
+    color: #8993a2;
+
     font-size: 13px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    margin-bottom: 8px;
 }
 
-.header h1 {
+h1 {
     margin: 0;
-    font-size: 42px;
-    letter-spacing: 6px;
+
+    color: #ffffff;
+
+    font-size: 40px;
     font-weight: bold;
+    letter-spacing: 5px;
 }
 
-.header p {
-    margin: 12px 0 0;
-    color: #aeb7c4;
+.description {
+    margin: 12px auto 0;
+
+    max-width: 650px;
+
+    color: #aab4c1;
+
     font-size: 15px;
+    line-height: 1.5;
 }
 
-/* Linha */
+
+/* =========================
+   LINHA
+   ========================= */
 
 .line {
-    width: 70px;
+    width: 65px;
     height: 3px;
+
     margin: 18px auto 0;
+
     background: #ffffff;
 }
 
-/* Idioma */
+
+/* =========================
+   IDIOMA
+   ========================= */
 
 .language {
-    margin-top: 18px;
-    min-height: 50px;
+    margin-top: 20px;
+
+    height: 52px;
 }
 
-/*.language button {
-    display: inline-block;
-
+.language button {
     width: 70px;
     height: 50px;
 
     margin: 0 4px;
     padding: 0;
 
-    border: 1px solid #3a424d;
+    border: 1px solid #3b4552;
     border-radius: 10px;
 
-    background: #202630;
-    color: #697586;
+    background: #202731;
+    color: #737e8e;
 
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
     font-weight: bold;
-    letter-spacing: 1px;
 
     cursor: pointer;
-}*/
-
-.language button:hover {
-    background: #3a424d;
-    border-color: #697586;
-    color: #ffffff;
-    transform: scale(1.12);
 }
 
 .language button.active {
-    background: #303844;
-    border-color: #59636f;
+    background: #303946;
+    border-color: #697585;
     color: #ffffff;
 }
 
-/* Cards */
+/* Destaque ao passar o ponteiro */
 
-.container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+.language button:hover {
+    background: #3a4451;
+    border-color: #8995a5;
+    color: #ffffff;
+
+    transform: scale(1.10);
 }
 
+
+/* =========================
+   CARDS
+   ========================= */
+
+.container {
+    width: 100%;
+
+    text-align: center;
+}
+
+
+/* =========================
+   CARD
+   ========================= */
+
 .card {
-    position: relative;
+    display: inline-block;
+
+    vertical-align: top;
 
     width: 260px;
     min-height: 245px;
 
-    padding: 28px 20px 22px;
+    margin: 0 8px 16px;
+    padding: 28px 18px 22px;
 
-    background: #171d25;
-    border: 1px solid #2b333e;
-    border-radius: 18px;
+    background: #181f28;
 
-    text-decoration: none;
+    border: 1px solid #2b3440;
+    border-radius: 16px;
+
     color: #ffffff;
+    text-decoration: none;
 
     overflow: hidden;
 }
 
-/* Brilho simples */
 
-.card::before {
-    content: "";
-    position: absolute;
+/* Destaque do card */
 
-    width: 180px;
-    height: 180px;
+.card:hover {
+    background: #202832;
+    border-color: #465363;
 
-    top: -90px;
-    left: 50%;
-
-    margin-left: -90px;
-
-    background: #1c232c;
-    border-radius: 50%;
+    transform: translateY(-5px);
 }
 
-/* Imagem */
+
+/* =========================
+   IMAGEM
+   ========================= */
 
 .card img {
-    position: relative;
+    width: 90px;
+    height: 90px;
 
-    width: 96px;
-    height: 96px;
+    margin-bottom: 15px;
 
     object-fit: contain;
-    margin-bottom: 14px;
 }
 
-/* Nome */
+
+/* Pequeno destaque da imagem */
+
+.card:hover img {
+    transform: scale(1.08);
+}
+
+
+/* =========================
+   NOME
+   ========================= */
 
 .card h2 {
-    position: relative;
-
     margin: 0;
 
-    font-size: 22px;
-    letter-spacing: 2px;
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
-/* Versão */
+
+/* =========================
+   FIRMWARE
+   ========================= */
 
 .version {
-    position: relative;
-
     display: inline-block;
 
-    margin-top: 10px;
-    padding: 6px 12px;
+    margin-top: 11px;
+    padding: 6px 10px;
 
-    border-radius: 20px;
+    background: #252d37;
 
-    background: #242b35;
-    color: #bfc8d4;
+    border-radius: 15px;
 
-    font-size: 13px;
+    color: #bec7d2;
+
+    font-size: 12px;
 }
 
-/* Texto */
+
+/* =========================
+   OFFLINE
+   ========================= */
 
 .select {
-    position: relative;
-
     display: block;
 
     margin-top: 18px;
 
-    font-size: 12px;
+    color: #8994a3;
+
+    font-size: 11px;
     font-weight: bold;
     letter-spacing: 1px;
-
-    color: #8f9aaa;
 }
 
-/* Rodapé */
+.card:hover .select {
+    color: #ffffff;
+}
+
+
+/* =========================
+   RODAPE
+   ========================= */
 
 .footer {
-    margin-top: 32px;
+    margin-top: 18px;
 
-    color: #697586;
-    font-size: 12px;
+    color: #687484;
+
+    font-size: 11px;
     letter-spacing: 1px;
 }
 
-/* Clique */
 
-.card:active {
-    transform: none;
-}
-
-/* Telas menores */
+/* =========================
+   TELAS MENORES
+   ========================= */
 
 @media (max-width: 850px) {
 
-    body {
-        align-items: flex-start;
-    }
-
     .wrapper {
-        padding: 45px 16px 30px;
+        padding: 40px 12px 25px;
     }
 
-    .header {
-        margin-bottom: 30px;
-    }
-
-    .header h1 {
+    h1 {
         font-size: 34px;
         letter-spacing: 4px;
     }
 
-    .header p {
+    .description {
         font-size: 14px;
     }
 
-    .container {
-        gap: 12px;
-    }
-
     .card {
-        width: calc(50% - 6px);
+        width: 240px;
         min-height: 225px;
-        padding: 23px 10px 18px;
+
+        padding: 24px 12px 20px;
     }
 
     .card img {
-        width: 82px;
-        height: 82px;
+        width: 80px;
+        height: 80px;
     }
 
     .card h2 {
         font-size: 19px;
     }
-
-    .version {
-        font-size: 11px;
-        padding: 5px 7px;
-    }
-
-    .select {
-        font-size: 10px;
-    }
 }
 
-/* Celulares */
 
-@media (max-width: 600px) {
+/* =========================
+   CELULAR / TELA PEQUENA
+   ========================= */
 
-    .container {
-        flex-wrap: wrap;
-        gap: 16px;
-    }
+@media (max-width: 560px) {
 
     .card {
-        width: calc(50% - 8px);
-    }
-}
-
-/* Telas muito pequenas */
-
-@media (max-width: 350px) {
-
-    .header h1 {
-        font-size: 29px;
-    }
-
-    .card {
-        min-height: 210px;
+        width: 44%;
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
     .card img {
-        width: 72px;
-        height: 72px;
+        width: 75px;
+        height: 75px;
+    }
+
+    .card h2 {
+        font-size: 17px;
+    }
+
+    .version {
+        font-size: 10px;
+    }
+
+    .select {
+        font-size: 9px;
+    }
+}
+
+
+/* =========================
+   TELA MUITO PEQUENA
+   ========================= */
+
+@media (max-width: 350px) {
+
+    .wrapper {
+        padding-top: 30px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .small {
+        font-size: 11px;
+    }
+
+    .description {
+        font-size: 13px;
+    }
+
+    .card {
+        width: 46%;
+        min-height: 205px;
+
+        padding: 20px 8px 16px;
+    }
+
+    .card img {
+        width: 65px;
+        height: 65px;
+    }
+
+    .card h2 {
+        font-size: 15px;
     }
 }
 
@@ -327,131 +396,217 @@ body {
 
 </head>
 
+
 <body>
 
 <div class="wrapper">
 
-<header class="header">
 
-<div class="small" data-i18n="platform">
-    PlayStation 4
+<!-- =========================
+     CABECALHO
+     ========================= -->
+
+<div class="header">
+
+    <div class="small" data-i18n="platform">
+        PlayStation 4
+    </div>
+
+    <h1>JAILBREAK</h1>
+
+    <p class="description" data-i18n="description">
+        Selecione o exploit compatível com a versão de firmware do seu PS4.
+    </p>
+
+    <div class="line"></div>
+
+
+    <!-- IDIOMAS -->
+
+    <div class="language">
+
+        <button
+            id="pt"
+            onclick="setLanguage('pt')">
+            PT
+        </button>
+
+        <span>•</span>
+
+        <button
+            id="en"
+            onclick="setLanguage('en')">
+            EN
+        </button>
+
+    </div>
+
 </div>
 
-<h1>JAILBREAK</h1>
 
-<p data-i18n="description">
-    Selecione o exploit compatível com a versão de firmware do seu PS4.
-</p>
+<!-- =========================
+     EXPLOITS
+     ========================= -->
 
-<div class="line"></div>
+<div class="container">
 
-<div class="language">
-    <button id="pt" onclick="setLanguage('pt')">PT</button>
-    <span>•</span>
-    <button id="en" onclick="setLanguage('en')">EN</button>
+
+    <!-- RAW GAME -->
+
+    <a class="card" href="/raw/index.html">
+
+        <img
+            src="raw_game.png"
+            alt="Raw Games">
+
+        <h2>
+            Fork Raw Game
+        </h2>
+
+        <span
+            class="version"
+            data-i18n="firmwareRaw">
+            Firmware: 11.00 – 13.00
+        </span>
+
+        <span
+            class="select"
+            data-i18n="offline">
+            MODO OFFLINE (EM CACHE)
+        </span>
+
+    </a>
+
+
+    <!-- GAMERHACK -->
+
+    <a class="card" href="/gh/index.html">
+
+        <img
+            src="gamerhack.png"
+            alt="GamerHack">
+
+        <h2>
+            Fork GamerHack
+        </h2>
+
+        <span
+            class="version"
+            data-i18n="firmwareGH">
+            Firmware: 5.05 – 13.00
+        </span>
+
+        <span
+            class="select"
+            data-i18n="offline">
+            MODO OFFLINE (EM CACHE)
+        </span>
+
+    </a>
+
+
+    <!-- PSPULSE -->
+
+    <a class="card" href="/pspulse/index.html">
+
+        <img
+            src="pspulse.png"
+            alt="PSPulse">
+
+        <h2>
+            Fork PSPulse
+        </h2>
+
+        <span
+            class="version"
+            data-i18n="firmwarePSPulse">
+            Firmware: 5.05 – 13.00
+        </span>
+
+        <span
+            class="select"
+            data-i18n="offline">
+            MODO OFFLINE (EM CACHE)
+        </span>
+
+    </a>
+
+
 </div>
 
-</header>
 
+<!-- =========================
+     RODAPE
+     ========================= -->
 
-<main class="container">
-
-<!-- RAW GAME -->
-
-<a class="card" href="/raw/index.html">
-
-    <img src="raw_game.png" alt="Raw Games">
-
-    <h2>Fork Raw Game</h2>
-
-    <span class="version" data-i18n="firmwareRaw">
-        Firmware: 11.00 – 13.00
-    </span>
-
-    <span class="select" data-i18n="offline">
-        MODO OFFLINE (EM CACHE)
-    </span>
-
-</a>
-
-
-<!-- GAMERHACK -->
-
-<a class="card" href="/gh/index.html">
-
-    <img src="gamerhack.png" alt="GamerHack">
-
-    <h2>Fork GamerHack</h2>
-
-    <span class="version" data-i18n="firmwareGH">
-        Firmware: 5.05 – 13.00
-    </span>
-
-    <span class="select" data-i18n="offline">
-        MODO OFFLINE (EM CACHE)
-    </span>
-
-</a>
-
-
-<!-- PSPULSE -->
-
-<a class="card" href="/pspulse/index.html">
-
-    <img src="pspulse.png" alt="PSPulse">
-
-    <h2>Fork PSPulse</h2>
-
-    <span class="version" data-i18n="firmwarePSPulse">
-        Firmware: 5.05 – 13.00
-    </span>
-
-    <span class="select" data-i18n="offline">
-        MODO OFFLINE (EM CACHE)
-    </span>
-
-</a>
-
-</main>
-
-
-<footer class="footer" data-i18n="footer">
+<div
+    class="footer"
+    data-i18n="footer">
     SELECIONE SEU EXPLOIT
-</footer>
+</div>
+
 
 </div>
 
 
 <script>
 
-/* Traduções */
+/* =========================
+   TRADUCOES
+   ========================= */
 
 var translations = {
 
     pt: {
         platform: "PlayStation 4",
-        description: "Selecione o exploit compatível com a versão de firmware do seu PS4.",
-        firmwareRaw: "Firmware: 11.00 – 13.00",
-        firmwareGH: "Firmware: 5.05 – 13.00",
-        firmwarePSPulse: "Firmware: 5.05 – 13.00",
-        offline: "MODO OFFLINE (EM CACHE)",
-        footer: "SELECIONE SEU EXPLOIT"
+
+        description:
+            "Selecione o exploit compatível com a versão de firmware do seu PS4.",
+
+        firmwareRaw:
+            "Firmware: 11.00 – 13.00",
+
+        firmwareGH:
+            "Firmware: 5.05 – 13.00",
+
+        firmwarePSPulse:
+            "Firmware: 5.05 – 13.00",
+
+        offline:
+            "MODO OFFLINE (EM CACHE)",
+
+        footer:
+            "SELECIONE SEU EXPLOIT"
     },
 
     en: {
         platform: "PlayStation 4",
-        description: "Select the exploit compatible with your PS4 firmware version.",
-        firmwareRaw: "Firmware: 11.00 – 13.00",
-        firmwareGH: "Firmware: 5.05 – 13.00",
-        firmwarePSPulse: "Firmware: 5.05 – 13.00",
-        offline: "OFFLINE MODE (CACHED)",
-        footer: "SELECT YOUR EXPLOIT"
+
+        description:
+            "Select the exploit compatible with your PS4 firmware version.",
+
+        firmwareRaw:
+            "Firmware: 11.00 – 13.00",
+
+        firmwareGH:
+            "Firmware: 5.05 – 13.00",
+
+        firmwarePSPulse:
+            "Firmware: 5.05 – 13.00",
+
+        offline:
+            "OFFLINE MODE (CACHED)",
+
+        footer:
+            "SELECT YOUR EXPLOIT"
     }
 
 };
 
 
-/* Detecta o idioma */
+/* =========================
+   DETECTAR IDIOMA
+   ========================= */
 
 function detectLanguage() {
 
@@ -466,7 +621,8 @@ function detectLanguage() {
         navigator.userLanguage ||
         "en";
 
-    browserLanguage = browserLanguage.toLowerCase();
+    browserLanguage =
+        browserLanguage.toLowerCase();
 
     if (browserLanguage.indexOf("pt") === 0) {
         return "pt";
@@ -476,7 +632,9 @@ function detectLanguage() {
 }
 
 
-/* Aplica o idioma */
+/* =========================
+   ALTERAR IDIOMA
+   ========================= */
 
 function setLanguage(language) {
 
@@ -484,11 +642,15 @@ function setLanguage(language) {
 
     document.documentElement.lang = language;
 
-    var elements = document.querySelectorAll("[data-i18n]");
+
+    var elements =
+        document.querySelectorAll("[data-i18n]");
+
 
     for (var i = 0; i < elements.length; i++) {
 
-        var key = elements[i].getAttribute("data-i18n");
+        var key =
+            elements[i].getAttribute("data-i18n");
 
         if (texts[key]) {
             elements[i].innerHTML = texts[key];
@@ -496,19 +658,47 @@ function setLanguage(language) {
 
     }
 
-    document.getElementById("pt").className =
-        language === "pt" ? "active" : "";
 
-    document.getElementById("en").className =
-        language === "en" ? "active" : "";
+    /* Botao PT */
 
-    localStorage.setItem("language", language);
+    if (language === "pt") {
+
+        document.getElementById("pt").className =
+            "active";
+
+        document.getElementById("en").className =
+            "";
+
+    }
+
+
+    /* Botao EN */
+
+    else {
+
+        document.getElementById("pt").className =
+            "";
+
+        document.getElementById("en").className =
+            "active";
+
+    }
+
+
+    localStorage.setItem(
+        "language",
+        language
+    );
 }
 
 
-/* Inicialização */
+/* =========================
+   INICIALIZACAO
+   ========================= */
 
-setLanguage(detectLanguage());
+setLanguage(
+    detectLanguage()
+);
 
 </script>
 
