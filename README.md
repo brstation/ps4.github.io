@@ -1,6 +1,6 @@
 # Fork - PS4 WebKit Exploit (5.05 – 13.00)
 
-A collection of PlayStation 4 WebKit exploit hosts and their forks, all hosted in a single repository and running entirely in the console's browser.
+A collection of PlayStation 4 WebKit exploit hosts and their forks, all hosted in a single repository and running in the console's browser.
 
 ## Usage
 
