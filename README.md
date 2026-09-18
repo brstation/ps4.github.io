@@ -17,6 +17,7 @@ Open the browser on your PS4 and go to https://ps4.dpdns.org
   blobs come from published patch sources.
 - **[rawgame4](https://github.com/rawgame4/rawgame4.github.io)** — the PS4 port, the kernel chains, the offset tables and the delivery layer.
 - **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)** — the kernel chains, the offset tables and the delivery layer.
+- **[PS Pulse](https://github.com/psx8/psx8.github.io)** — the kernel chains, the offset tables and the delivery layer.
 
 ## Disclaimer
 
