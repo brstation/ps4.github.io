@@ -18,6 +18,7 @@ Open the browser on your PS4 and go to https://ps4.dpdns.org
 - **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)** — the kernel chains, the offset tables and the delivery layer.
 - **[PSPulse](https://github.com/psx8/psx8.github.io)** — the kernel chains, the offset tables and the delivery layer.
 - **[raw13g](https://github.com/raw13g/raw13g.github.io)** — the kernel chains, the offset tables and the delivery layer.
+- ***[rawgame4](https://github.com/rawgame4/rawgame4.github.io)**, **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)**, **[PSPulse](https://github.com/psx8/psx8.github.io)**, **[raw13g](https://github.com/raw13g/raw13g.github.io)** — kernel chains, offset tables, and delivery-layer work.
 
 ## Disclaimer
 
