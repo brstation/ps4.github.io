@@ -37,7 +37,7 @@ body {
 
 .wrapper {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1200px;
 
     margin: 0 auto;
     padding: 45px 20px 30px;
@@ -151,16 +151,17 @@ h1 {
 
 .container {
     width: 100%;
-    max-width: 930px;
+    max-width: 1120px;
 
     margin: 0 auto;
 
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
 
-    gap: 16px;
+    grid-template-columns: repeat(4, 1fr);
 
-    justify-items: center;
+    gap: 10px;
+
+    align-items: stretch;
 }
 
 
@@ -174,10 +175,10 @@ h1 {
     box-sizing: border-box;
 
     width: 100%;
-    max-width: 260px;
+    min-width: 0;
     min-height: 245px;
 
-    padding: 28px 18px 22px;
+    padding: 28px 10px 22px;
 
     background: #181f28;
 
@@ -188,13 +189,6 @@ h1 {
     text-decoration: none;
 
     overflow: hidden;
-}
-
-
-/* Centraliza o ultimo card */
-
-.card:last-child {
-    grid-column: 2;
 }
 
 
@@ -213,8 +207,8 @@ h1 {
    ========================= */
 
 .card img {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
 
     margin-bottom: 15px;
 
@@ -238,9 +232,9 @@ h1 {
 
     color: #ffffff;
 
-    font-size: 21px;
+    font-size: 16px;
     font-weight: bold;
-    letter-spacing: 1px;
+    letter-spacing: 0;
 }
 
 
@@ -252,7 +246,7 @@ h1 {
     display: inline-block;
 
     margin-top: 11px;
-    padding: 6px 10px;
+    padding: 6px 6px;
 
     background: #252d37;
 
@@ -260,7 +254,7 @@ h1 {
 
     color: #bec7d2;
 
-    font-size: 12px;
+    font-size: 10px;
 }
 
 
@@ -275,9 +269,9 @@ h1 {
 
     color: #8994a3;
 
-    font-size: 11px;
+    font-size: 9px;
     font-weight: bold;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .card:hover .select {
@@ -324,14 +318,9 @@ h1 {
     }
 
     .card {
-        max-width: 240px;
         min-height: 225px;
 
         padding: 24px 12px 20px;
-    }
-
-    .card:last-child {
-        grid-column: 1 / -1;
     }
 
     .card img {
@@ -341,6 +330,14 @@ h1 {
 
     .card h2 {
         font-size: 19px;
+    }
+
+    .version {
+        font-size: 11px;
+    }
+
+    .select {
+        font-size: 10px;
     }
 }
 
@@ -357,8 +354,6 @@ h1 {
     }
 
     .card {
-        width: 100%;
-        max-width: none;
         min-height: 225px;
 
         padding: 20px 8px 16px;
