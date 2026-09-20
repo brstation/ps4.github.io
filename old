@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 
@@ -37,12 +38,10 @@ body {
 
 .wrapper {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px;
 
     margin: 0 auto;
     padding: 45px 20px 30px;
-
-    box-sizing: border-box;
 }
 
 
@@ -136,6 +135,8 @@ h1 {
     color: #ffffff;
 }
 
+/* Destaque ao passar o ponteiro */
+
 .language button:hover {
     background: #3a4451;
     border-color: #8995a5;
@@ -146,22 +147,13 @@ h1 {
 
 
 /* =========================
-   CONTAINER
+   CARDS
    ========================= */
 
 .container {
     width: 100%;
-    max-width: 1120px;
 
-    margin: 0 auto;
-
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 10px;
-
-    align-items: stretch;
+    text-align: center;
 }
 
 
@@ -170,15 +162,15 @@ h1 {
    ========================= */
 
 .card {
-    display: block;
+    display: inline-block;
 
-    box-sizing: border-box;
+    vertical-align: top;
 
-    width: 100%;
-    min-width: 0;
+    width: 260px;
     min-height: 245px;
 
-    padding: 28px 10px 22px;
+    margin: 0 8px 16px;
+    padding: 28px 18px 22px;
 
     background: #181f28;
 
@@ -207,8 +199,8 @@ h1 {
    ========================= */
 
 .card img {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
 
     margin-bottom: 15px;
 
@@ -232,9 +224,9 @@ h1 {
 
     color: #ffffff;
 
-    font-size: 16px;
+    font-size: 21px;
     font-weight: bold;
-    letter-spacing: 0;
+    letter-spacing: 1px;
 }
 
 
@@ -246,7 +238,7 @@ h1 {
     display: inline-block;
 
     margin-top: 11px;
-    padding: 6px 6px;
+    padding: 6px 10px;
 
     background: #252d37;
 
@@ -254,7 +246,7 @@ h1 {
 
     color: #bec7d2;
 
-    font-size: 10px;
+    font-size: 12px;
 }
 
 
@@ -269,9 +261,9 @@ h1 {
 
     color: #8994a3;
 
-    font-size: 9px;
+    font-size: 11px;
     font-weight: bold;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .card:hover .select {
@@ -312,12 +304,8 @@ h1 {
         font-size: 14px;
     }
 
-    .container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
     .card {
+        width: 240px;
         min-height: 225px;
 
         padding: 24px 12px 20px;
@@ -331,14 +319,6 @@ h1 {
     .card h2 {
         font-size: 19px;
     }
-
-    .version {
-        font-size: 11px;
-    }
-
-    .select {
-        font-size: 10px;
-    }
 }
 
 
@@ -348,15 +328,10 @@ h1 {
 
 @media (max-width: 560px) {
 
-    .container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-
     .card {
-        min-height: 225px;
-
-        padding: 20px 8px 16px;
+        width: 44%;
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
     .card img {
@@ -401,6 +376,7 @@ h1 {
     }
 
     .card {
+        width: 46%;
         min-height: 205px;
 
         padding: 20px 8px 16px;
@@ -501,7 +477,6 @@ h1 {
 
     </a>
 
-
     <!-- RAW GAME 13G -->
 
     <a class="card" href="/raw13g/index.html">
@@ -527,7 +502,6 @@ h1 {
         </span>
 
     </a>
-
 
     <!-- GAMERHACK -->
 
@@ -582,7 +556,7 @@ h1 {
 
     </a>
 
-
+  
 </div>
 
 
@@ -616,10 +590,10 @@ var translations = {
 
         firmwareRaw:
             "Firmware: 11.00 – 13.00",
-
+        
         firmwareRaw13g:
-            "Firmware: 13.02 – 13.52",
-
+            "Firmware: 13.02 – 13.52", 
+        
         firmwareGH:
             "Firmware: 5.05 – 13.00",
 
@@ -641,9 +615,9 @@ var translations = {
 
         firmwareRaw:
             "Firmware: 11.00 – 13.00",
-
+        
         firmwareRaw13g:
-            "Firmware: 13.02 – 13.52",
+            "Firmware: 13.02 – 13.52",        
 
         firmwareGH:
             "Firmware: 5.05 – 13.00",
