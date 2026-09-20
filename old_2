@@ -246,18 +246,15 @@ h1 {
     display: inline-block;
 
     margin-top: 11px;
-    padding: 7px 9px;
+    padding: 6px 6px;
 
     background: #252d37;
 
     border-radius: 15px;
 
-    color: #d5dde7;
+    color: #bec7d2;
 
-    font-size: 12px;
-    font-weight: normal;
-
-    white-space: nowrap;
+    font-size: 10px;
 }
 
 
@@ -270,13 +267,11 @@ h1 {
 
     margin-top: 18px;
 
-    color: #aeb9c8;
+    color: #8994a3;
 
-    font-size: 11px;
+    font-size: 9px;
     font-weight: bold;
-    letter-spacing: 0.3px;
-
-    white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
 .card:hover .select {
