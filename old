@@ -37,10 +37,10 @@ body {
 
 .wrapper {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1200px;
 
     margin: 0 auto;
-    padding: 40px 25px 30px;
+    padding: 45px 20px 30px;
 
     box-sizing: border-box;
 }
@@ -51,7 +51,7 @@ body {
    ========================= */
 
 .header {
-    margin-bottom: 38px;
+    margin-bottom: 35px;
 }
 
 .small {
@@ -59,7 +59,7 @@ body {
 
     color: #8993a2;
 
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: 3px;
     text-transform: uppercase;
 }
@@ -69,19 +69,19 @@ h1 {
 
     color: #ffffff;
 
-    font-size: 44px;
+    font-size: 40px;
     font-weight: bold;
     letter-spacing: 5px;
 }
 
 .description {
-    margin: 14px auto 0;
+    margin: 12px auto 0;
 
-    max-width: 800px;
+    max-width: 650px;
 
     color: #aab4c1;
 
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.5;
 }
 
@@ -94,7 +94,7 @@ h1 {
     width: 65px;
     height: 3px;
 
-    margin: 20px auto 0;
+    margin: 18px auto 0;
 
     background: #ffffff;
 }
@@ -107,7 +107,7 @@ h1 {
 .language {
     margin-top: 20px;
 
-    height: 55px;
+    height: 52px;
 }
 
 .language button {
@@ -124,7 +124,7 @@ h1 {
     color: #737e8e;
 
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
 
     cursor: pointer;
@@ -151,7 +151,7 @@ h1 {
 
 .container {
     width: 100%;
-    max-width: 1250px;
+    max-width: 1120px;
 
     margin: 0 auto;
 
@@ -159,7 +159,7 @@ h1 {
 
     grid-template-columns: repeat(4, 1fr);
 
-    gap: 12px;
+    gap: 10px;
 
     align-items: stretch;
 }
@@ -176,9 +176,9 @@ h1 {
 
     width: 100%;
     min-width: 0;
-    min-height: 275px;
+    min-height: 245px;
 
-    padding: 28px 12px 25px;
+    padding: 28px 10px 22px;
 
     background: #181f28;
 
@@ -207,10 +207,10 @@ h1 {
    ========================= */
 
 .card img {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
 
-    margin-bottom: 17px;
+    margin-bottom: 15px;
 
     object-fit: contain;
 }
@@ -232,7 +232,7 @@ h1 {
 
     color: #ffffff;
 
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: 0;
 }
@@ -245,16 +245,16 @@ h1 {
 .version {
     display: inline-block;
 
-    margin-top: 14px;
-    padding: 8px 11px;
+    margin-top: 11px;
+    padding: 7px 10px;
 
     background: #252d37;
 
     border-radius: 15px;
 
-    color: #e0e7ef;
+    color: #d5dde7;
 
-    font-size: 16px;
+    font-size: 13px;
     font-weight: normal;
 
     white-space: nowrap;
@@ -268,11 +268,11 @@ h1 {
 .select {
     display: block;
 
-    margin-top: 21px;
+    margin-top: 18px;
 
-    color: #c0cbd9;
+    color: #aeb9c8;
 
-    font-size: 15px;
+    font-size: 12px;
     font-weight: bold;
     letter-spacing: 0.3px;
 
@@ -289,11 +289,11 @@ h1 {
    ========================= */
 
 .footer {
-    margin-top: 20px;
+    margin-top: 18px;
 
-    color: #78879a;
+    color: #687484;
 
-    font-size: 13px;
+    font-size: 11px;
     letter-spacing: 1px;
 }
 
@@ -323,7 +323,7 @@ h1 {
     }
 
     .card {
-        min-height: 245px;
+        min-height: 225px;
 
         padding: 24px 12px 20px;
     }
@@ -338,11 +338,11 @@ h1 {
     }
 
     .version {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .select {
-        font-size: 12px;
+        font-size: 11px;
     }
 }
 
@@ -374,11 +374,11 @@ h1 {
     }
 
     .version {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .select {
-        font-size: 11px;
+        font-size: 10px;
     }
 }
 
