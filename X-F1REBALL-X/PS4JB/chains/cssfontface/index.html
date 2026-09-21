@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PS4JB — CSSFontFace</title>
+<style>
+  html,body{margin:0;padding:0;min-height:100%;background:#000;color:#2a9fff;
+    font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+  #brand{text-align:center;padding:22px 12px 6px}
+  #brand-title{margin:0;font-size:15px;font-weight:700;letter-spacing:.28em;
+    text-transform:uppercase;color:#2a9fff;text-shadow:0 0 18px rgba(42,159,255,.45)}
+  #brand-sub{margin:8px 0 0;font-size:13px;font-weight:600;letter-spacing:.1em;color:#fff}
+  #wrap{max-width:640px;margin:0 auto;padding:12px 16px 40px}
+  #state{font-size:22px;font-weight:800;margin:12px 0;text-align:center}
+  #console{white-space:pre-wrap;background:rgba(0,20,40,.7);border:1px solid rgba(42,159,255,.35);
+    border-radius:6px;padding:12px;min-height:180px;max-height:55vh;overflow:auto;
+    font:12px/1.4 ui-monospace,monospace;color:#9ad2ff}
+  #foot{text-align:center;font-size:11px;color:#5eb6ff;margin-top:14px}
+  a{color:#2a9fff}
+</style>
+</head>
+<body>
+<div id="brand">
+  <p id="brand-title">PS4JB</p>
+  <p id="brand-sub">CSSFontFace + Lapse &middot; 7.00–11.02</p>
+</div>
+<div id="wrap">
+  <div id="state">starting...</div>
+  <pre id="console"></pre>
+  <p id="foot"><a href="../../index.html">back</a> &middot; chain from WebKitty / ntfargo (AGPL/MIT)</p>
+</div>
+<script>
+(function () {
+  // Default: Lapse (WebKitty chain id 4). Netctrl = 3.
+  if (localStorage.getItem("exploitChain") == null)
+    localStorage.setItem("exploitChain", "4");
+  if (!sessionStorage.getItem("payload_path"))
+    sessionStorage.setItem("payload_path", "payload.bin");
+
+  var stateEl = document.getElementById("state");
+  function setState(t) { if (stateEl) stateEl.textContent = t; }
+
+  // Manual override: ?kernel=netctrl
+  var q = location.search || "";
+  if (q.indexOf("kernel=netctrl") !== -1)
+    localStorage.setItem("exploitChain", "3");
+
+  setState("loading CSSFontFace...");
+  var s = document.createElement("script");
+  s.src = "main.js";
+  s.onload = function () {
+    setState("running...");
+    if (typeof doCssFontFaceJailbreak === "function") {
+      doCssFontFaceJailbreak().then(function () {
+        setState("done");
+      }).catch(function (e) {
+        setState("failed");
+        var c = document.getElementById("console");
+        if (c) c.append((e && e.message ? e.message : String(e)) + "\n");
+      });
+    } else {
+      setState("main.js missing entry");
+    }
+  };
+  s.onerror = function () { setState("failed to load main.js"); };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

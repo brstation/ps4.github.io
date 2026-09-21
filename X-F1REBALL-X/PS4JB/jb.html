@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" manifest="cache.appcache">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="Accept-CH" content="Sec-CH-UA-Model, Sec-CH-UA-Platform-Version, Sec-CH-UA-Platform" />
+    <title>PS4JB</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: #000;
+        color: #2a9fff;
+        font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+      }
+      #bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: #000 url("ps-controller-bg.jpg") center center / cover no-repeat;
+      }
+      #bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.35) 0%,
+          rgba(0, 0, 0, 0.55) 45%,
+          rgba(0, 0, 0, 0.75) 100%
+        );
+      }
+      #brand,
+      #spin,
+      #progress-wrap,
+      #msg,
+      #wrap,
+      #foot {
+        position: relative;
+        z-index: 1;
+      }
+
+      #brand {
+        text-align: center;
+        padding: 22px 12px 6px;
+        background: transparent;
+        border: none;
+      }
+
+      #brand-sub {
+        margin: 8px 0 0;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+      }
+      #brand-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: #2a9fff;
+        margin: 0;
+        text-shadow: 0 0 18px rgba(42, 159, 255, 0.45);
+      }
+
+      #progress-wrap {
+        position: relative;
+        z-index: 2;
+        width: 72%;
+        max-width: 420px;
+        margin: 28px auto 8px;
+        height: 14px;
+        border-radius: 8px;
+        background: rgba(0, 40, 80, 0.55);
+        border: 1px solid rgba(42, 159, 255, 0.45);
+        overflow: hidden;
+        box-shadow: 0 0 18px rgba(42, 159, 255, 0.2);
+      }
+      #progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #1464b4, #2a9fff, #7ec8ff);
+        box-shadow: 0 0 14px rgba(42, 159, 255, 0.55);
+      }
+      #progress-pct {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: #9ad2ff;
+        text-shadow: 0 0 10px rgba(42, 159, 255, 0.35);
+        margin: 0 0 10px;
+      }
+      body.log #progress-wrap,
+      body.log #progress-pct {
+        display: none;
+      }
+      #spin {
+        display: none !important;
+      }
+      #msg {
+        position: fixed;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #2a9fff;
+        text-shadow: 0 0 18px rgba(42, 159, 255, 0.4);
+        display: none;
+        z-index: 2;
+      }
+      #wrap {
+        padding: 0;
+      }
+      #state,
+      #out {
+        display: none;
+      }
+
+      body.done #spin,
+      body.fail #spin {
+        display: none;
+      }
+      body.fail #brand-sub {
+        display: none;
+      }
+      body.done #msg,
+      body.fail #msg {
+        display: block;
+      }
+      body.done #msg {
+        color: #ffffff;
+        text-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+      }
+      body.fail #msg {
+        color: #2a9fff;
+      }
+
+      body.log #spin,
+      body.log #msg {
+        display: none;
+      }
+      body.log #wrap {
+        padding: 14px 18px;
+      }
+      body.log #state {
+        display: block;
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 8px;
+        color: #2a9fff;
+      }
+      body.log #out {
+        display: block;
+        white-space: pre-wrap;
+        font: 12px/1.45 Consolas, monospace;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(42, 159, 255, 0.35);
+        border-radius: 5px;
+        padding: 10px 12px;
+        height: calc(100vh - 160px);
+        overflow-y: auto;
+        color: #9ad2ff;
+      }
+      .ok {
+        color: #5eb6ff;
+      }
+      .bad {
+        color: #5eb6ff;
+      }
+      .warn {
+        color: #2a9fff;
+      }
+      #foot {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 10px;
+        text-align: center;
+        font-size: 12px;
+        color: #2a9fff;
+        letter-spacing: 0.08em;
+        pointer-events: none;
+        line-height: 1.5;
+        text-shadow: 0 0 12px rgba(42, 159, 255, 0.35);
+      }
+      #foot b {
+        color: #2a9fff;
+        font-weight: 600;
+      }
+      body.device-blocked #progress-wrap,
+      body.device-blocked #progress-pct,
+      body.device-blocked #spin {
+        display: none !important;
+      }
+      #msg.blocked {
+        color: #ff6473;
+        font-size: 22px;
+        font-weight: 700;
+        text-align: center;
+        padding: 24px 16px;
+        text-shadow: 0 0 12px rgba(255, 100, 115, 0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bg" aria-hidden="true"></div>
+    <div id="brand">
+      <p id="brand-title">PS4JB</p>
+      <p id="brand-sub">Jailbreak in progress</p>
+    </div>
+    <div id="progress-wrap" aria-hidden="true">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-pct">0%</div>
+    <div id="spin"></div>
+    <div id="msg"></div>
+    <div id="wrap">
+      <div id="state"></div>
+      <div id="out"></div>
+    </div>
+    <script src="device.js?v=1"></script>
+    <script>
+      (function () {
+        var ua = navigator.userAgent || "";
+        if (!/PlayStation\s+4/i.test(ua)) {
+          document.body.className = "device-blocked";
+          var sub = document.getElementById("brand-sub");
+          var msg = document.getElementById("msg");
+          var wrap = document.getElementById("progress-wrap");
+          var pctEl = document.getElementById("progress-pct");
+          if (wrap) wrap.style.display = "none";
+          if (pctEl) pctEl.style.display = "none";
+          function showBlocked(device) {
+            var text = device + " — not supported";
+            if (sub) {
+              sub.textContent = text;
+              sub.style.color = "#ff6473";
+            }
+            if (msg) {
+              msg.textContent = text;
+              msg.className = "blocked";
+              msg.style.display = "block";
+            }
+          }
+          showBlocked(typeof detectDeviceFromUa === "function" ? detectDeviceFromUa(ua) : "Unknown device");
+          if (typeof resolveDeviceLabel === "function") resolveDeviceLabel(ua, showBlocked);
+          return;
+        }
+        var bar = document.getElementById("progress-bar");
+        var pct = document.getElementById("progress-pct");
+        var wrap = document.getElementById("progress-wrap");
+        if (!bar || !pct) return;
+        var value = 0;
+        var finished = false;
+        var t0 = Date.now();
+        function paint(v) {
+          if (v < 0) v = 0;
+          if (v > 100) v = 100;
+          value = v;
+          bar.style.width = v + "%";
+          pct.textContent = Math.floor(v) + "%";
+        }
+        function complete(ok) {
+          if (finished) return;
+          finished = true;
+          try {
+            clearInterval(timer);
+          } catch (e) {}
+          // Set 100% immediately — PS4 WebKit often stalls timers after the payload.
+          paint(100);
+          if (wrap) {
+            wrap.style.display = "block";
+            wrap.style.borderColor = ok
+              ? "rgba(255,255,255,0.55)"
+              : "rgba(42,159,255,0.45)";
+          }
+          if (pct) pct.style.display = "block";
+          // Keep 100% on screen; do not depend on later timers to finish the fill.
+        }
+        window.__ps4jbProgressComplete = complete;
+        var timer = setInterval(function () {
+          if (finished) return;
+          var cls = document.body.className || "";
+          if (cls.indexOf("done") !== -1) {
+            complete(true);
+            return;
+          }
+          if (cls.indexOf("fail") !== -1) {
+            complete(false);
+            return;
+          }
+          // Reach ~85% by ~3s and ~95% by ~6s for typical fast jailbreaks.
+          var sec = (Date.now() - t0) / 1000;
+          var target = 96 * (1 - Math.exp(-sec / 2.2));
+          if (target > value) paint(target);
+        }, 50);
+      })();
+    </script>
+    <script type="module">
+      if (/PlayStation\s+4/i.test(navigator.userAgent || "")) {
+        import("./jb.js?v=19");
+      }
+    </script>
+    <div id="foot">
+      <b>Created by X-F1REBALL-X</b>
+    </div>
+  </body>
+</html>

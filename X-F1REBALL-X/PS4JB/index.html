@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" manifest="cache.appcache">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Accept-CH" content="Sec-CH-UA-Model, Sec-CH-UA-Platform-Version, Sec-CH-UA-Platform">
+<title>PS4JB</title>
+<style>
+  html, body {
+    margin:0; padding:0; height:100%;
+    background:#000;
+    color:#2a9fff;
+    font:15px/1.45 "Segoe UI", system-ui, sans-serif;
+    overflow-x:hidden;
+  }
+  #bg {
+    position:fixed; top:0; right:0; bottom:0; left:0; z-index:0;
+    background:#000 url("ps-logo.jpg") center center no-repeat;
+    background-size:cover;
+    pointer-events:none;
+  }
+  #bg:after {
+    content:"";
+    position:absolute; top:0; right:0; bottom:0; left:0;
+    background:rgba(0,0,0,0.55);
+    pointer-events:none;
+  }
+  #brand, #wrap, #credits, #foot {
+    position:relative; z-index:2;
+  }
+
+  #brand {
+    text-align:center; padding:28px 12px 8px;
+    background:transparent; border:none;
+  }
+
+  #brand-sub {
+    margin:8px 0 0;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.12em;
+    color:#ffffff;
+    text-shadow:0 0 10px rgba(255,255,255,.35);
+  }
+  #brand-title {
+    font-size:16px; font-weight:700; letter-spacing:.28em;
+    text-transform:uppercase; color:#2a9fff; margin:0;
+    text-shadow:0 0 18px rgba(42,159,255,.45);
+  }
+  #wrap {
+    padding:18px 20px 16px; max-width:520px; margin:0 auto;
+    text-align:center;
+  }
+  #state {
+    font-size:28px; font-weight:800; margin:18px 0 10px;
+    letter-spacing:.03em; color:#2a9fff;
+    text-shadow:0 0 22px rgba(42,159,255,.4);
+  }
+  #det { font-size:14px; color:#5eb6ff; margin:0 0 6px; }
+  #det b { color:#9ad2ff; font-weight:600; }
+  #cache {
+    font-size:12px; color:#4a9fd8; margin:0 0 14px; min-height:14px;
+  }
+  #cache.cacheok { color:#5eb6ff; }
+  .ok { color:#5eb6ff; } .bad { color:#5eb6ff; } .warn { color:#2a9fff; }
+
+  #startBtn {
+    display:none;
+    margin:22px auto 0;
+    padding:16px 28px;
+    min-width:220px;
+    border:2px solid #2a9fff;
+    border-radius:6px;
+    background:rgba(0,40,80,.65);
+    color:#2a9fff;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:.06em;
+    text-decoration:none;
+    cursor:pointer;
+    text-shadow:0 0 12px rgba(42,159,255,.45);
+    box-shadow:0 0 24px rgba(42,159,255,.25);
+  }
+  #startBtn.show { display:inline-block; }
+
+  #credits {
+    position:relative; z-index:2;
+    max-width:640px; margin:8px auto 70px; padding:0 16px;
+    text-align:center;
+    font-size:11px; line-height:1.55;
+    color:#5eb6ff;
+    text-shadow:0 0 10px rgba(42,159,255,.25);
+  }
+  #credits .credits-heading {
+    margin:0 0 8px;
+    font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase;
+    color:#2a9fff;
+  }
+  #credits .credits-group {
+    margin:0 0 8px;
+  }
+  #credits .credits-label {
+    display:block;
+    margin:0 0 2px;
+    font-size:11px; font-weight:700;
+    letter-spacing:.08em;
+    color:#9ad2ff;
+  }
+  #credits .credits-names {
+    margin:0;
+    color:#5eb6ff;
+  }
+  #foot {
+    position:fixed; left:0; right:0; bottom:10px; text-align:center;
+    font-size:12px; color:#2a9fff; letter-spacing:.08em;
+    pointer-events:none; line-height:1.5;
+    text-shadow:0 0 12px rgba(42,159,255,.35);
+    z-index:2;
+  }
+  #foot b { color:#2a9fff; font-weight:600; }
+
+  #countdown {
+    display:none;
+    position:fixed; top:0; right:0; bottom:0; left:0; z-index:9999;
+    text-align:center;
+    background:rgba(0,0,0,.88);
+    padding-top:28%;
+  }
+  #countdown.show { display:block; }
+  #countdown-num {
+    font-size:120px; font-weight:900; line-height:1;
+    color:#2a9fff;
+    text-shadow:0 0 40px rgba(42,159,255,.55);
+  }
+  #state.blocked {
+    color:#ff6473;
+    font-size:22px;
+    text-shadow:0 0 12px rgba(255,100,115,.35);
+  }
+  body.device-blocked #startBtn,
+  body.device-blocked #countdown,
+  body.device-blocked #cache,
+  body.device-blocked #det,
+  body.device-blocked #credits { display:none !important; }
+  #countdown-label {
+    margin-top:18px; font-size:14px; letter-spacing:.28em;
+    text-transform:uppercase; color:#5eb6ff;
+  }
+</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<div id="countdown" aria-live="assertive">
+  <div id="countdown-num">3</div>
+  <div id="countdown-label">starting</div>
+</div>
+<div id="brand">
+  <p id="brand-title">PS4JB</p>
+  <p id="brand-sub">7.00–11.02 &middot; 13.02–13.52</p>
+</div>
+<div id="wrap">
+  <div id="state">detecting firmware...</div>
+  <div id="det"></div>
+  <div id="cache"></div>
+  <a id="startBtn" href="#">Press X to start</a>
+</div>
+
+<script src="device.js?v=1"></script>
+<script>
+(function () {
+    var stateEl = document.getElementById("state");
+    var detEl = document.getElementById("det");
+    var cacheEl = document.getElementById("cache");
+    var startBtn = document.getElementById("startBtn");
+    function setState(t, c) { stateEl.textContent = t; stateEl.className = c || ""; }
+    function setCache(t, ok) { cacheEl.textContent = t; cacheEl.className = ok ? "cacheok" : ""; }
+
+    // Avoid URLSearchParams (missing on older PS4 WebKit).
+    function getParam(name) {
+        var q = location.search || "";
+        if (q.charAt(0) === "?") q = q.substring(1);
+        var parts = q.split("&");
+        for (var i = 0; i < parts.length; i++) {
+            var kv = parts[i].split("=");
+            if (decodeURIComponent(kv[0]) === name) {
+                return kv.length > 1 ? decodeURIComponent(kv[1]) : "";
+            }
+        }
+        return null;
+    }
+
+    // Firmware router (phase 1). fwnum = major*100 + minor (e.g. 9.00 -> 900, 13.52 -> 1352).
+    // Relapse 13.02-13.52 stays on existing jb.html. Lower FW -> chains/*.
+    var ROUTES = [
+        // CSSFontFace + Lapse (patches/constants present). Prefer for 7.00-11.02.
+        { min: 700, max: 1102, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
+        // Relapse (existing PS4JB / raw13g) — HW-proven for this host on listed FWs.
+        { min: 1302, max: 1352, target: "jb.html", label: "Relapse", proven: true,
+          only: { 1302: 1, 1304: 1, 1350: 1, 1352: 1 } }
+    ];
+    // Extra chains (wired entry present; not preferred default for overlapping ranges):
+    //   700-960  -> chains/psfree-lapse/index.html  (PSFree+Lapse, untested here)
+    //   1100-1202 -> chains/slopkit/index.html       (Slopkit Lapse, untested here)
+    //   1250-1300 -> chains/slopkit/index.html       (Slopkit Netctrl, untested here)
+
+    var ua = navigator.userAgent || "";
+    var isPs4 = /PlayStation\s+4/i.test(ua);
+    if (!isPs4) {
+        document.body.className = (document.body.className || "") + " device-blocked";
+        function showBlocked(device) {
+            setState(device + " — not supported", "blocked");
+            if (detEl) detEl.textContent = "";
+            if (cacheEl) cacheEl.textContent = "";
+            if (startBtn) startBtn.className = "";
+        }
+        showBlocked(typeof detectDeviceFromUa === "function" ? detectDeviceFromUa(ua) : "Unknown device");
+        if (typeof resolveDeviceLabel === "function") resolveDeviceLabel(ua, showBlocked);
+        return;
+    }
+
+    var key = null, fwnum = null;
+    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(ua);
+    if (m) {
+        var ms = parseInt(m[2], 16).toString(16);
+        if (ms.length < 2) ms = "0" + ms;
+        key = m[1] + "." + ms;
+        fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+    }
+
+    function pickRoute(n) {
+        if (n === null) return null;
+        for (var i = 0; i < ROUTES.length; i++) {
+            var r = ROUTES[i];
+            if (n < r.min || n > r.max) continue;
+            if (r.only && !r.only[n]) continue;
+            return r;
+        }
+        return null;
+    }
+
+    var forced = getParam("force") === "1";
+    var forceChain = getParam("chain"); // cssfontface | psfree | slopkit | relapse
+    var route = pickRoute(fwnum);
+    if (forceChain === "cssfontface") route = { target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false };
+    else if (forceChain === "psfree") route = { target: "chains/psfree-lapse/index.html", label: "PSFree+Lapse", proven: false };
+    else if (forceChain === "slopkit") route = { target: "chains/slopkit/index.html", label: "Slopkit", proven: false };
+    else if (forceChain === "relapse") route = { target: "jb.html", label: "Relapse", proven: true };
+
+    var supported = forced || route !== null;
+    var detBits = "firmware <b>" + (key || "unknown") + "</b>";
+    if (route) {
+        detBits += " &middot; <b>" + route.label + "</b>";
+        if (!route.proven) detBits += " &middot; untested on this host";
+        else detBits += " &middot; <b>supported</b>";
+    } else {
+        detBits += " &middot; no chain for this FW in phase 1";
+    }
+    detEl.innerHTML = detBits;
+
+    var target = (route ? route.target : "jb.html") + (location.search || "");
+    function runCountdown(done) {
+        var overlay = document.getElementById("countdown");
+        var numEl = document.getElementById("countdown-num");
+        var labelEl = document.getElementById("countdown-label");
+        if (!overlay || !numEl) { done(); return; }
+        overlay.className = "show";
+        var n = 3;
+        numEl.textContent = String(n);
+        if (labelEl) labelEl.textContent = "starting";
+        var iv = setInterval(function () {
+            n -= 1;
+            if (n <= 0) {
+                clearInterval(iv);
+                numEl.textContent = "GO";
+                if (labelEl) labelEl.textContent = "";
+                setTimeout(function () {
+                    overlay.className = "";
+                    done();
+                }, 350);
+            } else {
+                numEl.textContent = String(n);
+            }
+        }, 1000);
+    }
+    function go() {
+        if (startBtn) startBtn.className = "";
+        runCountdown(function () {
+            if (stateEl) stateEl.style.display = "";
+            setState("loading...", "warn");
+            location.replace(target);
+        });
+    }
+
+    function waitForTap(msg, action) {
+        // Prompt on the start button. Only Cross (X) / Enter starts — not other keys.
+        setState("");
+        if (stateEl) stateEl.style.display = "none";
+        if (startBtn) {
+            startBtn.textContent = msg;
+            startBtn.className = "show";
+            try { startBtn.focus(); } catch (e) {}
+        }
+        var fired = false;
+        function isCrossKey(ev) {
+            if (!ev) return false;
+            var c = ev.keyCode || ev.which || 0;
+            var k = ev.key || "";
+            // PS4 browser maps controller Cross (X) to Enter.
+            return c === 13 || k === "Enter";
+        }
+        function cleanup() {
+            window.removeEventListener("keydown", onKey, true);
+            if (startBtn) {
+                startBtn.onclick = null;
+                startBtn.onkeydown = null;
+            }
+        }
+        function fire(ev) {
+            if (fired) return;
+            fired = true;
+            if (ev && ev.preventDefault) ev.preventDefault();
+            cleanup();
+            if (startBtn) startBtn.className = "";
+            action();
+        }
+        function onKey(ev) {
+            if (!isCrossKey(ev)) {
+                // Block other keys from starting the jailbreak.
+                if (ev.preventDefault) ev.preventDefault();
+                if (ev.stopPropagation) ev.stopPropagation();
+                return;
+            }
+            fire(ev);
+        }
+        // Capture phase so other handlers cannot start on random keys.
+        window.addEventListener("keydown", onKey, true);
+        if (startBtn) {
+            // Cross on a focused link also synthesizes click — allow only on the button.
+            startBtn.onclick = function (ev) { fire(ev); };
+        }
+    }
+
+    if (!supported) {
+        waitForTap("Press X to start", go);
+        return;
+    }
+
+    var ac = window.applicationCache;
+    if (!ac || !document.documentElement.getAttribute("manifest")) {
+        go();
+    } else if (!navigator.onLine) {
+        setCache("offline -- from cache", true);
+        go();
+    } else if (ac.status === ac.IDLE) {
+        setCache("cached", true);
+        go();
+    } else if (ac.status === ac.UPDATEREADY) {
+        try { ac.swapCache(); } catch (e) {}
+        setCache("update downloaded", true);
+        waitForTap("Press X to start", function () { location.reload(); });
+    } else {
+        setCache("checking cache...");
+        var started = false;
+        function startOnce() {
+            if (started) return;
+            started = true;
+            go();
+        }
+        // Safety: never stay stuck on cache checking forever.
+        setTimeout(function () {
+            if (!started) {
+                setCache("cache timeout -- continue");
+                waitForTap("Press X to start", go);
+            }
+        }, 8000);
+        ac.addEventListener("downloading",
+            function () { setCache("caching for offline (first run)..."); }, false);
+        ac.addEventListener("progress", function (e) {
+            if (e && e.total)
+                setCache("caching " + Math.round((e.loaded / e.total) * 100) + "%");
+        }, false);
+        ac.addEventListener("cached", function () {
+            setCache("cached for offline use", true);
+            waitForTap("Press X to start", go);
+        }, false);
+        ac.addEventListener("updateready", function () {
+            try { ac.swapCache(); } catch (e) {}
+            setCache("update downloaded", true);
+            waitForTap("Press X to start", function () { location.reload(); });
+        }, false);
+        ac.addEventListener("noupdate", function () {
+            setCache("cached -- offline ready", true);
+            startOnce();
+        }, false);
+        ac.addEventListener("error", function () {
+            setCache("cache unavailable");
+            waitForTap("Press X to start", go);
+        }, false);
+        ac.addEventListener("obsolete", function () {
+            setCache("cache obsolete");
+            waitForTap("Press X to start", go);
+        }, false);
+    }
+})();
+</script>
+<div id="credits">
+  <p class="credits-heading">Credits</p>
+  <div class="credits-group">
+    <span class="credits-label">HEN / GoldHEN</span>
+    <p class="credits-names">SiSTRo · ctn · Kameleon</p>
+  </div>
+  <div class="credits-group">
+    <span class="credits-label">Exploit / chain</span>
+    <p class="credits-names">TheFloW · Gezine · WhiteShadow · ufm42 · Nathan Fargo · Dr.Yenyen · ArabPixel · MasterMaind · ABC · raw13g · Echo Stretch · anonymous (PSFree) · Fire30 · Sleirsgoevy</p>
+  </div>
+  <div class="credits-group">
+    <span class="credits-label">Hosts / assets</span>
+    <p class="credits-names">ArabPixel/WebKitty (AGPL-3.0) · ntfargo/CSSFontFace-Exploit · B4411M/all · DestoryG/CSSFontFace-DGHost</p>
+  </div>
+</div>
+<div id="foot">
+  <b>Created by X-F1REBALL-X</b>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PS4JB — Slopkit</title>
+<style>
+  html,body{margin:0;padding:0;min-height:100%;background:#000;color:#2a9fff;
+    font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+  #brand{text-align:center;padding:22px 12px 6px}
+  #brand-title{margin:0;font-size:15px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#2a9fff}
+  #brand-sub{margin:8px 0 0;font-size:13px;font-weight:600;color:#fff}
+  #wrap{max-width:640px;margin:0 auto;padding:12px 16px 40px;text-align:center}
+  #state{font-size:20px;font-weight:800;margin:12px 0}
+  #console,#DebugConsole{text-align:left;white-space:pre-wrap;background:rgba(0,20,40,.7);
+    border:1px solid rgba(42,159,255,.35);border-radius:6px;padding:12px;min-height:160px;
+    max-height:50vh;overflow:auto;font:12px/1.4 ui-monospace,monospace;color:#9ad2ff}
+  #foot{font-size:11px;color:#5eb6ff;margin-top:14px}
+  a{color:#2a9fff}
+</style>
+</head>
+<body>
+<div id="brand">
+  <p id="brand-title">PS4JB</p>
+  <p id="brand-sub">Slopkit &middot; 11.00–13.00 (wired, untested here)</p>
+</div>
+<div id="wrap">
+  <div id="state">starting...</div>
+  <pre id="console"></pre>
+  <div id="DebugConsole" hidden></div>
+  <p id="foot"><a href="../../index.html">back</a> &middot; from WebKitty / raw13g (AGPL)</p>
+</div>
+<script>
+(function () {
+  if (!sessionStorage.getItem("payload_path"))
+    sessionStorage.setItem("payload_path", "payload.bin");
+  // WebKitty: 5 = lapse (11–12.02), 6 = netctrl (12.50–13.00)
+  var chain = localStorage.getItem("exploitChain");
+  var ua = navigator.userAgent || "";
+  var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(ua);
+  var fw = 0;
+  if (m) {
+    var ms = parseInt(m[2], 16).toString(16);
+    if (ms.length < 2) ms = "0" + ms;
+    fw = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+  }
+  if (chain == null) {
+    chain = (fw >= 1250 && fw <= 1300) ? "6" : "5";
+    localStorage.setItem("exploitChain", chain);
+  }
+  var src = (chain === "6") ? "chain_poops.js" : "chain_lapse.js";
+  document.getElementById("state").textContent = "loading " + src + "...";
+  var s = document.createElement("script");
+  s.type = "module";
+  s.src = src;
+  s.onerror = function () { document.getElementById("state").textContent = "failed to load " + src; };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

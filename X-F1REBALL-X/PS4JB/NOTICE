@@ -1,0 +1,28 @@
+PS4JB — third-party notices
+============================
+
+This host includes public PlayStation 4 WebKit / kernel exploit chain assets
+copied from upstream repositories. Licenses are preserved; do not strip
+headers from vendored files.
+
+1) ArabPixel/WebKitty — GNU Affero General Public License v3.0 (or later)
+   - Full text: LICENSE (repo root) and third_party/licenses/WebKitty-AGPL-3.0.txt
+   - Also: chains/LICENSE.WebKitty-AGPL-3.0
+   - Vendored under chains/{cssfontface,psfree-lapse,slopkit,relapse,badhoist}/
+     and mirrored patches/offsets under third_party/webkitty/
+   - Network use of modified AGPL code requires offering corresponding source
+     (this GitHub repo is the source offer for the live Pages host).
+
+2) ntfargo/CSSFontFace-Exploit — MIT
+   - third_party/licenses/CSSFontFace-Exploit-MIT.txt
+   - third_party/CSSFontFace-Exploit/ and third_party/cssfontface/
+
+3) B4411M/all — see third_party/licenses/B4411M-all-LICENSE.txt
+   - Offset tables and patch bins under third_party/B4411M-all/ and
+     third_party/b4411m/
+
+Upstream exploit authors (non-exhaustive): ufm42, Nathan Fargo, TheFloW,
+Gezine, abc, anonymous (PSFree), Fire30, Sleirsgoevy, raw13g / Raw Game,
+ArabPixel, DestoryG, and others credited in those projects' READMEs.
+
+PS4JB host UI / Relapse 13.02–13.52 wiring: X-F1REBALL-X (based on raw13g).

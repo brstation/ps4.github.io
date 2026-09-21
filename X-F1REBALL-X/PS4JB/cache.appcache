@@ -1,0 +1,53 @@
+CACHE MANIFEST
+# rev 20260921-x-only
+ps-logo.jpg #95cab1d70cad3e48fbf67a5de86ab368a908e46b81c5ee1f547414afb44abf84
+ps-controller-bg.jpg #d373feec02ff0f3dd6992b9f0d5b9c459c09cff64a615d5d558d78db33743fbf
+
+index.html #a7de39b67f2c9cb4d90db23c85d8378362e35f2e683b3ef59244f225f5f98d32 #97b683322104ec482138ea123afaabfc7537e75bafb82a7f9234023b696e4a75
+cache.html #940a155ce23bc829e0ce370b7f3f4bd0c9de48d2f6854fab21e629f751756ca1
+jb.html #dab8cf3cf684abd584a94f7278b02002481ba2741e7f11927b81bb30d6c6e693 #04dfcb51fbb9bf8149d9c23e1e23570827f3c7ca7586ef4d183099bdfacd1b83
+logo_raw.png
+ps4-bg.png
+device.js #6fa76e47563ea1714a217fe2a311df306c38dd2cd3f98703015471bd228fd589
+device.js?v=1 #6fa76e47563ea1714a217fe2a311df306c38dd2cd3f98703015471bd228fd589
+jb.js #a11499cb7571ad47886f974d7b350e02c5ede0364a519b17b470d8d3bed706ae
+core.js #a76c52afbc19b05d176be2059048a3c6a4fb61db084d56434cef2b17da00b2b3
+mem.js #ee5e52ea8c7ac349f3df4249e6245c6bb41aa9482081b452e629e589dead3b11
+int64.js #611da6a52da5ecf970a3718ab2a4561d3992c655c55342d066d12a9a50554f34
+ps4_offsets.js #0ec78d92052c9fbb69d2be88da1556f57bcb83e11487495eaccf28ae3d5535f0
+rpc_worker.js #2d030c4cc92f46f96e1e4aea0463e1cde84e7f9a2ec17411473880a0c3f4e682
+hen.bin #4cf0df0dbde6cf68fbb407151cda9a50e64a716fe7af9583f04654825f1ea70b
+goldhen.bin #48d46667249330c9be48c96a2a3a2dab4464dababa8fcb3e38170c98caf3851f
+ps4debug.bin #28829f48465d3dfdf97afc15f01edafd8802f8213c44635af6f21e0e8b48c8f6
+patches/1302.bin #76584f8a02be806816aa7987ff6f2aed3a4a7f9494c49643e32f9cb9d75ab71b
+patches/1350.bin #b9ab32fa10c272c341da97159a13818d98316b9998f3cf89d874e0b35e41cdbd
+patches/1352.bin #a4ca7dc1f31a342cd80cb3b4aee0fcd56e92685e3ce1491c34cbd656c1af562c
+core.js?v=10 #a76c52afbc19b05d176be2059048a3c6a4fb61db084d56434cef2b17da00b2b3
+jb.js?v=19 #a11499cb7571ad47886f974d7b350e02c5ede0364a519b17b470d8d3bed706ae
+
+# multi-fw phase 1
+NOTICE
+LICENSE
+chains/cssfontface/index.html
+chains/cssfontface/main.js
+chains/cssfontface/misc.js
+chains/cssfontface/loader.js
+chains/cssfontface/workers.js
+chains/cssfontface/worker.js
+chains/cssfontface/lapse.js
+chains/cssfontface/netctrl.js
+chains/cssfontface/ps4/constants.js
+chains/cssfontface/ps4/userland.js
+chains/cssfontface/ps4/kernel.js
+chains/psfree-lapse/index.html
+chains/psfree-lapse/bundle.js
+chains/slopkit/index.html
+chains/slopkit/chain_lapse.js
+chains/slopkit/chain_poops.js
+
+NETWORK:
+*
+
+FALLBACK:
+index.html index.html
+jb.html jb.html
