@@ -25,7 +25,9 @@ body {
 body {
     background: #0f141b;
     color: #ffffff;
+
     font-family: Arial, Helvetica, sans-serif;
+
     text-align: center;
 }
 
@@ -55,7 +57,7 @@ body {
     position: absolute;
 
     top: 40px;
-    right: 50px;
+    right: 40px;
 
     padding: 9px 16px;
 
@@ -81,19 +83,6 @@ body {
     color: #ffffff;
 
     transform: translateY(-2px);
-}
-
-
-/* =========================
-   AJUSTE PARA PS4
-   ========================= */
-
-@media (max-width: 1300px) {
-
-    .credits {
-        right: 0px;
-    }
-
 }
 
 
@@ -242,6 +231,9 @@ h1 {
     overflow: hidden;
 }
 
+
+/* Destaque do card */
+
 .card:hover {
     background: #202832;
     border-color: #465363;
@@ -262,6 +254,9 @@ h1 {
 
     object-fit: contain;
 }
+
+
+/* Pequeno destaque da imagem */
 
 .card:hover img {
     transform: scale(1.08);
@@ -496,7 +491,7 @@ h1 {
 
 <a
     class="credits"
-    href="/about"
+    href="https://ps4.dpdns.org/about"
     data-i18n="credits">
     CRÉDITOS
 </a>
