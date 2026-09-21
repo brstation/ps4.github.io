@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -36,6 +37,8 @@ body {
    ========================= */
 
 .wrapper {
+    position: relative;
+
     width: 100%;
     max-width: 1400px;
 
@@ -43,6 +46,43 @@ body {
     padding: 40px 25px 30px;
 
     box-sizing: border-box;
+}
+
+
+/* =========================
+   BOTAO CREDITOS
+   ========================= */
+
+.credits {
+    position: absolute;
+
+    top: 40px;
+    right: 25px;
+
+    padding: 9px 16px;
+
+    background: #46576b;
+
+    border: 1px solid #687b90;
+    border-radius: 9px;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    transition: 0.2s ease;
+}
+
+.credits:hover {
+    background: #596c81;
+    border-color: #7e91a5;
+    color: #ffffff;
+
+    transform: translateY(-2px);
 }
 
 
@@ -353,6 +393,20 @@ h1 {
 
 @media (max-width: 560px) {
 
+    .credits {
+        top: 70px;
+        right: 12px;
+
+        padding: 8px 11px;
+
+        font-size: 11px;
+        letter-spacing: 0.8px;
+    }
+
+    .header {
+        padding-top: 35px;
+    }
+
     .container {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
@@ -429,6 +483,18 @@ h1 {
 <body>
 
 <div class="wrapper">
+
+
+<!-- =========================
+     BOTAO CREDITOS
+     ========================= -->
+
+<a
+    class="credits"
+    href="https://ps4.dpdns.org/about"
+    data-i18n="credits">
+    CRÉDITOS
+</a>
 
 
 <!-- =========================
@@ -614,7 +680,9 @@ h1 {
 var translations = {
 
     pt: {
-        platform: "PlayStation 4",
+
+        platform:
+            "PlayStation 4",
 
         description:
             "Selecione o exploit compatível com a versão de firmware do seu PS4.",
@@ -635,11 +703,17 @@ var translations = {
             "MODO OFFLINE (EM CACHE)",
 
         footer:
-            "SELECIONE SEU EXPLOIT"
+            "SELECIONE SEU EXPLOIT",
+
+        credits:
+            "CRÉDITOS"
     },
 
+
     en: {
-        platform: "PlayStation 4",
+
+        platform:
+            "PlayStation 4",
 
         description:
             "Select the exploit compatible with your PS4 firmware version.",
@@ -660,7 +734,10 @@ var translations = {
             "OFFLINE MODE (CACHED)",
 
         footer:
-            "SELECT YOUR EXPLOIT"
+            "SELECT YOUR EXPLOIT",
+
+        credits:
+            "CREDITS"
     }
 
 };
@@ -704,10 +781,8 @@ function setLanguage(language) {
 
     document.documentElement.lang = language;
 
-
     var elements =
         document.querySelectorAll("[data-i18n]");
-
 
     for (var i = 0; i < elements.length; i++) {
 
