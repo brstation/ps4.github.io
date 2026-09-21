@@ -56,29 +56,34 @@ body {
 .credits {
     position: absolute;
 
-    top: 25px;
+    /* Alinhado verticalmente com PLAYSTATION 4 */
+    top: 40px;
     right: 25px;
 
-    padding: 9px 15px;
+    padding: 9px 16px;
 
-    background: #202731;
+    background: #8b949e;
 
-    border: 1px solid #3b4552;
+    border: 1px solid #aab4c1;
     border-radius: 9px;
 
-    color: #aab4c1;
+    color: #ffffff;
 
     text-decoration: none;
 
     font-size: 13px;
     font-weight: bold;
     letter-spacing: 1px;
+
+    transition: 0.2s ease;
 }
 
 .credits:hover {
-    background: #303946;
-    border-color: #697585;
+    background: #aab4c1;
+    border-color: #d5dbe1;
     color: #ffffff;
+
+    transform: translateY(-2px);
 }
 
 
@@ -390,7 +395,7 @@ h1 {
 @media (max-width: 560px) {
 
     .credits {
-        top: 15px;
+        top: 70px;
         right: 12px;
 
         padding: 8px 11px;
@@ -777,10 +782,8 @@ function setLanguage(language) {
 
     document.documentElement.lang = language;
 
-
     var elements =
         document.querySelectorAll("[data-i18n]");
-
 
     for (var i = 0; i < elements.length; i++) {
 
