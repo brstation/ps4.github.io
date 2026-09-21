@@ -90,33 +90,85 @@ function jailbreakCountdown() {
     }, 1000);
 }
 
-// Точка входа автозапуска: если AppCache ещё качает файлы (первый визит),
-// отсчёт НЕ стартует — ждём терминального события кэша (cached / updateready /
-// noupdate / error). На повторных визитах кэш уже готов (IDLE) и идёт сразу
-// обычный 5-секундный отсчёт.
+// Точка входа автозапуска: отсчёт стартует только на устоявшемся кэше.
+// Иначе тяжёлый exploit-чейн идёт поверх фоновой закачки и вешает браузер
+// (прогресс вставал ~81%). Покрыты все состояния AppCache:
+// - CHECKING/DOWNLOADING: закачка идёт — ждём терминального события;
+// - UNCACHED с манифестом: первый визит, проверка манифеста обычно ещё не
+//   стартовала — ждём её начала + терминального события, со страховкой
+//   таймаутом на случай, если AppCache для страницы не работает (file://);
+// - IDLE и прочие: кэш готов — отсчёт сразу, но с ловушкой на позднюю
+//   закачку (проверка обновлений может стартовать уже после загрузки).
 function startAutoJb() {
     if (jeilbrekBtn.disabled) return;
     var ac = window.applicationCache;
-    if (ac && (ac.status === ac.CHECKING || ac.status === ac.DOWNLOADING)) {
-        label.textContent = 'Installing offline cache... auto-start paused';
-        var releaseCacheWait = function (run) {
-            ac.removeEventListener('cached', onReady, false);
-            ac.removeEventListener('updateready', onReady, false);
-            ac.removeEventListener('noupdate', onReady, false);
-            ac.removeEventListener('error', onError, false);
-            if (run) jailbreakCountdown();
-        };
-        var onReady = function () { releaseCacheWait(true); };
-        var onError = function () {
-            releaseCacheWait(false);
-            label.textContent = 'Cache error - press Jailbreak manually';
-        };
-        ac.addEventListener('cached', onReady, false);
-        ac.addEventListener('updateready', onReady, false);
-        ac.addEventListener('noupdate', onReady, false);
-        ac.addEventListener('error', onError, false);
+    var hasManifest = false;
+    try { hasManifest = document.documentElement.hasAttribute("manifest"); } catch (e) { hasManifest = false; }
+    if (!ac || !hasManifest) { jailbreakCountdown(); return; }
+
+    var waitDone = false;
+    var uncachedFallback = null;
+    var userTookOver = function () {
+        return jeilbrekBtn.disabled || !checkbox.checked;
+    };
+    var detachWaiters = function () {
+        ac.removeEventListener('downloading', onLateDownload, false);
+        ac.removeEventListener('cached', onCacheReady, false);
+        ac.removeEventListener('updateready', onCacheReady, false);
+        ac.removeEventListener('noupdate', onCacheReady, false);
+        ac.removeEventListener('error', onCacheError, false);
+    };
+    var onCacheReady = function () {
+        if (waitDone) return;
+        waitDone = true;
+        detachWaiters();
+        clearTimeout(uncachedFallback);
+        if (!userTookOver()) jailbreakCountdown();
+    };
+    var onCacheError = function () {
+        if (waitDone) return;
+        waitDone = true;
+        detachWaiters();
+        clearTimeout(uncachedFallback);
+        label.textContent = 'Cache error - press Jailbreak manually';
+    };
+    // Поздняя закачка при устоявшемся кэше: остановить бегущий отсчёт
+    // и дождаться терминального события вместо гонки с чейном.
+    var onLateDownload = function () {
+        ac.removeEventListener('downloading', onLateDownload, false);
+        if (waitDone || userTookOver()) return;
+        stopInterval();
+        label.textContent = 'Cache update found... auto-start paused';
+        ac.addEventListener('cached', onCacheReady, false);
+        ac.addEventListener('updateready', onCacheReady, false);
+        ac.addEventListener('noupdate', onCacheReady, false);
+        ac.addEventListener('error', onCacheError, false);
+    };
+    var st = ac.status;
+    if (st === ac.CHECKING || st === ac.DOWNLOADING || st === ac.UNCACHED) {
+        label.textContent = (st === ac.UNCACHED)
+            ? 'Checking offline cache...'
+            : 'Installing offline cache... auto-start paused';
+        ac.addEventListener('cached', onCacheReady, false);
+        ac.addEventListener('updateready', onCacheReady, false);
+        ac.addEventListener('noupdate', onCacheReady, false);
+        ac.addEventListener('error', onCacheError, false);
+        if (st === ac.UNCACHED) {
+            uncachedFallback = setTimeout(function () {
+                if (waitDone) return;
+                try {
+                    // Закачка всё-таки стартовала позже — её терминальные
+                    // события уже под контролем слушателей выше.
+                    if (ac.status !== ac.UNCACHED) return;
+                } catch (e) {}
+                waitDone = true;
+                detachWaiters();
+                if (!userTookOver()) jailbreakCountdown();
+            }, 8000);
+        }
         return;
     }
+    ac.addEventListener('downloading', onLateDownload, false);
     jailbreakCountdown();
 }
 

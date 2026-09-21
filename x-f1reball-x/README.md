@@ -10,14 +10,15 @@ PS4 jailbreak / HEN host.
 
 | Firmware | Chain | Status |
 | --- | --- | --- |
-| 13.02, 13.04, 13.50, 13.52 | Relapse (existing) | Working on this host |
-| 7.00 – 11.02 | CSSFontFace + Lapse | Wired (assets from WebKitty / ntfargo) — **untested on this host** |
-| 7.00 – 9.60 | PSFree + Lapse | Wired entry (`?chain=psfree`) — **untested** |
-| 11.00 – 12.02 | Slopkit + Lapse | Wired entry (`?chain=slopkit`) — **untested** |
-| 12.50 – 13.00 | Slopkit + Netctrl | Wired entry (`?chain=slopkit`) — **untested** |
-| 6.70 – 6.72 | BadHoist | Assets only — not wired |
+| 13.02, 13.04, 13.50, 13.52 | Relapse | Working on this host |
+| 7.00 – 11.02 | CSSFontFace + Lapse | Auto (untested on this host) |
+| 11.03 – 12.02 | Slopkit | Auto (untested on this host) |
+| 12.50 – 13.00 | Slopkit | Auto (untested on this host) |
+| 6.00 – 6.69 | CSSFontFace + Lapse | Auto (untested on this host) |
+| 6.70 – 6.72 | BadHoist | Entry page (limited) |
+| 7.00 – 9.60 | PSFree + Lapse | `?chain=psfree` (untested) |
 
-Router auto-picks CSSFontFace for 7.00–11.02 and Relapse for 13.02–13.52. Override with `?chain=cssfontface|psfree|slopkit|relapse` or `?force=1`.
+Router auto-picks CSSFontFace (6.00–6.69 / 7.00–11.02), BadHoist (6.70–6.72), Slopkit (11.03–12.02 / 12.50–13.00), Relapse (13.02–13.52). Override with `?chain=cssfontface|psfree|slopkit|relapse|badhoist` or `?force=1`.
 
 ## Setup
 

@@ -53,7 +53,7 @@
     setState("running...");
     if (typeof doCssFontFaceJailbreak === "function") {
       doCssFontFaceJailbreak().then(function () {
-        setState("done");
+        setState("Jailbreak completed successfully. You can close the browser now."); try{window.close();}catch(e){}
       }).catch(function (e) {
         setState("failed");
         var c = document.getElementById("console");

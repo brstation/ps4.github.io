@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" type="image/png" href="../pspulse.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSPULSE // PS4 7.00-8.52 HOST / VERSION</title>
@@ -169,12 +170,12 @@
                     <span class="menu-hint">&uarr; &darr; move &nbsp; X select</span>
                 </div>
                 <div class="version-grid">
-                    <div class="version-card latest" onclick="selectVersion('v2.4b18.10')" tabindex="0"
+                    <div class="version-card latest" onclick="selectVersion('v2.4b18.11')" tabindex="0"
                         data-version="latest">
                         <span class="card-index">01</span>
                         <span>
                             <span class="version-badge latest">Latest</span>
-                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.10</span></span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.11</span></span>
                             <span class="version-description">Latest release with improved stability, new features, and better compatibility. Recommended for most users.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
@@ -209,7 +210,7 @@
             localStorage.setItem('selectedGoldHENVersion', version);
 
             // Redirect to appropriate cache page based on version
-            if (version === 'v2.4b18.10') {
+            if (version === 'v2.4b18.11') {
                 window.location.href = 'cache.html';
             } else if (version === 'v2.4b18.5') {
                 window.location.href = 'cache5.html';

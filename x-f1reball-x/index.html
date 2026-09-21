@@ -157,7 +157,7 @@
 </div>
 <div id="brand">
   <p id="brand-title">PS4JB</p>
-  <p id="brand-sub">7.00–11.02 &middot; 13.02–13.52</p>
+  <p id="brand-sub">6.00–12.02 &middot; 12.50–13.52</p>
 </div>
 <div id="wrap">
   <div id="state">detecting firmware...</div>
@@ -193,16 +193,21 @@
     // Firmware router (phase 1). fwnum = major*100 + minor (e.g. 9.00 -> 900, 13.52 -> 1352).
     // Relapse 13.02-13.52 stays on existing jb.html. Lower FW -> chains/*.
     var ROUTES = [
+        // CSSFontFace + Lapse (6.00-6.69 patches/constants present; untested on this host).
+        { min: 600, max: 669, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
+        // BadHoist stub (6.70-6.72) — assets present; full auto chain still limited.
+        { min: 670, max: 672, target: "chains/badhoist/index.html", label: "BadHoist", proven: false },
         // CSSFontFace + Lapse (patches/constants present). Prefer for 7.00-11.02.
         { min: 700, max: 1102, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
+        // Slopkit + Lapse / Netctrl (wired; untested on this host).
+        { min: 1103, max: 1202, target: "chains/slopkit/index.html", label: "Slopkit", proven: false },
+        { min: 1250, max: 1300, target: "chains/slopkit/index.html", label: "Slopkit", proven: false },
         // Relapse (existing PS4JB / raw13g) — HW-proven for this host on listed FWs.
         { min: 1302, max: 1352, target: "jb.html", label: "Relapse", proven: true,
           only: { 1302: 1, 1304: 1, 1350: 1, 1352: 1 } }
     ];
-    // Extra chains (wired entry present; not preferred default for overlapping ranges):
+    // Extra override still available: ?chain=psfree|cssfontface|slopkit|relapse|badhoist
     //   700-960  -> chains/psfree-lapse/index.html  (PSFree+Lapse, untested here)
-    //   1100-1202 -> chains/slopkit/index.html       (Slopkit Lapse, untested here)
-    //   1250-1300 -> chains/slopkit/index.html       (Slopkit Netctrl, untested here)
 
     var ua = navigator.userAgent || "";
     var isPs4 = /PlayStation\s+4/i.test(ua);
@@ -246,6 +251,7 @@
     else if (forceChain === "psfree") route = { target: "chains/psfree-lapse/index.html", label: "PSFree+Lapse", proven: false };
     else if (forceChain === "slopkit") route = { target: "chains/slopkit/index.html", label: "Slopkit", proven: false };
     else if (forceChain === "relapse") route = { target: "jb.html", label: "Relapse", proven: true };
+    else if (forceChain === "badhoist") route = { target: "chains/badhoist/index.html", label: "BadHoist", proven: false };
 
     var supported = forced || route !== null;
     var detBits = "firmware <b>" + (key || "unknown") + "</b>";
@@ -259,6 +265,9 @@
     detEl.innerHTML = detBits;
 
     var target = (route ? route.target : "jb.html") + (location.search || "");
+    if (key) {
+        target += (target.indexOf("?") >= 0 ? "&" : "?") + "fw=" + encodeURIComponent(key);
+    }
     function runCountdown(done) {
         var overlay = document.getElementById("countdown");
         var numEl = document.getElementById("countdown-num");

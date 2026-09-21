@@ -57,9 +57,20 @@ function finishUI(ok) {
       pct.style.display = "block";
     }
     if (wrap) wrap.style.display = "block";
+    if (typeof window.__ps4jbPaintResultColors === "function") {
+      window.__ps4jbPaintResultColors(!!ok);
+    } else if (bar) {
+      bar.style.background = ok ? "#22c55e" : "#ef4444";
+      if (wrap) {
+        wrap.style.borderColor = ok
+          ? "rgba(34,197,94,0.85)"
+          : "rgba(239,68,68,0.85)";
+      }
+      if (pct) pct.style.color = ok ? "#86efac" : "#fca5a5";
+    }
   } catch (eBar) {}
   var text = ok
-    ? "Jailbreak completed successfully"
+    ? "Jailbreak completed successfully. You can close the browser now."
     : "Jailbreak failed - restart your console";
   var sub = document.getElementById("brand-sub");
   if (sub) {
@@ -77,7 +88,52 @@ function finishUI(ok) {
     msg.style.color = "#ffffff";
     msg.style.zIndex = "9999";
   }
+  try {
+    var meta = document.getElementById("jb-meta");
+    if (meta) {
+      var fw = window.__ps4jbFw || null;
+      if (!fw) {
+        var ua = navigator.userAgent || "";
+        var fwM = /PlayStation\s+4[\/ ](\d+)\.(\d+)/i.exec(ua);
+        if (fwM) {
+          var minor = fwM[2];
+          if (minor.length === 1) minor = "0" + minor;
+          fw = fwM[1] + "." + minor;
+        }
+        try {
+          var q = (location.search || "").replace(/^\?/, "").split("&");
+          for (var qi = 0; qi < q.length; qi++) {
+            var qp = q[qi].split("=");
+            if (decodeURIComponent(qp[0] || "") === "fw") {
+              var qv = decodeURIComponent((qp[1] || "").replace(/\+/g, " "));
+              if (/^\d+\.\d+$/.test(qv)) fw = qv;
+            }
+          }
+        } catch (eQ) {}
+      }
+      var elapsed =
+        typeof window.__ps4jbElapsedMs === "number"
+          ? window.__ps4jbElapsedMs
+          : typeof window.__ps4jbT0 === "number"
+            ? Date.now() - window.__ps4jbT0
+            : 0;
+      var sec = Math.max(0, Math.floor(elapsed / 1000));
+      var mm = Math.floor(sec / 60);
+      var rr = sec % 60;
+      var timeStr = mm > 0 ? mm + "m " + rr + "s" : rr + "s";
+      meta.textContent =
+        (fw ? "FW " + fw : "FW ?") +
+        " · " +
+        timeStr +
+        (ok ? " · done" : " · failed");
+      meta.style.display = "block";
+    }
+  } catch (eMeta) {}
+  if (ok) {
+    try { window.close(); } catch (eClose) {}
+  }
 }
+
 function mark(tag, detail) {
   const raw = detail;
   detail = terse(detail);

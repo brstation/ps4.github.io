@@ -86,7 +86,39 @@
         border-radius: 8px;
         background: linear-gradient(90deg, #1464b4, #2a9fff, #7ec8ff);
         box-shadow: 0 0 14px rgba(42, 159, 255, 0.55);
+        -webkit-transition: width 0.25s linear;
+        transition: width 0.25s linear;
       }
+
+      #jb-meta {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        margin: 4px 0 0;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: #9ad2ff;
+        text-shadow: 0 0 10px rgba(42, 159, 255, 0.35);
+      }
+      body.done #progress-bar {
+        background: linear-gradient(90deg, #0d7a3e, #22c55e, #86efac);
+        box-shadow: 0 0 14px rgba(34, 197, 94, 0.55);
+      }
+      body.done #progress-wrap {
+        border-color: rgba(34, 197, 94, 0.65);
+        box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
+      }
+      body.done #progress-pct { color: #86efac; }
+      body.fail #progress-bar {
+        background: linear-gradient(90deg, #8b1538, #ef4444, #fca5a5);
+        box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
+      }
+      body.fail #progress-wrap {
+        border-color: rgba(239, 68, 68, 0.65);
+        box-shadow: 0 0 18px rgba(239, 68, 68, 0.25);
+      }
+      body.fail #progress-pct { color: #fca5a5; }
       #progress-pct {
         position: relative;
         z-index: 2;
@@ -130,9 +162,6 @@
 
       body.done #spin,
       body.fail #spin {
-        display: none;
-      }
-      body.fail #brand-sub {
         display: none;
       }
       body.done #msg,
@@ -219,6 +248,7 @@
     <div id="brand">
       <p id="brand-title">PS4JB</p>
       <p id="brand-sub">Jailbreak in progress</p>
+      <p id="jb-meta"></p>
     </div>
     <div id="progress-wrap" aria-hidden="true">
       <div id="progress-bar"></div>
@@ -261,35 +291,103 @@
         var bar = document.getElementById("progress-bar");
         var pct = document.getElementById("progress-pct");
         var wrap = document.getElementById("progress-wrap");
+        var meta = document.getElementById("jb-meta");
         if (!bar || !pct) return;
         var value = 0;
         var finished = false;
         var t0 = Date.now();
+        window.__ps4jbT0 = t0;
+        function getParam(name) {
+          try {
+            var q = (location.search || "").replace(/^\?/, "").split("&");
+            for (var i = 0; i < q.length; i++) {
+              var p = q[i].split("=");
+              if (decodeURIComponent(p[0] || "") === name) {
+                return decodeURIComponent((p[1] || "").replace(/\+/g, " "));
+              }
+            }
+          } catch (e) {}
+          return null;
+        }
+        function fwFromUa(ua) {
+          // Match "PlayStation 4 13.52" and "PlayStation 4/13.52"
+          var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/i.exec(ua || "");
+          if (!m) return null;
+          var minor = m[2];
+          if (minor.length === 1) minor = "0" + minor;
+          return m[1] + "." + minor;
+        }
+        function resolveFw() {
+          var fromQ = getParam("fw");
+          if (fromQ && /^\d+\.\d+$/.test(fromQ)) return fromQ;
+          return fwFromUa(navigator.userAgent || "");
+        }
+        var fwLabel = resolveFw();
+        window.__ps4jbFw = fwLabel;
+        function fmtElapsed(ms) {
+          var s = Math.max(0, Math.floor(ms / 1000));
+          var m = Math.floor(s / 60);
+          var r = s % 60;
+          if (m > 0) return m + "m " + r + "s";
+          return r + "s";
+        }
+        function paintMeta(extra) {
+          if (!meta) return;
+          var bits = [];
+          // Show firmware version number (what user asked for), not just "PlayStation 4".
+          bits.push(fwLabel ? ("FW " + fwLabel) : "FW ?");
+          bits.push(fmtElapsed(Date.now() - t0));
+          if (extra) bits.push(extra);
+          meta.textContent = bits.join(" · ");
+        }
+        paintMeta();
         function paint(v) {
           if (v < 0) v = 0;
           if (v > 100) v = 100;
           value = v;
-          bar.style.width = v + "%";
+          bar.style.width = v.toFixed(1) + "%";
           pct.textContent = Math.floor(v) + "%";
+          if (!finished) paintMeta();
         }
-        function complete(ok) {
-          if (finished) return;
-          finished = true;
-          try {
-            clearInterval(timer);
-          } catch (e) {}
-          // Set 100% immediately — PS4 WebKit often stalls timers after the payload.
-          paint(100);
+        function paintResultColors(ok) {
+          if (bar) {
+            bar.style.webkitTransition = "none";
+            bar.style.transition = "none";
+            bar.style.background = ok ? "#22c55e" : "#ef4444";
+            bar.style.boxShadow = ok
+              ? "0 0 14px rgba(34,197,94,0.7)"
+              : "0 0 14px rgba(239,68,68,0.7)";
+          }
           if (wrap) {
             wrap.style.display = "block";
             wrap.style.borderColor = ok
-              ? "rgba(255,255,255,0.55)"
-              : "rgba(42,159,255,0.45)";
+              ? "rgba(34,197,94,0.85)"
+              : "rgba(239,68,68,0.85)";
+            wrap.style.boxShadow = ok
+              ? "0 0 18px rgba(34,197,94,0.35)"
+              : "0 0 18px rgba(239,68,68,0.35)";
           }
-          if (pct) pct.style.display = "block";
-          // Keep 100% on screen; do not depend on later timers to finish the fill.
+          if (pct) {
+            pct.style.display = "block";
+            pct.style.color = ok ? "#86efac" : "#fca5a5";
+          }
+        }
+        window.__ps4jbPaintResultColors = paintResultColors;
+        function complete(ok) {
+          if (finished) {
+            paintResultColors(!!ok);
+            paintMeta(ok ? "done" : "failed");
+            return;
+          }
+          finished = true;
+          try { clearInterval(timer); } catch (e) {}
+          paint(100);
+          paintResultColors(!!ok);
+          window.__ps4jbElapsedMs = Date.now() - t0;
+          paintMeta(ok ? "done" : "failed");
         }
         window.__ps4jbProgressComplete = complete;
+        // Smooth ease toward asymptotic ~94%, then crawl — less jumpy than hard paint jumps.
         var timer = setInterval(function () {
           if (finished) return;
           var cls = document.body.className || "";
@@ -301,16 +399,22 @@
             complete(false);
             return;
           }
-          // Reach ~85% by ~3s and ~95% by ~6s for typical fast jailbreaks.
           var sec = (Date.now() - t0) / 1000;
-          var target = 96 * (1 - Math.exp(-sec / 2.2));
-          if (target > value) paint(target);
-        }, 50);
+          // Reach ~70% by ~8s, ~90% by ~20s, approach 95% slowly (typical JB duration).
+          var target = 95 * (1 - Math.exp(-sec / 7.5));
+          if (target < 3) target = 3 * (sec / 1.5);
+          if (target > 95) target = 95;
+          // Ease current value toward target for smoother motion.
+          var next = value + (target - value) * 0.18;
+          if (next < value) next = value;
+          if (next - value < 0.05 && target > value) next = value + 0.05;
+          paint(next);
+        }, 40);
       })();
     </script>
     <script type="module">
       if (/PlayStation\s+4/i.test(navigator.userAgent || "")) {
-        import("./jb.js?v=19");
+        import("./jb.js?v=22");
       }
     </script>
     <div id="foot">

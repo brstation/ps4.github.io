@@ -17,7 +17,7 @@
 $ ./launch --pspulse
 
 [ ok ] 6 host routes detected
-[ ok ] goldhen v2.4b18.10 / v2.4b18.5 staged
+[ ok ] goldhen v2.4b18.11 / v2.4b18.5 staged
 [ ok ] offline cache ready
 [ ok ] gamepad navigation enabled
 ```
@@ -52,7 +52,7 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 - PSFree/Lapse host flows for firmware 7.00–8.52 and 9.00–9.60.
 - A CSSFontFace UAF host flow for firmware 6.00–11.02.
 - A SlopKit WebKit research flow for firmware 11.00–13.00.
-- Repository-bundled GoldHEN v2.4b18.10 and v2.4b18.5 assets where the host supports both builds.
+- Repository-bundled GoldHEN v2.4b18.11 and v2.4b18.5 assets where the host supports both builds.
 - AppCache-based offline operation with firmware-specific cache and manifest files.
 - Firmware-specific payload utilities on the host branches that provide them.
 - A single visual system — dark terminal aesthetic, violet accent, controller-friendly focus — across every selector, cache page, and exploit page.
@@ -69,6 +69,10 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 | 06 | **5.05** | `505/index.html` | Dedicated host | Directly on page | Included |
 
 The root selector stores the selected firmware locally and routes to the correct branch. Always use the host intended for the exact firmware installed on the console.
+
+The 1300 branch is intentionally experimental. `zrmslopkit` is a separate upstream project claim and is not equivalent to the official PPPwn support matrix. Its router reports 12.03–12.49 as unsupported, and its browser-facing runners use ES modules. No real-console validation is possible in this repository, so no reliability or no-panic guarantee is made for that branch. Firmware 11.01/11.02 are automatically redirected to the local CSSFontFace branch.
+
+Already-loaded guards: the 1300 chains check `getuid`/`setuid(0)` after the userland pivot and exit early with `ALREADY JAILBROKEN` instead of re-running the kernel exploit on an active jailbreak; the 700 and 900 PSFree branches poll the GoldHEN status endpoint (`http://127.0.0.1:9090/status`) for 1.5 s and skip the exploit entirely when GoldHEN answers. Re-opening a host after success is therefore safe by design.
 
 ## How the host works
 
@@ -95,14 +99,14 @@ The project is intentionally static. HTML pages provide the interface, JavaScrip
 
 The repository contains two GoldHEN choices where supported:
 
-- **GoldHEN v2.4b18.10** — a repository-bundled build exposed by the selectors.
+- **GoldHEN v2.4b18.11** — a repository-bundled build exposed by the selectors.
 - **GoldHEN v2.4b18.5** — a repository-bundled previous build.
 
 Official GoldHEN `v2.4b18` documents PS4 support through the listed `11.00` targets, not a general `11.02–13.00` range. Do not infer official GoldHEN support for the experimental 1300 branch.
 
 The 7.00–8.52 and 9.00–9.60 branches select a GoldHEN build through their version selector and cache page. The CSSFontFace branch uses [`css/version-selector.html`](./css/version-selector.html), which routes to:
 
-- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.10;
+- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.11;
 - [`css/stable/index.html`](./css/stable/index.html) for v2.4b18.5.
 
 ## Payload tools

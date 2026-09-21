@@ -835,4 +835,14 @@ async function main() {
   // path to your script that will use the exploit
   import('./lapse.mjs');
 }
-main();
+
+function checkGHBLS() {
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://127.0.0.1:9090/status");
+    req.send();
+    req.onload = function () {
+        goldhen_already();
+    }
+    req.onerror = function () { setTimeout(main, 500); }
+}
+setTimeout(checkGHBLS, 1500);

@@ -52,7 +52,7 @@ function CheckFW() {
         user.ps4Fw = fwVersion;
 
         var fwNum = parseFloat(fwVersion);
-        updateHenFlavorVisibility(fwVersion);
+        // updateHenFlavorVisibility(fwVersion); // GoldHEN is now supported.
         if (fwNum >= webKitMin && fwNum <= webKitMax) {
             ui.ps4FwStatus.style.color = 'green';
 

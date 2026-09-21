@@ -45,7 +45,7 @@
     document.getElementById("state").textContent = "running...";
     if (typeof doJailBreak === "function") {
       Promise.resolve(doJailBreak()).then(function () {
-        document.getElementById("state").textContent = "done";
+        document.getElementById("state").textContent = "Jailbreak completed successfully. You can close the browser now."; try{window.close();}catch(e){}
       }).catch(function (e) {
         document.getElementById("state").textContent = "failed";
         window.log(e && e.message ? e.message : e);

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v8 - IDLE re-check closes re-download race, payload stable build
+# v10 - favicon link, payload stable build
 
 CACHE:
 index.html

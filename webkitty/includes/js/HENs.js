@@ -19,7 +19,7 @@ function GoldHEN() {
             sessionStorage.setItem('payload_path', basePath + "goldhen_v2.4b18.6.bin");
             break;
         default:
-            sessionStorage.setItem('payload_path', basePath + "goldhen_v2.4b18.11.bin");
+            sessionStorage.setItem('payload_path', basePath + "goldhen_v2.4b18.12.bin");
             break;
     }
 }
@@ -35,11 +35,19 @@ function chooseHEN() {
 }
 
 function setGoldHENVer(value) {
+    const defaultValue = "GHv2.4b18.12";
+    if (user.ps4Fw > 13.00 && value !== defaultValue) {
+        alert(window.lang.unsupportedFirmware + user.ps4Fw);
+        // reset to latest version if firmware doesn't support older GoldHEN versions
+        const goldHenRadio = document.querySelector(`input[name="goldhen"][value="${defaultValue}"]`);
+        if (goldHenRadio) goldHenRadio.checked = true;
+        return;
+    }
     localStorage.setItem('GHVer', value);
 }
 
 function loadGoldHENVer() {
-    const goldHenVer = localStorage.getItem("GHVer") || "GHv2.4b18.11";
+    const goldHenVer = localStorage.getItem("GHVer") || "GHv2.4b18.12";
     const goldHenRadio = document.querySelector(`input[name="goldhen"][value="${goldHenVer}"]`);
     if (goldHenRadio) goldHenRadio.checked = true;
 }
