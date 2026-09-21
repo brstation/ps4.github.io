@@ -57,9 +57,7 @@ body {
     position: absolute;
 
     top: 40px;
-
-    /* Alinha automaticamente com a borda dos cards */
-    right: max(25px, calc((100vw - 1250px) / 2));
+    right: 50px;
 
     padding: 9px 16px;
 
@@ -85,6 +83,19 @@ body {
     color: #ffffff;
 
     transform: translateY(-2px);
+}
+
+
+/* =========================
+   AJUSTE PARA PS4 / TELAS MENORES
+   ========================= */
+
+@media (max-width: 1300px) {
+
+    .credits {
+        right: 15px;
+    }
+
 }
 
 
@@ -379,10 +390,6 @@ h1 {
 
     .select {
         font-size: 12px;
-    }
-
-    .credits {
-        top: 40px;
     }
 }
 
