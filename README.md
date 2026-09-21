@@ -14,7 +14,7 @@ Open the browser on your PS4 and go to https://ps4.dpdns.org
 - The `aio` use-after-free and the IPv6 `pktopts` reclaim strategy behind
   `lapse` and `poops` are public PS4/PS5 community research. The kernel patch
   blobs come from published patch sources.
-- **[rawgame4](https://github.com/rawgame4/rawgame4.github.io)**, **[raw13g](https://github.com/raw13g/raw13g.github.io)**, **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)**, **[psx8](https://github.com/psx8/psx8.github.io)**, **[X-F1REBALL-X](https://github.com/X-F1REBALL-X/PS4JB)**,**[WebKitty](https://github.com/ArabPixel/WebKitty)** — original hosts, kernel chains, offset tables, and delivery-layer work.
+- **[rawgame4](https://github.com/rawgame4/rawgame4.github.io)**, **[raw13g](https://github.com/raw13g/raw13g.github.io)**, **[GamerHack](https://github.com/GamerHack/GamerHack.github.io)**, **[psx8](https://github.com/psx8/psx8.github.io)**, **[X-F1REBALL-X](https://github.com/X-F1REBALL-X/PS4JB)**, **[WebKitty](https://github.com/ArabPixel/WebKitty)** — original hosts, kernel chains, offset tables, and delivery-layer work.
 
 ## Disclaimer
 
