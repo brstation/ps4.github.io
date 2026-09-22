@@ -1,0 +1,121 @@
+body {
+    background: #111111 url("../img/BG.jpg") center center / cover no-repeat fixed;
+    color: #dddddd;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #ffffff;
+    font-size: 28px;
+    margin: 10px 0 5px 0;
+}
+
+h3 {
+    color: #aaaaaa;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0 0 15px 0;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #333333;
+    margin: 15px auto;
+    width: 90%;
+}
+
+.btn-container {
+    margin: 20px 0 30px 0;
+}
+
+button {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 12px 35px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+button:disabled, button:hover:disabled {
+    background: #0b2253;
+    cursor: default;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.main-layout {
+    width: 98%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.media-box {
+    flex: 1;
+    max-width: 25%;
+    text-align: center;
+}
+
+.media-box img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #222222;
+    border-radius: 4px;
+}
+
+#console {
+    flex: 3;
+    width: 100%;
+    background: #000000;
+    color: #00ff00;
+    font-family: monospace, monospace;
+    font-size: 14px;
+    padding: 15px;
+    text-align: left;
+    height: 320px;
+    overflow-y: auto;
+    word-break: break-all;
+    border: 1px solid #222222;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+#kernel-options {
+    margin-bottom: 1rem;
+}
+
+input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #555;
+    border-radius: 50%;
+    background-color: #fff;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+input[type="radio"]:checked {
+    background-color: #00ff00;
+}
+
+.autoJb {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.mt-2 {
+    margin-top: 2rem;
+}
