@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" type="image/png" href="../pspulse.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSPULSE // PS4 6.00-11.02 HOST / VERSION</title>
+    <link rel="icon" type="image/png" href="../pspulse.png">
     <style>
         :root {
             --bg: #151515;
@@ -133,6 +133,7 @@
         }
         .foot a { color: var(--muted); }
         .foot a:hover, .foot a:focus { color: var(--accent); }
+        .foot div { margin: 2px 0; }
 
         @media (max-width: 760px) {
             body { overflow: auto; }
@@ -157,8 +158,8 @@
 
         <main class="layout">
             <p class="kicker">$ select --goldhen</p>
-            <h1>Choose <em>version</em></h1>
-            <p class="sub">Select the GoldHEN version to cache and use with the CSSFontFace host.</p>
+            <h1>Choose <em>GoldHEN</em></h1>
+            <p class="sub">Select the GoldHEN version to cache and use. The CSSFontFace host supports PS4 firmware 6.00-11.02.</p>
             <ul class="boot">
                 <li>[ <b>ok</b> ] cssfontface chain ready</li>
                 <li>[ <b>ok</b> ] 2 builds available</li>
@@ -170,12 +171,12 @@
                     <span class="menu-hint">&uarr; &darr; move &nbsp; X select</span>
                 </div>
                 <div class="version-grid">
-                    <div class="version-card latest" onclick="selectVersion('v2.4b18.11')" tabindex="0"
+                    <div class="version-card latest" onclick="selectVersion('v2.4b18.12')" tabindex="0"
                         data-version="latest">
                         <span class="card-index">01</span>
                         <span>
                             <span class="version-badge latest">Latest</span>
-                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.11</span></span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.12</span></span>
                             <span class="version-description">Latest release with improved stability, new features, and better compatibility. Recommended for most users.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
@@ -199,7 +200,8 @@
             </a>
 
             <footer class="foot">
-                Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a>
+                <div>Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a></div>
+                <div>Upstream: <a href="https://github.com/itskenethb?tab=repositories">itskenethb</a></div>
             </footer>
         </main>
     </div>
@@ -209,8 +211,8 @@
             // Store the selected version in localStorage
             localStorage.setItem('selectedGoldHENVersion', version);
 
-            // Redirect to the chosen host build
-            if (version === 'v2.4b18.11') {
+            // Redirect to appropriate cache page based on version
+            if (version === 'v2.4b18.12') {
                 window.location.href = 'latest/index.html';
             } else if (version === 'v2.4b18.5') {
                 window.location.href = 'stable/index.html';
@@ -218,22 +220,65 @@
         }
 
         // Gamepad navigation
-        // Arrow keys are NOT intercepted: the PS4 browser moves its visible
-        // focus pointer natively. Cards are activated with X (Enter/Space).
-        var cards = document.querySelectorAll('.version-card');
+        let currentFocus = 0;
+        const cards = document.querySelectorAll('.version-card');
 
-        // Handle X (Enter/Space) on focused cards
-        for (var cardIndex = 0; cardIndex < cards.length; cardIndex++) {
-            var card = cards[cardIndex];
+        // Handle keyboard navigation
+        document.addEventListener('keydown', function (event) {
+            switch (event.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    event.preventDefault();
+                    currentFocus = currentFocus > 0 ? currentFocus - 1 : cards.length - 1;
+                    cards[currentFocus].focus();
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    event.preventDefault();
+                    currentFocus = currentFocus < cards.length - 1 ? currentFocus + 1 : 0;
+                    cards[currentFocus].focus();
+                    break;
+                case 'Enter':
+                case ' ':
+                    event.preventDefault();
+                    cards[currentFocus].click();
+                    break;
+            }
+        });
+
+        // Track focus changes
+        cards.forEach((card, index) => {
+            card.addEventListener('focus', function () {
+                currentFocus = index;
+            });
+
+            // Handle Enter key on focused element
             card.addEventListener('keydown', function (event) {
-                var cardKey = event.key || event.keyCode;
-                if (cardKey === 'Enter' || cardKey === ' ' || cardKey === 13 || cardKey === 32) {
+                if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     this.click();
                 }
             });
-        }
+        });
+
+        // Add click animation effect
+        document.querySelectorAll('.version-card').forEach(card => {
+            card.addEventListener('mousedown', function () {
+                this.style.transform = 'translateY(-2px) scale(0.98)';
+            });
+
+            card.addEventListener('mouseup', function () {
+                this.style.transform = 'translateY(-5px) scale(1)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0px) scale(1)';
+            });
+
+            card.addEventListener('blur', function () {
+                this.style.transform = 'translateY(0px) scale(1)';
+            });
+        });
     </script>
 </body>
-
 </html>

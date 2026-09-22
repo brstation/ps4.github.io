@@ -7,429 +7,653 @@
 <title>PS4JB</title>
 <style>
   html, body {
-    margin:0; padding:0; height:100%;
-    background:#000;
-    color:#2a9fff;
-    font:15px/1.45 "Segoe UI", system-ui, sans-serif;
-    overflow-x:hidden;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #000;
+    color: #2a9fff;
+    font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+    overflow-x: hidden;
   }
   #bg {
-    position:fixed; top:0; right:0; bottom:0; left:0; z-index:0;
-    background:#000 url("ps-logo.jpg") center center no-repeat;
-    background-size:cover;
-    pointer-events:none;
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: 0;
+    background: #000 url("ps-logo.jpg") center center no-repeat;
+    background-size: cover;
+    pointer-events: none;
   }
   #bg:after {
-    content:"";
-    position:absolute; top:0; right:0; bottom:0; left:0;
-    background:rgba(0,0,0,0.55);
-    pointer-events:none;
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: rgba(0,0,0,0.55);
+    pointer-events: none;
   }
-  #brand, #wrap, #credits, #foot {
-    position:relative; z-index:2;
-  }
-
-  #brand {
-    text-align:center; padding:28px 12px 8px;
-    background:transparent; border:none;
-  }
-
-  #brand-sub {
-    margin:8px 0 0;
-    font-size:14px;
-    font-weight:600;
-    letter-spacing:.12em;
-    color:#ffffff;
-    text-shadow:0 0 10px rgba(255,255,255,.35);
+  #main {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 20px 80px;
+    box-sizing: border-box;
+    max-width: 420px;
+    width: 100%;
   }
   #brand-title {
-    font-size:16px; font-weight:700; letter-spacing:.28em;
-    text-transform:uppercase; color:#2a9fff; margin:0;
-    text-shadow:0 0 18px rgba(42,159,255,.45);
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #2a9fff;
+    text-shadow: 0 0 18px rgba(42,159,255,0.45);
   }
-  #wrap {
-    padding:18px 20px 16px; max-width:520px; margin:0 auto;
-    text-align:center;
+  #brand-sub {
+    margin: 8px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.35);
   }
-  #state {
-    font-size:28px; font-weight:800; margin:18px 0 10px;
-    letter-spacing:.03em; color:#2a9fff;
-    text-shadow:0 0 22px rgba(42,159,255,.4);
+  #fwMeta {
+    margin: 10px 0 0;
+    color: #facc15;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 12px rgba(250, 204, 21, 0.45);
   }
-  #det { font-size:14px; color:#5eb6ff; margin:0 0 6px; }
-  #det b { color:#9ad2ff; font-weight:600; }
   #cache {
-    font-size:12px; color:#4a9fd8; margin:0 0 14px; min-height:14px;
+    margin: 8px 0 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #4a9fd8;
+    min-height: 20px;
+    text-shadow: 0 0 10px rgba(74, 159, 216, 0.35);
   }
-  #cache.cacheok { color:#5eb6ff; }
-  .ok { color:#5eb6ff; } .bad { color:#5eb6ff; } .warn { color:#2a9fff; }
-
-  #startBtn {
-    display:none;
-    margin:22px auto 0;
-    padding:16px 28px;
-    min-width:220px;
-    border:2px solid #2a9fff;
-    border-radius:6px;
-    background:rgba(0,40,80,.65);
-    color:#2a9fff;
-    font-size:20px;
-    font-weight:800;
-    letter-spacing:.06em;
-    text-decoration:none;
-    cursor:pointer;
-    text-shadow:0 0 12px rgba(42,159,255,.45);
-    box-shadow:0 0 24px rgba(42,159,255,.25);
+  #cache.cacheok { color: #5eb6ff; }
+  #stage {
+    display: none;
+    margin: 16px 0 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: left;
+    text-shadow: 0 0 14px rgba(255,255,255,0.4);
+    width: 100%;
   }
-  #startBtn.show { display:inline-block; }
-
-  #credits {
-    position:relative; z-index:2;
-    max-width:640px; margin:8px auto 70px; padding:0 16px;
-    text-align:center;
-    font-size:11px; line-height:1.55;
-    color:#5eb6ff;
-    text-shadow:0 0 10px rgba(42,159,255,.25);
+  #stage.on { display: block; }
+  #stage.ok {
+    color: #22c55e;
+    text-shadow: 0 0 14px rgba(34,197,94,0.55);
   }
-  #credits .credits-heading {
-    margin:0 0 8px;
-    font-size:12px; font-weight:700;
-    letter-spacing:.2em; text-transform:uppercase;
-    color:#2a9fff;
+  #stage.bad {
+    color: #ef4444;
+    text-shadow: 0 0 14px rgba(239,68,68,0.55);
   }
-  #credits .credits-group {
-    margin:0 0 8px;
+  #progress-wrap {
+    display: none;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    margin: 8px 0 8px;
+    height: 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    overflow: hidden;
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
   }
-  #credits .credits-label {
-    display:block;
-    margin:0 0 2px;
-    font-size:11px; font-weight:700;
-    letter-spacing:.08em;
-    color:#9ad2ff;
+  #progress-wrap.on { display: block; }
+  #progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #e8e8e8, #ffffff, #f5f5f5);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+    -webkit-transition: background 0.35s ease, box-shadow 0.35s ease;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
   }
-  #credits .credits-names {
-    margin:0;
-    color:#5eb6ff;
+  /* One continuous CSS animation 0→100% — keeps moving if JS stalls (JS-stall safe). */
+  @-webkit-keyframes ps4jb-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+  @keyframes ps4jb-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+  #progress-bar.run {
+    -webkit-animation: ps4jb-fill 9s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    animation: ps4jb-fill 9s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  }
+  #progress-bar.finishing {
+    -webkit-animation: none;
+    animation: none;
+    width: 100% !important;
+    -webkit-transition: width 0.5s ease-out, background 0.35s ease, box-shadow 0.35s ease;
+    transition: width 0.5s ease-out, background 0.35s ease, box-shadow 0.35s ease;
+  }
+  #progress-pct {
+    display: none;
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+    margin: 0 0 6px;
+    width: 100%;
+  }
+  #progress-pct.on { display: block; }
+  #elapsed {
+    display: none;
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #e5e5e5;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    margin: 0 0 10px;
+    width: 100%;
+  }
+  #elapsed.on { display: block; }
+  #successMsg {
+    display: none;
+    position: relative;
+    z-index: 2;
+    margin: 10px 0 0;
+    padding: 0;
+    max-width: 100%;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #22c55e;
+    text-align: left;
+    text-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+    width: 100%;
+  }
+  #successMsg .check {
+    display: inline-block;
+    width: 16px;
+    height: 9px;
+    margin: 0 10px 3px 0;
+    border-left: 3px solid #2a9fff;
+    border-bottom: 3px solid #2a9fff;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    vertical-align: middle;
+    box-shadow: none;
+    text-shadow: none;
+    color: transparent;
+  }
+  body.done #successMsg { display: none !important; }
+  body.done #stage { display: none !important; }
+  body.done #progress-bar {
+    background: linear-gradient(90deg, #15803d, #22c55e, #86efac) !important;
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.55) !important;
+  }
+  body.done #progress-pct { color: #86efac !important; }
+  body.done #elapsed { color: #86efac !important; }
+  body.fail #progress-bar {
+    background: linear-gradient(90deg, #991b1b, #ef4444, #fca5a5) !important;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.55) !important;
+  }
+  body.fail #progress-pct { color: #fca5a5 !important; }
+  body.fail #elapsed { color: #fca5a5 !important; }
+  body.fail #stage {
+    display: block !important;
+    color: #ef4444 !important;
+    text-shadow: 0 0 14px rgba(239,68,68,0.55) !important;
+  }
+  #msg, #spin, #wrap, #state, #out { display: none; }
+  body.log #wrap, body.log #state, body.log #out { display: block; }
+  body.log #progress-wrap,
+  body.log #progress-pct,
+  body.log #elapsed,
+  body.log #stage,
+  body.log #successMsg { display: none !important; }
+  body.log #wrap { padding: 14px 18px; width: 100%; max-width: none; }
+  body.log #state {
+    font-size: 22px; font-weight: 700; margin: 0 0 8px; color: #2a9fff;
+  }
+  body.log #out {
+    white-space: pre-wrap;
+    font: 12px/1.45 Consolas, monospace;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(42,159,255,0.35);
+    border-radius: 5px;
+    padding: 10px 12px;
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+    color: #9ad2ff;
   }
   #foot {
-    position:fixed; left:0; right:0; bottom:10px; text-align:center;
-    font-size:12px; color:#2a9fff; letter-spacing:.08em;
-    pointer-events:none; line-height:1.5;
-    text-shadow:0 0 12px rgba(42,159,255,.35);
-    z-index:2;
+    position: fixed;
+    left: 0; right: 0; bottom: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+    line-height: 1.5;
+    text-shadow: 0 0 12px rgba(255,255,255,0.35);
+    z-index: 2;
   }
-  #foot b { color:#2a9fff; font-weight:600; }
-
-  #countdown {
-    display:none;
-    position:fixed; top:0; right:0; bottom:0; left:0; z-index:9999;
-    text-align:center;
-    background:rgba(0,0,0,.88);
-    padding-top:28%;
-  }
-  #countdown.show { display:block; }
-  #countdown-num {
-    font-size:120px; font-weight:900; line-height:1;
-    color:#2a9fff;
-    text-shadow:0 0 40px rgba(42,159,255,.55);
-  }
-  #state.blocked {
-    color:#ff6473;
-    font-size:22px;
-    text-shadow:0 0 12px rgba(255,100,115,.35);
-  }
-  body.device-blocked #startBtn,
-  body.device-blocked #countdown,
+  #foot b { color: #ffffff; font-weight: 600; }
   body.device-blocked #cache,
-  body.device-blocked #det,
-  body.device-blocked #credits { display:none !important; }
-  #countdown-label {
-    margin-top:18px; font-size:14px; letter-spacing:.28em;
-    text-transform:uppercase; color:#5eb6ff;
+  body.device-blocked #progress-wrap,
+  body.device-blocked #progress-pct,
+  body.device-blocked #elapsed,
+  body.device-blocked #stage,
+  body.device-blocked #successMsg,
+  body.device-blocked #fwMeta { display: none !important; }
+  #brand-sub.blocked {
+    color: #ff6473;
+    text-shadow: 0 0 12px rgba(255,100,115,0.35);
   }
 </style>
 </head>
 <body>
 <div id="bg" aria-hidden="true"></div>
-<div id="countdown" aria-live="assertive">
-  <div id="countdown-num">3</div>
-  <div id="countdown-label">starting</div>
-</div>
-<div id="brand">
+<div id="main">
   <p id="brand-title">PS4JB</p>
-  <p id="brand-sub">6.00–12.02 &middot; 12.50–13.52</p>
-</div>
-<div id="wrap">
-  <div id="state">detecting firmware...</div>
-  <div id="det"></div>
+  <p id="brand-sub">6.00–12.02 · 12.50–13.52</p>
+  <p id="fwMeta">detecting firmware...</p>
   <div id="cache"></div>
-  <a id="startBtn" href="#">Press X to start</a>
+  <div id="stage">Jailbreak in progress</div>
+  <div id="progress-wrap" aria-hidden="true"><div id="progress-bar"></div></div>
+  <div id="progress-pct">0%</div>
+  <div id="elapsed">Elapsed 0:00</div>
+  <div id="successMsg" style="display:none" aria-hidden="true"></div>
+  <div id="spin"></div>
+  <div id="msg"></div>
+  <div id="wrap">
+    <div id="state"></div>
+    <div id="out"></div>
+  </div>
 </div>
+<div id="foot"><b>Created by X-F1REBALL-X</b></div>
 
 <script src="device.js?v=1"></script>
 <script>
 (function () {
-    var stateEl = document.getElementById("state");
-    var detEl = document.getElementById("det");
-    var cacheEl = document.getElementById("cache");
-    var startBtn = document.getElementById("startBtn");
-    function setState(t, c) { stateEl.textContent = t; stateEl.className = c || ""; }
-    function setCache(t, ok) { cacheEl.textContent = t; cacheEl.className = ok ? "cacheok" : ""; }
+  var cacheEl = document.getElementById("cache");
+  var fwMeta = document.getElementById("fwMeta");
+  var brandSub = document.getElementById("brand-sub");
+  var stageEl = document.getElementById("stage");
+  var wrapBar = document.getElementById("progress-wrap");
+  var pctEl = document.getElementById("progress-pct");
+  var elapsedEl = document.getElementById("elapsed");
+  var jbStarted = false;
 
-    // Avoid URLSearchParams (missing on older PS4 WebKit).
-    function getParam(name) {
-        var q = location.search || "";
-        if (q.charAt(0) === "?") q = q.substring(1);
-        var parts = q.split("&");
-        for (var i = 0; i < parts.length; i++) {
-            var kv = parts[i].split("=");
-            if (decodeURIComponent(kv[0]) === name) {
-                return kv.length > 1 ? decodeURIComponent(kv[1]) : "";
-            }
-        }
-        return null;
+  function setCache(t, ok) {
+    if (!cacheEl) return;
+    cacheEl.textContent = t || "";
+    cacheEl.className = ok ? "cacheok" : "";
+  }
+
+  function getParam(name) {
+    var q = location.search || "";
+    if (q.charAt(0) === "?") q = q.substring(1);
+    var parts = q.split("&");
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split("=");
+      if (decodeURIComponent(kv[0]) === name) {
+        return kv.length > 1 ? decodeURIComponent(kv[1]) : "";
+      }
     }
+    return null;
+  }
 
-    // Firmware router (phase 1). fwnum = major*100 + minor (e.g. 9.00 -> 900, 13.52 -> 1352).
-    // Relapse 13.02-13.52 stays on existing jb.html. Lower FW -> chains/*.
-    var ROUTES = [
-        // CSSFontFace + Lapse (6.00-6.69 patches/constants present; untested on this host).
-        { min: 600, max: 669, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
-        // BadHoist stub (6.70-6.72) — assets present; full auto chain still limited.
-        { min: 670, max: 672, target: "chains/badhoist/index.html", label: "BadHoist", proven: false },
-        // CSSFontFace + Lapse (patches/constants present). Prefer for 7.00-11.02.
-        { min: 700, max: 1102, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
-        // Slopkit + Lapse / Netctrl (wired; untested on this host).
-        { min: 1103, max: 1202, target: "chains/slopkit/index.html", label: "Slopkit", proven: false },
-        { min: 1250, max: 1300, target: "chains/slopkit/index.html", label: "Slopkit", proven: false },
-        // Relapse (existing PS4JB / raw13g) — HW-proven for this host on listed FWs.
-        { min: 1302, max: 1352, target: "jb.html", label: "Relapse", proven: true,
-          only: { 1302: 1, 1304: 1, 1350: 1, 1352: 1 } }
-    ];
-    // Extra override still available: ?chain=psfree|cssfontface|slopkit|relapse|badhoist
-    //   700-960  -> chains/psfree-lapse/index.html  (PSFree+Lapse, untested here)
+  var ROUTES = [
+    { min: 600, max: 669, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
+    { min: 670, max: 672, target: "chains/badhoist/index.html", label: "BadHoist", proven: false },
+    { min: 700, max: 1102, target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false },
+    { min: 1103, max: 1202, target: "chains/slopkit/index.html", label: "Slopkit Lapse", proven: false },
+    { min: 1250, max: 1300, target: "chains/slopkit/index.html", label: "Slopkit Netctrl", proven: false },
+    { min: 1302, max: 1352, target: "same", label: "Slopkit Relapse", proven: true,
+      only: { 1302: 1, 1304: 1, 1350: 1, 1352: 1 } }
+  ];
 
-    var ua = navigator.userAgent || "";
-    var isPs4 = /PlayStation\s+4/i.test(ua);
-    if (!isPs4) {
-        document.body.className = (document.body.className || "") + " device-blocked";
-        function showBlocked(device) {
-            setState(device + " — not supported", "blocked");
-            if (detEl) detEl.textContent = "";
-            if (cacheEl) cacheEl.textContent = "";
-            if (startBtn) startBtn.className = "";
-        }
-        showBlocked(typeof detectDeviceFromUa === "function" ? detectDeviceFromUa(ua) : "Unknown device");
-        if (typeof resolveDeviceLabel === "function") resolveDeviceLabel(ua, showBlocked);
+  var ua = navigator.userAgent || "";
+  var isPs4 = /PlayStation\s+4/i.test(ua);
+  if (!isPs4) {
+    document.body.className = (document.body.className || "") + " device-blocked";
+    function showBlocked(device) {
+      if (brandSub) {
+        brandSub.textContent = device + " — not supported";
+        brandSub.className = "blocked";
+      }
+      if (fwMeta) fwMeta.textContent = "";
+      setCache("");
+    }
+    showBlocked(typeof detectDeviceFromUa === "function" ? detectDeviceFromUa(ua) : "Unknown device");
+    if (typeof resolveDeviceLabel === "function") resolveDeviceLabel(ua, showBlocked);
+    return;
+  }
+
+  var key = null, fwnum = null;
+  var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(ua);
+  if (m) {
+    var ms = parseInt(m[2], 16).toString(16);
+    if (ms.length < 2) ms = "0" + ms;
+    key = m[1] + "." + ms;
+    fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+  }
+  var fromQ = getParam("fw");
+  if (fromQ && /^\d+\.\d+$/.test(fromQ)) key = fromQ;
+
+  function pickRoute(n) {
+    if (n === null) return null;
+    for (var i = 0; i < ROUTES.length; i++) {
+      var r = ROUTES[i];
+      if (n < r.min || n > r.max) continue;
+      if (r.only && !r.only[n]) continue;
+      return r;
+    }
+    return null;
+  }
+
+  var forced = getParam("force") === "1";
+  var forceChain = getParam("chain");
+  var route = pickRoute(fwnum);
+  if (forceChain === "cssfontface") route = { target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false };
+  else if (forceChain === "psfree") route = { target: "chains/psfree-lapse/index.html", label: "PSFree+Lapse", proven: false };
+  else if (forceChain === "slopkit") route = { target: "chains/slopkit/index.html", label: "Slopkit Lapse", proven: false };
+  else if (forceChain === "relapse") route = { target: "same", label: "Slopkit Relapse", proven: true };
+  else if (forceChain === "badhoist") route = { target: "chains/badhoist/index.html", label: "BadHoist", proven: false };
+
+  var supported = forced || route !== null;
+  if (fwMeta) {
+    var bits = "FW " + (key || "?");
+    if (route) bits += " · " + route.label;
+    fwMeta.textContent = bits;
+  }
+  window.__ps4jbFw = key;
+
+  function isSamePage(r) {
+    if (!r) return true; // forced unknown -> try Relapse on this page
+    return !r.target || r.target === "same" || r.target === "jb.html";
+  }
+
+  function chainUrl(r) {
+    var target = (r && r.target && r.target !== "same") ? r.target : "jb.html";
+    var q = location.search || "";
+    target = target + q;
+    if (key) target += (target.indexOf("?") >= 0 ? "&" : "?") + "fw=" + encodeURIComponent(key);
+    return target;
+  }
+
+  function startProgress() {
+    if (wrapBar) wrapBar.className = "on";
+    if (pctEl) pctEl.className = "on";
+    if (elapsedEl) elapsedEl.className = "on";
+    if (stageEl) {
+      stageEl.textContent = "Jailbreak in progress";
+      stageEl.className = "on";
+    }
+    // Keep cache status visible: offline-ready tip after AppCache.
+
+    var bar = document.getElementById("progress-bar");
+    var pct = document.getElementById("progress-pct");
+    if (!bar || !pct) return;
+    var finished = false;
+    var t0 = Date.now();
+    var rafId = 0;
+    var timer = 0;
+    window.__ps4jbT0 = t0;
+
+    function formatElapsed(ms) {
+      var s = Math.floor(ms / 1000);
+      var m = Math.floor(s / 60);
+      s = s % 60;
+      return m + ":" + (s < 10 ? "0" : "") + s;
+    }
+    // % follows the live CSS bar width (bar keeps animating even if JS stalls).
+    var shownPct = 0;
+    function readBarPct() {
+      try {
+        var wrap = bar.parentNode;
+        if (!wrap) return null;
+        var bw = bar.getBoundingClientRect().width;
+        var ww = wrap.getBoundingClientRect().width;
+        if (ww > 1) return (bw / ww) * 100;
+      } catch (eR) {}
+      return null;
+    }
+    function paintPct(v) {
+      if (v < 0) v = 0;
+      if (v > 100) v = 100;
+      shownPct = v;
+      pct.textContent = Math.floor(v + 0.0001) + "%";
+    }
+    function paintElapsed(now) {
+      if (!elapsedEl) return;
+      elapsedEl.textContent = "Elapsed " + formatElapsed(now - t0);
+    }
+    function stopLoop() {
+      if (timer) {
+        try { clearInterval(timer); } catch (e) {}
+        timer = 0;
+      }
+      if (rafId && typeof cancelAnimationFrame === "function") {
+        try { cancelAnimationFrame(rafId); } catch (e2) {}
+        rafId = 0;
+      }
+      window.__ps4jbElapsedMs = Date.now() - t0;
+    }
+    function startCssFill() {
+      try {
+        bar.className = "";
+        bar.style.width = "0%";
+        bar.style.webkitAnimation = "";
+        bar.style.animation = "";
+        void bar.offsetWidth;
+        bar.className = "run";
+      } catch (eCss) {}
+    }
+    function tick() {
+      if (finished) return;
+      var now = Date.now();
+      var cls = document.body.className || "";
+      if (cls.indexOf("done") !== -1) {
+        complete();
         return;
+      }
+      if (cls.indexOf("fail") !== -1) {
+        fail();
+        return;
+      }
+      var fromBar = readBarPct();
+      if (fromBar != null) paintPct(fromBar);
+      paintElapsed(now);
+      if ((now - t0) / 1000 > 180 && stageEl) {
+        stageEl.textContent = "Jailbreak failed - restart your console";
+        stageEl.className = "on bad";
+        fail();
+      }
     }
-
-    var key = null, fwnum = null;
-    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(ua);
-    if (m) {
-        var ms = parseInt(m[2], 16).toString(16);
-        if (ms.length < 2) ms = "0" + ms;
-        key = m[1] + "." + ms;
-        fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+    function loop() {
+      tick();
+      if (finished) return;
+      if (typeof requestAnimationFrame === "function") {
+        rafId = requestAnimationFrame(loop);
+      }
     }
-
-    function pickRoute(n) {
-        if (n === null) return null;
-        for (var i = 0; i < ROUTES.length; i++) {
-            var r = ROUTES[i];
-            if (n < r.min || n > r.max) continue;
-            if (r.only && !r.only[n]) continue;
-            return r;
+    function complete() {
+      try { if (timer) clearInterval(timer); } catch (eT) {}
+      try { if (window.__ps4jbRaf) cancelAnimationFrame(window.__ps4jbRaf); } catch (eR) {}
+      if (finished) return;
+      finished = true;
+      stopLoop();
+      if (wrapBar) wrapBar.style.display = "block";
+      if (pct) pct.style.display = "block";
+      paintElapsed(Date.now());
+      try {
+        var cur = readBarPct();
+        if (cur == null) cur = shownPct;
+        if (cur < 1) cur = 1;
+        if (cur > 99.5) {
+          paintPct(100);
+          bar.className = "finishing";
+          bar.style.width = "100%";
+        } else {
+          // Continue smoothly from current width to 100% (no mid-bar freeze).
+          bar.className = "";
+          bar.style.webkitAnimation = "none";
+          bar.style.animation = "none";
+          bar.style.width = cur + "%";
+          void bar.offsetWidth;
+          bar.className = "finishing";
+          bar.style.width = "100%";
+          var end0 = Date.now();
+          var startV = cur;
+          function rampDone() {
+            var u = (Date.now() - end0) / 500;
+            if (u >= 1) {
+              paintPct(100);
+              return;
+            }
+            paintPct(startV + (100 - startV) * u);
+            if (typeof requestAnimationFrame === "function") requestAnimationFrame(rampDone);
+            else setTimeout(rampDone, 32);
+          }
+          rampDone();
         }
-        return null;
+      } catch (eF) {
+        paintPct(100);
+      }
     }
-
-    var forced = getParam("force") === "1";
-    var forceChain = getParam("chain"); // cssfontface | psfree | slopkit | relapse
-    var route = pickRoute(fwnum);
-    if (forceChain === "cssfontface") route = { target: "chains/cssfontface/index.html", label: "CSSFontFace+Lapse", proven: false };
-    else if (forceChain === "psfree") route = { target: "chains/psfree-lapse/index.html", label: "PSFree+Lapse", proven: false };
-    else if (forceChain === "slopkit") route = { target: "chains/slopkit/index.html", label: "Slopkit", proven: false };
-    else if (forceChain === "relapse") route = { target: "jb.html", label: "Relapse", proven: true };
-    else if (forceChain === "badhoist") route = { target: "chains/badhoist/index.html", label: "BadHoist", proven: false };
-
-    var supported = forced || route !== null;
-    var detBits = "firmware <b>" + (key || "unknown") + "</b>";
-    if (route) {
-        detBits += " &middot; <b>" + route.label + "</b>";
-        if (!route.proven) detBits += " &middot; untested on this host";
-        else detBits += " &middot; <b>supported</b>";
+    function fail() {
+      if (finished) return;
+      finished = true;
+      stopLoop();
+      if (wrapBar) wrapBar.style.display = "block";
+      if (pct) pct.style.display = "block";
+      try {
+        document.body.classList.remove("done");
+        document.body.classList.add("fail");
+      } catch (eB) {}
+      try {
+        bar.className = "finishing";
+        bar.style.width = "100%";
+      } catch (eF2) {}
+      paintElapsed(Date.now());
+      paintPct(100);
+    }
+    window.__ps4jbProgressComplete = complete;
+    window.__ps4jbProgressFail = fail;
+    paintPct(0);
+    paintElapsed(t0);
+    startCssFill();
+    if (typeof requestAnimationFrame === "function") {
+      rafId = requestAnimationFrame(loop);
     } else {
-        detBits += " &middot; no chain for this FW in phase 1";
+      timer = setInterval(tick, 50);
     }
-    detEl.innerHTML = detBits;
+  }
 
-    var target = (route ? route.target : "jb.html") + (location.search || "");
-    if (key) {
-        target += (target.indexOf("?") >= 0 ? "&" : "?") + "fw=" + encodeURIComponent(key);
-    }
-    function runCountdown(done) {
-        var overlay = document.getElementById("countdown");
-        var numEl = document.getElementById("countdown-num");
-        var labelEl = document.getElementById("countdown-label");
-        if (!overlay || !numEl) { done(); return; }
-        overlay.className = "show";
-        var n = 3;
-        numEl.textContent = String(n);
-        if (labelEl) labelEl.textContent = "starting";
-        var iv = setInterval(function () {
-            n -= 1;
-            if (n <= 0) {
-                clearInterval(iv);
-                numEl.textContent = "GO";
-                if (labelEl) labelEl.textContent = "";
-                setTimeout(function () {
-                    overlay.className = "";
-                    done();
-                }, 350);
-            } else {
-                numEl.textContent = String(n);
-            }
-        }, 1000);
-    }
-    function go() {
-        if (startBtn) startBtn.className = "";
-        runCountdown(function () {
-            if (stateEl) stateEl.style.display = "";
-            setState("loading...", "warn");
-            location.replace(target);
-        });
-    }
+  function startRelapse() {
+    if (jbStarted) return;
+    jbStarted = true;
+    startProgress();
+    var s = document.createElement("script");
+    s.type = "module";
+    s.src = "jb.js?v=40";
+    s.onerror = function () {
+      if (stageEl) {
+        stageEl.textContent = "Jailbreak failed - restart your console";
+        stageEl.className = "on bad";
+      }
+      if (typeof window.__ps4jbProgressFail === "function") window.__ps4jbProgressFail();
+    };
+    document.body.appendChild(s);
+  }
 
-    function waitForTap(msg, action) {
-        // Prompt on the start button. Only Cross (X) / Enter starts — not other keys.
-        setState("");
-        if (stateEl) stateEl.style.display = "none";
-        if (startBtn) {
-            startBtn.textContent = msg;
-            startBtn.className = "show";
-            try { startBtn.focus(); } catch (e) {}
-        }
-        var fired = false;
-        function isCrossKey(ev) {
-            if (!ev) return false;
-            var c = ev.keyCode || ev.which || 0;
-            var k = ev.key || "";
-            // PS4 browser maps controller Cross (X) to Enter.
-            return c === 13 || k === "Enter";
-        }
-        function cleanup() {
-            window.removeEventListener("keydown", onKey, true);
-            if (startBtn) {
-                startBtn.onclick = null;
-                startBtn.onkeydown = null;
-            }
-        }
-        function fire(ev) {
-            if (fired) return;
-            fired = true;
-            if (ev && ev.preventDefault) ev.preventDefault();
-            cleanup();
-            if (startBtn) startBtn.className = "";
-            action();
-        }
-        function onKey(ev) {
-            if (!isCrossKey(ev)) {
-                // Block other keys from starting the jailbreak.
-                if (ev.preventDefault) ev.preventDefault();
-                if (ev.stopPropagation) ev.stopPropagation();
-                return;
-            }
-            fire(ev);
-        }
-        // Capture phase so other handlers cannot start on random keys.
-        window.addEventListener("keydown", onKey, true);
-        if (startBtn) {
-            // Cross on a focused link also synthesizes click — allow only on the button.
-            startBtn.onclick = function (ev) { fire(ev); };
-        }
-    }
-
+  function go() {
     if (!supported) {
-        waitForTap("Press X to start", go);
-        return;
+      if (brandSub) {
+        brandSub.textContent = "no chain for this firmware";
+        brandSub.className = "blocked";
+      }
+      return;
     }
+    if (isSamePage(route) || forced) {
+      startRelapse();
+      return;
+    }
+    // Other FW chains still live in their own folders (different scripts).
+    location.replace(chainUrl(route));
+  }
 
-    var ac = window.applicationCache;
-    if (!ac || !document.documentElement.getAttribute("manifest")) {
-        go();
-    } else if (!navigator.onLine) {
-        setCache("offline -- from cache", true);
-        go();
-    } else if (ac.status === ac.IDLE) {
-        setCache("cached", true);
-        go();
-    } else if (ac.status === ac.UPDATEREADY) {
-        try { ac.swapCache(); } catch (e) {}
-        setCache("update downloaded", true);
-        waitForTap("Press X to start", function () { location.reload(); });
-    } else {
-        setCache("checking cache...");
-        var started = false;
-        function startOnce() {
-            if (started) return;
-            started = true;
-            go();
-        }
-        // Safety: never stay stuck on cache checking forever.
-        setTimeout(function () {
-            if (!started) {
-                setCache("cache timeout -- continue");
-                waitForTap("Press X to start", go);
-            }
-        }, 8000);
-        ac.addEventListener("downloading",
-            function () { setCache("caching for offline (first run)..."); }, false);
-        ac.addEventListener("progress", function (e) {
-            if (e && e.total)
-                setCache("caching " + Math.round((e.loaded / e.total) * 100) + "%");
-        }, false);
-        ac.addEventListener("cached", function () {
-            setCache("cached for offline use", true);
-            waitForTap("Press X to start", go);
-        }, false);
-        ac.addEventListener("updateready", function () {
-            try { ac.swapCache(); } catch (e) {}
-            setCache("update downloaded", true);
-            waitForTap("Press X to start", function () { location.reload(); });
-        }, false);
-        ac.addEventListener("noupdate", function () {
-            setCache("cached -- offline ready", true);
-            startOnce();
-        }, false);
-        ac.addEventListener("error", function () {
-            setCache("cache unavailable");
-            waitForTap("Press X to start", go);
-        }, false);
-        ac.addEventListener("obsolete", function () {
-            setCache("cache obsolete");
-            waitForTap("Press X to start", go);
-        }, false);
+  var ac = window.applicationCache;
+  if (!ac || !document.documentElement.getAttribute("manifest")) {
+    go();
+  } else if (!navigator.onLine) {
+    // Offline: use whatever is already cached.
+    setCache("Cache ready — you can jailbreak without internet", true);
+    go();
+  } else if (ac.status === ac.UPDATEREADY) {
+    try { ac.swapCache(); } catch (e) {}
+    setCache("Cache ready — you can jailbreak without internet", true);
+    location.reload();
+  } else {
+    // Wait for AppCache before starting the jailbreak.
+    // Do NOT start on IDLE alone — PS4 WebKit often reports IDLE while
+    // it is still checking/downloading, which used to launch jb.js early.
+    setCache("checking cache...");
+    var started = false;
+    function startOnce() {
+      if (started) return;
+      started = true;
+      go();
     }
+    function markReady() {
+      setCache("Cache ready — you can jailbreak without internet", true);
+      startOnce();
+    }
+    ac.addEventListener("checking",
+      function () { setCache("checking cache..."); }, false);
+    ac.addEventListener("downloading",
+      function () { setCache("caching for offline (first run)..."); }, false);
+    ac.addEventListener("progress", function (e) {
+      if (e && e.total)
+        setCache("caching " + Math.round((e.loaded / e.total) * 100) + "%");
+    }, false);
+    ac.addEventListener("cached", markReady, false);
+    ac.addEventListener("noupdate", markReady, false);
+    ac.addEventListener("updateready", function () {
+      try { ac.swapCache(); } catch (e) {}
+      setCache("Cache ready — you can jailbreak without internet", true);
+      location.reload();
+    }, false);
+    ac.addEventListener("error", function () {
+      setCache("cache unavailable");
+      startOnce();
+    }, false);
+    ac.addEventListener("obsolete", function () {
+      setCache("cache obsolete");
+      startOnce();
+    }, false);
+    // If the check already finished before listeners attached (IDLE),
+    // nudge an update so noupdate/cached will fire.
+    try {
+      if (ac.status === ac.IDLE || ac.status === ac.UNCACHED)
+        ac.update();
+    } catch (e) {}
+  }
 })();
 </script>
-<div id="credits">
-  <p class="credits-heading">Credits</p>
-  <div class="credits-group">
-    <span class="credits-label">HEN / GoldHEN</span>
-    <p class="credits-names">SiSTRo · ctn · Kameleon</p>
-  </div>
-  <div class="credits-group">
-    <span class="credits-label">Exploit / chain</span>
-    <p class="credits-names">TheFloW · Gezine · WhiteShadow · ufm42 · Nathan Fargo · Dr.Yenyen · ArabPixel · MasterMaind · ABC · raw13g · Echo Stretch · anonymous (PSFree) · Fire30 · Sleirsgoevy</p>
-  </div>
-  <div class="credits-group">
-    <span class="credits-label">Hosts / assets</span>
-    <p class="credits-names">ArabPixel/WebKitty (AGPL-3.0) · ntfargo/CSSFontFace-Exploit · B4411M/all · DestoryG/CSSFontFace-DGHost</p>
-  </div>
-</div>
-<div id="foot">
-  <b>Created by X-F1REBALL-X</b>
-</div>
 </body>
 </html>

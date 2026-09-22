@@ -180,7 +180,7 @@ AGPL-3.0-or-later (see [LICENSE](LICENSE)). Part of this repo belongs to the gro
 - **abc:** For PSFree userland and Lapse kernel exploits.
 - **sleirsgoevy:** For 6.7x kernel exploit. 
 - **Fire30:** For Bad Hoist userland exploit.
-- **Egycnq:**: Porting Netctrl to slopkit.
+- **Egycnq:** Porting Netctrl to slopkit.
 - **Jordy and Sonic-Iso:** Original Slopkit project.
 - **Al-Azif:** For the modular (multi-file) PSFree Lapse and AIO workaround implementations.
 - **Nathan Fargo and ufm42:** For CSSFontFace userland exploit.

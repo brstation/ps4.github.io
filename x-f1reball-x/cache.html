@@ -1,6 +1,6 @@
 <html manifest="cache.appcache">
 <head>
-<title>Shadow's Services · PS4 Exploit</title>
+<title>PS4JB</title>
 <style>
 body {
     background:#0b0d10;
@@ -61,13 +61,13 @@ function DLProgress(e) {
     var msgs = document.getElementById("msgs");
     if (!msgs) return;
     var pct = e.total ? Math.round(e.loaded / e.total * 100) : 0;
-    msgs.innerHTML = "Shadow's Services &middot; Installing ... <b>" + pct + "%</b>";
+    msgs.innerHTML = "PS4JB &middot; Installing ... <b>" + pct + "%</b>";
 }
 
 function DisplayCacheProgress() {
     var msgs = document.getElementById("msgs");
     setTimeout(function () {
-        if (msgs) msgs.innerHTML = "Shadow's Services &middot; <b>Cache OK</b>";
+        if (msgs) msgs.innerHTML = "PS4JB &middot; <b>Cache OK</b>";
     }, 1500);
     setTimeout(function () {
         location.reload();
@@ -87,6 +87,6 @@ if (window.applicationCache) {
 </script>
 </head>
 <body>
-<div id="msgs" class="info">Shadow's Services &middot; Priming cache ...</div>
+<div id="msgs" class="info">PS4JB &middot; Priming cache ...</div>
 </body>
 </html>

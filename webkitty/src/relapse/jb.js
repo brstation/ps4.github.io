@@ -50,10 +50,9 @@ function terse(s) {
 
 const SHOW_LOG = params.get("log") === "1" || !!outEl;
 // if (SHOW_LOG && document.body) document.body.className = "log";
-// function finishUI(ok) {
-//   if (SHOW_LOG || !document.body) return;
-//   document.body.className = ok ? "done" : "fail";
-// }
+function finishCheck(ok) {
+  if (!ok) state("Jailbreak failed, reload/restart and try again.", "bad");
+}
 function mark(tag, detail) {
   const raw = detail;
   detail = terse(detail);
@@ -536,10 +535,12 @@ let allDone = false,
     async function launchPayloadDirect() {
       if (!DO_PAYLOAD || !PAYLOAD_FILE) {
         mark("DIRECT-PAYLOAD-SKIPPED", "payload disabled or not selected");
+        state("payload not found!", "warn");
         return false;
       }
 
       let payload = null;
+      state("Fetching the payload..", "warn");
       try {
         const response = await fetch(PAYLOAD_FILE);
         if (response.ok) payload = new Uint8Array(await response.arrayBuffer());
@@ -556,6 +557,7 @@ let allDone = false,
       const entry = new int64(mapped.lo, mapped.hi);
       if (mapped.i32 === -1 || entry.hi >>> 0 === 0) {
         mark("DIRECT-PAYLOAD-MAP-FAILED", "errno=" + errno());
+        state("payload mmap failed.", "bad");
         return false;
       }
 
@@ -2647,6 +2649,7 @@ let allDone = false,
               payloadBlob = null;
             const SITES = [];
             if (DO_PATCH) {
+              state("loading the kernel patches..", "warn");
               try {
                 const r = await fetch(KPATCH_FILE);
                 if (r.ok) kpatchBlob = new Uint8Array(await r.arrayBuffer());
@@ -2699,6 +2702,7 @@ let allDone = false,
             }
 
             if (DO_JB) {
+              state("Applying the exploit", "warn");
               const P_UCRED = 0x40,
                 P_FD = 0x48,
                 TD_PROC = 0x8;
@@ -3455,18 +3459,21 @@ let allDone = false,
         (allDone ? "" : "  INCOMPLETE"),
     );
     try {
-      // finishUI(payloadRunning);
-       if (typeof jailbreakSuccess === "function") {
-        if (alreadyRootDetected) {
-            const alreadyJailbrokenMessage =
-              (window.lang && window.lang.alreadyJailbroken) ||
-              "Already Jailbroken ...";
-            if (payloadRunning) jailbreakSuccess(alreadyJailbrokenMessage);
-            else state(alreadyJailbrokenMessage + " (payload not loaded)", "warn");
-        } else if (payloadRunning) {
-          jailbreakSuccess();
-        }
+      if (alreadyRootDetected) {
+          const alreadyJailbrokenMessage =
+            (window.lang && window.lang.alreadyJailbroken) ||
+            "Already Jailbroken ...";
+          if (payloadRunning) {
+            if (typeof jailbreakSuccess == "function"){
+              jailbreakSuccess(alreadyJailbrokenMessage);
+            }
+          }
+          else state(alreadyJailbrokenMessage + " (payload not loaded)", "warn");
+      } else if (payloadRunning) {
+        state("Done!");
+        jailbreakSuccess();
       }
+      finishCheck(payloadRunning);
     } catch (eUI) {}
   }
 })();

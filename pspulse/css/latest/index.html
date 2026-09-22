@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="../../pspulse.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSPULSE // PS4 6.00-11.02 HOST / 2.4B18.11</title>
+    <title>PSPULSE // PS4 6.00-11.02 HOST / 2.4B18.12</title>
     <style>
         :root {
             --bg: #151515;
@@ -17,6 +17,8 @@
             --muted: #b5b5b5;
             --dim: #828282;
             --accent: #a294ff;
+            --red: #ff9b9b;
+            --amber: #e1bd72;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,6 +66,9 @@
         .boot li { margin: 3px 0; }
         .boot b { color: var(--accent); font-weight: 400; }
         #UA { color: var(--dim); display: block; font-size: 12px; margin-top: 10px; overflow-wrap: anywhere; }
+        /* Offline cache stage (upstream inline script target) */
+        #cache { color: var(--dim); font-size: 13px; margin: 6px 0 0; min-height: 16px; }
+        #cache.cacheok { color: var(--accent); }
 
         /* Status / exploit output */
         .status {
@@ -95,10 +100,6 @@
             padding: 10px 14px;
             white-space: pre-wrap;
         }
-        /* colored exploit log lines (upstream logger classes) */
-        .log-info { color: var(--accent); }
-        .log-error { color: #ff9b9b; }
-        .log-debug { color: var(--dim); }
 
         /* Controls */
         .controls { border: 1px solid var(--line); margin-top: 14px; padding: 14px; }
@@ -179,8 +180,9 @@
         }
         .foot a { color: var(--muted); }
         .foot a:hover, .foot a:focus { color: var(--accent); }
+        .foot div { margin: 2px 0; }
 
-        @media (max-width: 820px) {
+        @media (max-width: 760px) {
             body { overflow: auto; }
             .app { padding: 8px 10px; width: min(100% - 20px, 560px); }
             .bar { font-size: 12px; padding: 8px 12px; }
@@ -207,10 +209,11 @@
             <p class="sub">Offline auto GoldHEN loader by PlayStation Pulse.</p>
             <ul class="boot">
                 <li>[ <b>ok</b> ] cssfontface chain ready</li>
-                <li>[ <b>ok</b> ] goldhen v2.4b18.11 staged</li>
+                <li>[ <b>ok</b> ] goldhen v2.4b18.12 staged</li>
                 <li>[ <b>ok</b> ] offline cache ready</li>
             </ul>
             <p id="UA">Running on:</p>
+            <p id="cache">Checking offline cache...</p>
 
             <div class="status">
                 <div class="status-label">Exploit output</div>
@@ -223,7 +226,7 @@
                     <span class="chain-label">Kernel chain</span>
                     <div class="chain-options">
                         <input type="radio" name="kernel" id="netctrl-exploit" value="netctrl">
-                        <label class="chain-option" for="netctrl-exploit">NetCtrl</label>
+                        <label class="chain-option" for="netctrl-exploit">Poops</label>
                         <input type="radio" name="kernel" id="lapse-exploit" value="lapse">
                         <label class="chain-option" for="lapse-exploit">Lapse</label>
                     </div>
@@ -242,13 +245,79 @@
             </a>
 
             <footer class="foot">
-                Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a>
+                <div>Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a></div>
+                <div>Upstream: <a href="https://github.com/itskenethb?tab=repositories">itskenethb</a></div>
             </footer>
         </main>
     </div>
 
     <script src="src/main.js"></script>
     <script src="includes/script.js"></script>
-    </body>
+
+    <script>
+    (function () {var cacheEl = document.getElementById("cache");
+        function setCache(text, ok) {
+            if (!cacheEl) return;
+            cacheEl.textContent = text;
+            cacheEl.className = ok ? "cacheok" : "";
+        }
+
+        var ac = window.applicationCache;
+
+        if (!ac || !document.documentElement.hasAttribute("manifest")) {
+            setCache("application cache unavailable");
+        } else if (!navigator.onLine) {
+            setCache("offline -- using cached resources", true);
+        } else if (ac.status === ac.IDLE) {
+            setCache("cached -- offline ready", true);
+        } else if (ac.status === ac.UPDATEREADY) {
+            try {
+                ac.swapCache();
+            } catch (e) {}
+            setCache("update downloaded -- offline ready", true);
+        } else {
+            setCache("checking cache...");
+
+            ac.addEventListener("downloading", function () {
+                setCache("caching for offline (first run)...");
+            }, false);
+
+            ac.addEventListener("progress", function (e) {
+                if (e && e.total) {
+                    setCache(
+                        "caching " +
+                        Math.round((e.loaded / e.total) * 100) +
+                        "%"
+                    );
+                }
+            }, false);
+
+            ac.addEventListener("cached", function () {
+                setCache("cached for offline use", true);
+            }, false);
+
+            ac.addEventListener("updateready", function () {
+                try {
+                    ac.swapCache();
+                } catch (e) {}
+                setCache("update downloaded -- offline ready", true);
+            }, false);
+
+            ac.addEventListener("noupdate", function () {
+                setCache("cached -- offline ready", true);
+            }, false);
+
+            ac.addEventListener("error", function () {
+                setCache("cache unavailable");
+            }, false);
+
+            ac.addEventListener("obsolete", function () {
+                setCache("cache obsolete");
+            }, false);
+        }
+    })();
+    </script>
+
+</body>
 
 </html>

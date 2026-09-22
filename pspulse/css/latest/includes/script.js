@@ -1,12 +1,11 @@
 let timerId = null; 
+var lastCacheProgress = 0;
 const label = document.getElementById('autoJbLabel');
 const checkbox = document.getElementById('autoJbInput');
 const jeilbrekBtn = document.getElementById('jeilbrek');
 const UAElement = document.getElementById("UA");
 
 const storedAutoJb = localStorage.getItem("autoJb");
-// Автозапуск включён по умолчанию: хост сам начинает активацию GoldHEN
-// через 5 секунд после загрузки. Выключение сохраняется в localStorage.
 let autoJbValue = storedAutoJb !== null ? storedAutoJb === "true" : true;
 
 // choose one of kernel exploits
@@ -30,7 +29,7 @@ jeilbrekBtn.addEventListener("click", function (e){
     doJb();
 });
 
-// upstream: guarded reload button for recovering after a failed attempt
+// guarded reload button for recovering after a failed attempt
 const reloadBtn = document.getElementById('reloadBtn');
 
 if (reloadBtn) {
@@ -58,19 +57,6 @@ function stopInterval(){
     label.textContent = "Auto Jailbreak";
 }
 
-// Гигиена лога консоли: за один прогон exploit пишет сотни отладочных строк,
-// DOM #console растёт без ограничений. Держим последние строки, старые
-// удаляем пачками. На логику чейна не влияет — только рендер; сам логгер
-// в src/misc.js upstream-синхронен и не тронут.
-var CONSOLE_KEEP_LINES = 400;
-setInterval(function () {
-    var c = document.getElementById('console');
-    if (!c) return;
-    while (c.childNodes.length > CONSOLE_KEEP_LINES + 100) {
-        c.removeChild(c.firstChild);
-    }
-}, 5000);
-
 function jailbreakCountdown() {   
     stopInterval();
 
@@ -90,15 +76,15 @@ function jailbreakCountdown() {
     }, 1000);
 }
 
-// Точка входа автозапуска: отсчёт стартует только на устоявшемся кэше.
-// Иначе тяжёлый exploit-чейн идёт поверх фоновой закачки и вешает браузер
-// (прогресс вставал ~81%). Покрыты все состояния AppCache:
-// - CHECKING/DOWNLOADING: закачка идёт — ждём терминального события;
-// - UNCACHED с манифестом: первый визит, проверка манифеста обычно ещё не
-//   стартовала — ждём её начала + терминального события, со страховкой
-//   таймаутом на случай, если AppCache для страницы не работает (file://);
-// - IDLE и прочие: кэш готов — отсчёт сразу, но с ловушкой на позднюю
-//   закачку (проверка обновлений может стартовать уже после загрузки).
+// Auto-start entry point: run the countdown only on a settled cache.
+// Starting the heavy exploit chain on top of an active AppCache download
+// wedges the PS4 browser, so cover all AppCache states here:
+// - CHECKING/DOWNLOADING: download in progress, wait for a terminal event;
+// - UNCACHED with manifest: first visit, manifest check may not have started
+//   yet, wait for it to begin + a terminal event, with a timeout fallback in
+//   case AppCache is unavailable for this page (e.g. file://);
+// - IDLE and others: cache is ready, countdown immediately but watch for a
+//   late download (an update check may start after page load).
 function startAutoJb() {
     if (jeilbrekBtn.disabled) return;
     var ac = window.applicationCache;
@@ -108,10 +94,33 @@ function startAutoJb() {
 
     var waitDone = false;
     var uncachedFallback = null;
+    var progressWatchdog = null;
     var userTookOver = function () {
         return jeilbrekBtn.disabled || !checkbox.checked;
     };
+    var stopProgressWatchdog = function () {
+        if (progressWatchdog !== null) {
+            clearInterval(progressWatchdog);
+            progressWatchdog = null;
+        }
+    };
+    // A stalled download fires no events at all: if AppCache reports an
+    // active download but no progress arrives for a while, route it through
+    // the same error/retry path instead of waiting forever.
+    var startProgressWatchdog = function () {
+        if (progressWatchdog !== null) return;
+        lastCacheProgress = Date.now();
+        progressWatchdog = setInterval(function () {
+            if (waitDone || userTookOver()) { stopProgressWatchdog(); return; }
+            var cur = ac.status;
+            if (cur === ac.IDLE || cur === ac.UPDATEREADY) { onCacheReady(); return; }
+            if ((cur === ac.DOWNLOADING || cur === ac.CHECKING) && (Date.now() - lastCacheProgress > 45000)) {
+                onCacheError();
+            }
+        }, 5000);
+    };
     var detachWaiters = function () {
+        stopProgressWatchdog();
         ac.removeEventListener('downloading', onLateDownload, false);
         ac.removeEventListener('cached', onCacheReady, false);
         ac.removeEventListener('updateready', onCacheReady, false);
@@ -123,17 +132,35 @@ function startAutoJb() {
         waitDone = true;
         detachWaiters();
         clearTimeout(uncachedFallback);
+        try { sessionStorage.removeItem('cssCacheRetries'); } catch (e) {}
         if (!userTookOver()) jailbreakCountdown();
+    };
+    // Cache failures are usually transient (stalled connection), so retry
+    // automatically with a per-session cap instead of giving up at once.
+    // AutoJB + exploit choice survive the reload via localStorage.
+    var MAX_CACHE_RETRIES = 3;
+    var getCacheRetries = function () {
+        try { return parseInt(sessionStorage.getItem('cssCacheRetries') || '0', 10) || 0; }
+        catch (e) { return MAX_CACHE_RETRIES; }
     };
     var onCacheError = function () {
         if (waitDone) return;
         waitDone = true;
         detachWaiters();
         clearTimeout(uncachedFallback);
+        var retries = getCacheRetries();
+        if (retries < MAX_CACHE_RETRIES) {
+            label.textContent = 'Cache error - retrying (' + (retries + 1) + '/' + MAX_CACHE_RETRIES + ')...';
+            setTimeout(function () {
+                try { sessionStorage.setItem('cssCacheRetries', String(retries + 1)); } catch (e) {}
+                window.location.reload();
+            }, 4000);
+            return;
+        }
         label.textContent = 'Cache error - press Jailbreak manually';
     };
-    // Поздняя закачка при устоявшемся кэше: остановить бегущий отсчёт
-    // и дождаться терминального события вместо гонки с чейном.
+    // A late download on a settled cache: stop the running countdown and
+    // wait for a terminal event instead of racing the chain with it.
     var onLateDownload = function () {
         ac.removeEventListener('downloading', onLateDownload, false);
         if (waitDone || userTookOver()) return;
@@ -143,6 +170,7 @@ function startAutoJb() {
         ac.addEventListener('updateready', onCacheReady, false);
         ac.addEventListener('noupdate', onCacheReady, false);
         ac.addEventListener('error', onCacheError, false);
+        startProgressWatchdog();
     };
     var st = ac.status;
     if (st === ac.CHECKING || st === ac.DOWNLOADING || st === ac.UNCACHED) {
@@ -153,12 +181,13 @@ function startAutoJb() {
         ac.addEventListener('updateready', onCacheReady, false);
         ac.addEventListener('noupdate', onCacheReady, false);
         ac.addEventListener('error', onCacheError, false);
+        startProgressWatchdog();
         if (st === ac.UNCACHED) {
             uncachedFallback = setTimeout(function () {
                 if (waitDone) return;
                 try {
-                    // Закачка всё-таки стартовала позже — её терминальные
-                    // события уже под контролем слушателей выше.
+                    // A download that started late is already covered by the
+                    // terminal-event listeners above.
                     if (ac.status !== ac.UNCACHED) return;
                 } catch (e) {}
                 waitDone = true;
@@ -173,6 +202,7 @@ function startAutoJb() {
 }
 
 function cacheProgress(e) {
+    lastCacheProgress = Date.now();
     var Percent = (Math.round(e.loaded / e.total * 100));
     document.title = "Caching: " + Percent + "%";
 }
@@ -206,9 +236,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // apply autojb localStorage value
     checkbox.checked = autoJbValue;
 
-    // Автозапуск ждёт завершения установки AppCache: запуск тяжёлого
-    // exploit-чейна (heap-spray, воркеры, kernel race) поверх фоновой
-    // загрузки кэша вешает PS4-браузер — прогресс останавливается (~81%,
-    // крупные файлы payload.bin и kernel-цепочки идут в конце очереди).
+    // Auto-start waits for a settled offline cache (see startAutoJb).
     if (autoJbValue) startAutoJb();
 });

@@ -170,22 +170,22 @@
                     <span class="menu-hint">&uarr; &darr; move &nbsp; X select</span>
                 </div>
                 <div class="version-grid">
-                    <div class="version-card latest" onclick="selectVersion('v2.4b18.11')" tabindex="0"
+                    <div class="version-card latest" onclick="selectVersion('v2.4b18.12')" tabindex="0"
                         data-version="latest">
                         <span class="card-index">01</span>
                         <span>
                             <span class="version-badge latest">Latest</span>
-                            <span class="version-title">Payload <span class="version-number">v2.4b18.11</span></span>
+                            <span class="version-title">Payload <span class="version-number">v2.4b18.12</span></span>
                             <span class="version-description">Latest payload build with improved stability and compatibility. Recommended for most users.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
                     </div>
 
-                    <div class="version-card" onclick="selectVersion('v2.4b18.5')" tabindex="0" data-version="stable">
+                    <div class="version-card" onclick="selectVersion('v2.4b18.12')" tabindex="0" data-version="stable">
                         <span class="card-index">02</span>
                         <span>
                             <span class="version-badge">Stable</span>
-                            <span class="version-title">Payload <span class="version-number">v2.4b18.5</span></span>
+                            <span class="version-title">Payload <span class="version-number">v2.4b18.12</span></span>
                             <span class="version-description">Previous stable payload build with proven reliability. Choose this if the latest version causes issues.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
@@ -210,9 +210,9 @@
             localStorage.setItem('selectedSlopkitVersion', version);
 
             // Redirect to the chosen host build
-            if (version === 'v2.4b18.11') {
+            if (version === 'v2.4b18.12') {
                 window.location.href = 'latest/index.html';
-            } else if (version === 'v2.4b18.5') {
+            } else if (version === 'v2.4b18.12') {
                 window.location.href = 'stable/index.html';
             }
         }

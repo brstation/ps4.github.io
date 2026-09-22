@@ -41,7 +41,7 @@ const STOP_BEFORE_DOUBLE = params.get("stop") === "beforedouble";
 function hostOk() {
     var m = document.getElementById("msgs");
     if (m) {
-        m.innerHTML = "GoldHEN v2.4b18.10 Loaded ...";
+        m.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
     }
 }
 
@@ -210,7 +210,7 @@ let payloadRunning = false;
               + " sites=" + KPATCH_JMP_SITES.length
             : "blob=" + kpatchName + " MISSING");
         try {
-            const r = await fetch("goldhen_2.4b18.10.bin");
+            const r = await fetch("goldhen_2.4b18.12.bin");
             if (r.ok) payload = new Uint8Array(await r.arrayBuffer());
         } catch (e) { mark("PAYLOAD-FETCH-THREW", e.message); }
         mark("PAYLOAD-BLOB", payload

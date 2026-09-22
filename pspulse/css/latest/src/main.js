@@ -38,16 +38,6 @@ async function doJb() {
 
     logger.info("===END===");
 
-    // Не запускать kernel chain повторно поверх уже активного jailbreak.
-    const setuid_fn = new NativeFunction(0x17, "number");
-    const setuid_res = setuid_fn.invoke(0);
-    logger.info(`Early jailbreak check (setuid 0) returned: ${setuid_res}`);
-
-    if (setuid_res === 0) {
-      logger.info("System is ALREADY jailbroken! Skipping kernel exploit chain to prevent Kernel Panic.");
-      return;
-    }
-
     await load_script("src/loader.js");
     await load_script("src/workers.js");
 
@@ -130,14 +120,12 @@ async function doJb() {
       const bin_u8 = new Uint8Array(bin_buf);
 
       load_bin(bin_u8);
-      logger.info("Payload Loaded !!");
     }
 
     logger.info("===END===");
   } catch (e) {
     logger.error(e.message);
     logger.error(e.stack);
-    logger.info("Exploit failed, shutdown your console then try again !!");
     //mem.free_all();
   }
 }

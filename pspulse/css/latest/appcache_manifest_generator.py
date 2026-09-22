@@ -12,12 +12,9 @@ def calculate_file_hash(file_path):
 def generate_cache_manifest(directory_path, include_directory_path=True, include_payloads=True):
     manifest = ["CACHE MANIFEST"]
     
-    for root, dirs, files in os.walk(directory_path):
-        dirs.sort()
-        for file in sorted(files):
-            # Сам manifest не кэшируем: его hash самоссылочен и устаревает
-            # при любом изменении списка или содержимого файлов.
-            if file == 'cache.manifest' or '.appcache' in file:
+    for root, _, files in os.walk(directory_path):
+        for file in files:
+            if '.appcache' in file:
                 continue
             file_path = os.path.join(root, file)
 

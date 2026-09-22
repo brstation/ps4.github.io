@@ -11,13 +11,13 @@
   <img src="https://img.shields.io/badge/UI-terminal-151515?style=for-the-badge&color=a294ff" alt="Terminal-style interface">
 </p>
 
-![PlayStation Pulse Host Selector](https://raw.githubusercontent.com/sudoBlackArch/sudoblackarch.github.io/main/assets/showcase.webp)
+![PlayStation Pulse Host Selector](https://raw.githubusercontent.com/sudoBlackArch/sudoblackarch.github.io/refs/heads/main/assets/showcase.webp)
 
 ```text
 $ ./launch --pspulse
 
 [ ok ] 6 host routes detected
-[ ok ] goldhen v2.4b18.11 / v2.4b18.5 staged
+[ ok ] goldhen v2.4b18.12 / v2.4b18.5 staged
 [ ok ] offline cache ready
 [ ok ] gamepad navigation enabled
 ```
@@ -52,7 +52,7 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 - PSFree/Lapse host flows for firmware 7.00–8.52 and 9.00–9.60.
 - A CSSFontFace UAF host flow for firmware 6.00–11.02.
 - A SlopKit WebKit research flow for firmware 11.00–13.00.
-- Repository-bundled GoldHEN v2.4b18.11 and v2.4b18.5 assets where the host supports both builds.
+- Repository-bundled GoldHEN v2.4b18.12 and v2.4b18.5 assets where the host supports both builds.
 - AppCache-based offline operation with firmware-specific cache and manifest files.
 - Firmware-specific payload utilities on the host branches that provide them.
 - A single visual system — dark terminal aesthetic, violet accent, controller-friendly focus — across every selector, cache page, and exploit page.
@@ -61,16 +61,15 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 
 | # | Firmware | Entry point | Exploit flow | GoldHEN | Utility payloads |
 |---|---|---|---|---|---|
-| 01 | **11.00–13.00** | `1300/version-selector.html` | SlopKit WebKit (Lapse / Poops) | `stable` or `latest` | Upstream payload only |
-| 02 | **6.00–11.02** | `css/version-selector.html` | CSSFontFace UAF + Lapse/NetCtrl | `stable` or `latest` | No separate menu |
-| 03 | **9.00–9.60** | `900/version-selector.html` | PSFree + Lapse | Version selector | Included |
-| 04 | **7.00–8.52** | `700/version-selector.html` | PSFree + Lapse | Version selector | Included |
-| 05 | **6.72** | `672/index.html` | Dedicated host | Directly on page | Included |
-| 06 | **5.05** | `505/index.html` | Dedicated host | Directly on page | Included |
+| 01 | **13.02–13.52** | `1352/index.html` | SlopKit WebKit (GoldHEN) | `v2.4b18.12` | Upstream payload only |
+| 02 | **11.00–13.00** | `1300/version-selector.html` | SlopKit WebKit (Lapse / Poops) | `stable` or `latest` | Upstream payload only |
+| 03 | **6.00–11.02** | `css/version-selector.html` | CSSFontFace UAF + Lapse/NetCtrl | `stable` or `latest` | No separate menu |
+| 04 | **9.00–9.60** | `900/version-selector.html` | PSFree + Lapse | Version selector | Included |
+| 05 | **7.00–8.52** | `700/version-selector.html` | PSFree + Lapse | Version selector | Included |
+| 06 | **6.72** | `672/index.html` | Dedicated host | Directly on page | Included |
+| 07 | **5.05** | `505/index.html` | Dedicated host | Directly on page | Included |
 
 The root selector stores the selected firmware locally and routes to the correct branch. Always use the host intended for the exact firmware installed on the console.
-
-The 1300 branch is intentionally experimental. `zrmslopkit` is a separate upstream project claim and is not equivalent to the official PPPwn support matrix. Its router reports 12.03–12.49 as unsupported, and its browser-facing runners use ES modules. No real-console validation is possible in this repository, so no reliability or no-panic guarantee is made for that branch. Firmware 11.01/11.02 are automatically redirected to the local CSSFontFace branch.
 
 Already-loaded guards: the 1300 chains check `getuid`/`setuid(0)` after the userland pivot and exit early with `ALREADY JAILBROKEN` instead of re-running the kernel exploit on an active jailbreak; the 700 and 900 PSFree branches poll the GoldHEN status endpoint (`http://127.0.0.1:9090/status`) for 1.5 s and skip the exploit entirely when GoldHEN answers. Re-opening a host after success is therefore safe by design.
 
@@ -80,17 +79,18 @@ Already-loaded guards: the 1300 chains check `getuid`/`setuid(0)` after the user
 $ ./launch --select-host
 
   index.html ──► firmware router
-                    │
-      ┌─────────┬───┴────────┬─────────┬─────────┬─────────┐
-      ▼         ▼            ▼         ▼         ▼         ▼
-   FW 5.05   FW 6.72     FW 7-8     FW 9      CSS       1300
-    host      host       selector  selector  selector  selector
-      │         │           │         │         │         │
-      │         │        cache install (GoldHEN build choice)
-      ▼         ▼           ▼         ▼         ▼         ▼
-      └─────────┴───────────┴────┬────┴─────────┴─────────┘
-                                 ▼
-                    exploit chain ──► GoldHEN + tools
+                     │
+      ┌──────────┬──┴─────┬────────┬────────┬────────┬────────┬─────────┐
+      ▼          ▼        ▼        ▼        ▼        ▼        ▼         ▼
+   FW 13.02  FW 11.00  FW 6.00  FW 9.00  FW 7.00  FW 6.72  FW 5.05
+   -13.52    -13.00    -11.02   -9.60    -8.52    host     host
+   selector  selector  selector selector selector
+      │          │         │        │        │        │         │
+      │          │      cache install (payload build choice)
+      ▼          ▼        ▼        ▼        ▼        ▼         ▼
+      └──────────┴────────┴───┬────┴────────┴────────┴─────────┘
+                              ▼
+                 exploit chain ──► HEN / GoldHEN + tools
 ```
 
 The project is intentionally static. HTML pages provide the interface, JavaScript modules run the firmware-specific exploit chain, binary files provide GoldHEN/kernel-patch/payload assets, and AppCache files keep the selected flow available after the initial cache installation.
@@ -99,14 +99,12 @@ The project is intentionally static. HTML pages provide the interface, JavaScrip
 
 The repository contains two GoldHEN choices where supported:
 
-- **GoldHEN v2.4b18.11** — a repository-bundled build exposed by the selectors.
+- **GoldHEN v2.4b18.12** — a repository-bundled build exposed by the selectors.
 - **GoldHEN v2.4b18.5** — a repository-bundled previous build.
-
-Official GoldHEN `v2.4b18` documents PS4 support through the listed `11.00` targets, not a general `11.02–13.00` range. Do not infer official GoldHEN support for the experimental 1300 branch.
 
 The 7.00–8.52 and 9.00–9.60 branches select a GoldHEN build through their version selector and cache page. The CSSFontFace branch uses [`css/version-selector.html`](./css/version-selector.html), which routes to:
 
-- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.11;
+- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.12;
 - [`css/stable/index.html`](./css/stable/index.html) for v2.4b18.5.
 
 ## Payload tools
@@ -155,6 +153,7 @@ All host branches use relative assets and browser application caching. Cache fil
 | **9.00–9.60** | Select a build in `900/version-selector.html`, then use `cache.html` or `cache5.html` to install `PSPulse.manifest` or `PSPulse5.manifest`. |
 | **CSSFontFace** | Select a build in `css/version-selector.html`; the chosen `stable` or `latest` page uses its own `cache.manifest` with per-file SHA-256 hashes. |
 | **1300** | Select a build in `1300/version-selector.html`; the chosen `stable` or `latest` router page installs its own `cache.manifest` automatically, cache updates require a tap to reload. |
+| **1352** | Open `1352/index.html` (GoldHEN `v2.4b18.12` for 13.02–13.52); the page installs its own `cache.manifest` automatically, cache updates require a tap to reload. |
 
 After the first successful cache installation, close and reopen the PS4 browser when the page instructs you to do so. If a page still serves an older layout or script, clear the host's browser data and repeat the cache installation.
 
@@ -252,8 +251,6 @@ Game servers ....... NodePlay
 **Author:** [BlackArch](https://t.me/sudoBlackArch)<br>
 **Community:** [PlayStation Pulse](https://t.me/PlayStation_Pulse)<br>
 **Premium Game Servers:** [NodePlay](https://nodeplay.net/)
-
-The repository contains firmware-specific exploit components, support modules, and preserved upstream notices (PSFree, CSSFontFace, zrmslopkit, and their contributors). Please retain the original notices and attribution included with those components.
 
 > For any use of the materials or files, the links to the author [BlackArch](https://t.me/sudoBlackArch) and the [PlayStation Pulse](https://t.me/PlayStation_Pulse) Telegram group must remain on all pages.
 

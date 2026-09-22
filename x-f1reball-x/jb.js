@@ -41,55 +41,44 @@ const SHOW_LOG = params.get("log") === "1";
 if (SHOW_LOG && document.body) document.body.className = "log";
 function finishUI(ok) {
   if (SHOW_LOG || !document.body) return;
-  document.body.className = ok ? "done" : "fail";
   try {
-    if (typeof window.__ps4jbProgressComplete === "function") {
-      window.__ps4jbProgressComplete(!!ok);
+    document.body.classList.remove("done");
+    document.body.classList.remove("fail");
+    document.body.classList.add(ok ? "done" : "fail");
+  } catch (eCls) {
+    document.body.className = ok ? "done" : "fail";
+  }
+  try {
+    if (ok) {
+      if (typeof window.__ps4jbProgressComplete === "function") {
+        window.__ps4jbProgressComplete();
+      }
+    } else if (typeof window.__ps4jbProgressFail === "function") {
+      window.__ps4jbProgressFail();
+    } else if (typeof window.__ps4jbProgressComplete === "function") {
+      window.__ps4jbProgressComplete(false);
     }
   } catch (eProg) {}
-  try {
-    var bar = document.getElementById("progress-bar");
-    var pct = document.getElementById("progress-pct");
-    var wrap = document.getElementById("progress-wrap");
-    if (bar) bar.style.width = "100%";
-    if (pct) {
-      pct.textContent = "100%";
-      pct.style.display = "block";
-    }
-    if (wrap) wrap.style.display = "block";
-    if (typeof window.__ps4jbPaintResultColors === "function") {
-      window.__ps4jbPaintResultColors(!!ok);
-    } else if (bar) {
-      bar.style.background = ok ? "#22c55e" : "#ef4444";
-      if (wrap) {
-        wrap.style.borderColor = ok
-          ? "rgba(34,197,94,0.85)"
-          : "rgba(239,68,68,0.85)";
-      }
-      if (pct) pct.style.color = ok ? "#86efac" : "#fca5a5";
-    }
-  } catch (eBar) {}
   var text = ok
-    ? "Jailbreak completed successfully. You can close the browser now."
+    ? "Jailbreak completed successfully"
     : "Jailbreak failed - restart your console";
-  var sub = document.getElementById("brand-sub");
-  if (sub) {
-    sub.textContent = text;
-    sub.style.display = "block";
-    sub.style.visibility = "visible";
-    sub.style.color = "#ffffff";
+  var stage = document.getElementById("stage");
+  if (stage) {
+    stage.textContent = text;
+    stage.className = ok ? "ok" : "bad";
+    if (ok) stage.style.display = "none";
+  }
+  var successMsg = document.getElementById("successMsg");
+  if (successMsg) {
+    successMsg.style.display = "none";
   }
   var msg = document.getElementById("msg");
   if (msg) {
-    msg.textContent = text;
-    msg.style.display = "block";
-    msg.style.visibility = "visible";
-    msg.style.opacity = "1";
-    msg.style.color = "#ffffff";
-    msg.style.zIndex = "9999";
+    msg.textContent = "";
+    msg.style.display = "none";
   }
   try {
-    var meta = document.getElementById("jb-meta");
+    var meta = document.getElementById("fwMeta") || document.getElementById("jb-meta");
     if (meta) {
       var fw = window.__ps4jbFw || null;
       if (!fw) {
@@ -100,36 +89,13 @@ function finishUI(ok) {
           if (minor.length === 1) minor = "0" + minor;
           fw = fwM[1] + "." + minor;
         }
-        try {
-          var q = (location.search || "").replace(/^\?/, "").split("&");
-          for (var qi = 0; qi < q.length; qi++) {
-            var qp = q[qi].split("=");
-            if (decodeURIComponent(qp[0] || "") === "fw") {
-              var qv = decodeURIComponent((qp[1] || "").replace(/\+/g, " "));
-              if (/^\d+\.\d+$/.test(qv)) fw = qv;
-            }
-          }
-        } catch (eQ) {}
       }
-      var elapsed =
-        typeof window.__ps4jbElapsedMs === "number"
-          ? window.__ps4jbElapsedMs
-          : typeof window.__ps4jbT0 === "number"
-            ? Date.now() - window.__ps4jbT0
-            : 0;
-      var sec = Math.max(0, Math.floor(elapsed / 1000));
-      var mm = Math.floor(sec / 60);
-      var rr = sec % 60;
-      var timeStr = mm > 0 ? mm + "m " + rr + "s" : rr + "s";
-      meta.textContent =
-        (fw ? "FW " + fw : "FW ?") +
-        " · " +
-        timeStr +
-        (ok ? " · done" : " · failed");
+      if (fw) meta.textContent = "FW " + fw;
       meta.style.display = "block";
     }
   } catch (eMeta) {}
   if (ok) {
+    // Close the browser window/tab after success (PS4 may ignore; try anyway).
     try { window.close(); } catch (eClose) {}
   }
 }
@@ -311,6 +277,24 @@ let allDone = false,
         PAYLOAD_FILE +
         " src=ps4_offsets.js",
     );
+
+    // Prefetch patch/payload while the exploit runs so the post-JB load is faster.
+    const prefetchBin = (url) =>
+      fetch(url)
+        .then(async (r) => (r && r.ok ? new Uint8Array(await r.arrayBuffer()) : null))
+        .catch(() => null);
+    const kpatchPrefetch = DO_PATCH ? prefetchBin(KPATCH_FILE) : Promise.resolve(null);
+    const payloadPrefetch = DO_PAYLOAD ? prefetchBin(PAYLOAD_FILE) : Promise.resolve(null);
+    // Warm the other common payload too (hen <-> goldhen).
+    try {
+      const other =
+        PAYLOAD_FILE === "hen.bin"
+          ? "goldhen.bin"
+          : PAYLOAD_FILE === "goldhen.bin"
+            ? "hen.bin"
+            : null;
+      if (other) prefetchBin(other);
+    } catch (ePref) {}
 
     // ---- benign-miss auto-retry (reads only, before any kernel write) ----
     // A passA/passB "no crossing" is a recoverable reclaim miss in the READ
@@ -2635,8 +2619,11 @@ let allDone = false,
             const SITES = [];
             if (DO_PATCH) {
               try {
-                const r = await fetch(KPATCH_FILE);
-                if (r.ok) kpatchBlob = new Uint8Array(await r.arrayBuffer());
+                kpatchBlob = await kpatchPrefetch;
+                if (!kpatchBlob) {
+                  const r = await fetch(KPATCH_FILE);
+                  if (r.ok) kpatchBlob = new Uint8Array(await r.arrayBuffer());
+                }
               } catch (e) {
                 mark("KPATCH-FETCH-THREW", (e && e.message) || String(e));
               }
@@ -2665,8 +2652,11 @@ let allDone = false,
             }
             if (DO_PAYLOAD) {
               try {
-                const r = await fetch(PAYLOAD_FILE);
-                if (r.ok) payloadBlob = new Uint8Array(await r.arrayBuffer());
+                payloadBlob = await payloadPrefetch;
+                if (!payloadBlob) {
+                  const r = await fetch(PAYLOAD_FILE);
+                  if (r.ok) payloadBlob = new Uint8Array(await r.arrayBuffer());
+                }
               } catch (e) {
                 mark("PAYLOAD-FETCH-THREW", (e && e.message) || String(e));
               }
@@ -3167,6 +3157,21 @@ let allDone = false,
                   keepAlive.push(thr);
                   new Uint8Array(thr).fill(0);
                   const thrAddr = bufAddr(thr);
+                  // Smooth bar/pct to 100% just BEFORE GoldHEN starts (no hard snap).
+                  try {
+                    document.body.classList.remove("fail");
+                    document.body.classList.add("done");
+                    if (typeof window.__ps4jbProgressComplete === "function") {
+                      window.__ps4jbProgressComplete();
+                    }
+                    var successEl = document.getElementById("successMsg");
+                    if (successEl) successEl.style.display = "none";
+                    var stageEl2 = document.getElementById("stage");
+                    if (stageEl2) stageEl2.style.display = "none";
+                  } catch (ePreUi) {}
+                  await new Promise(function (r) {
+                    setTimeout(r, 750);
+                  });
                   const rc = callAddr(expect, [thrAddr, 0, entry, 0]).i32;
                   const tdv = new DataView(thr);
                   const handle = new int64(

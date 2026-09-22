@@ -3,38 +3,26 @@ const logger = {
   seq: 0,
   verbose: true, // enable for debug logs
   info(msg) {
-    this.log(`[+] ${msg}`, "info");
+    this.log(`[+] ${msg}`);
   },
   error(msg) {
-    this.log(`[-] ${msg}`, "error");
+    this.log(`[-] ${msg}`);
   },
   debug(msg) {
     if (this.verbose) {
-      this.log(`[*] ${msg}`, "debug");
+      this.log(`[*] ${msg}`);
     }
   },
-  log(msg, type = "") {
+  log(msg) {
     if (is_worker()) {
-      self.postMessage({ type: "log", value: `[${self.name}]${msg}`, logType: type });
+      self.postMessage({ type: "log", value: `[${self.name}]${msg}` });
     } else {
       if (this.console === undefined) {
         this.console = document.getElementById("console");
       }
 
-      if (this.console) {
-        const span = document.createElement("span");
-        const str = String(msg);
-        if (type === "error" || str.startsWith("[-]") || str.includes("[-]")) {
-          span.className = "log-error";
-        } else if (type === "info" || str.startsWith("[+]")) {
-          span.className = "log-info";
-        } else if (type === "debug" || str.startsWith("[*]")) {
-          span.className = "log-debug";
-        }
-        span.textContent = `${str}\n`;
-        this.console.appendChild(span);
-        this.console.scrollTop = this.console.scrollHeight;
-      }
+      this.console.append(`${msg}\n`);
+      this.console.scrollTop = this.console.scrollHeight;
 
       const data = JSON.stringify({
         seq: this.seq++,

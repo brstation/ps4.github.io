@@ -2,7 +2,7 @@
 const NUM_REQS = 3; // 0x80 kmalloc zone since SceKernelAioRWRequest.sizeof * 3 = 0x78
 const WORKER_NUM = 2;
 const SPRAY_NUM = 0x200;
-const ATTEMPT_NUM = 0x150;
+const ATTEMPT_NUM = 0x80;
 const HANDLES_NUM = 0x100;
 const IPV6_SOCK_NUM = 0x80;
 //#endregion
@@ -555,7 +555,6 @@ async function double_free_reqs2() {
 
     const tcp_state = arw.view(info_addr).getInt8(0);
     logger.debug(`tcp_state: ${tcp_state}`);
-    logger.info("If script stuck more than 15 seconds, shutdown your console then try again !!");
 
     mem.free(info_addr);
     mem.free(info_size_addr);
