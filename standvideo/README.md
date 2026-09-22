@@ -1,2 +1,0 @@
-# All
-WebKit All firmware
