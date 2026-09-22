@@ -1,0 +1,93 @@
+<html manifest="cache.appcache">
+<!-- <html manifest="cache.appcache"> -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stand PS5 Jailbreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<!-- body is set up as three rows: auto 1fr auto -->
+<body>
+        <div class="p-2" style="color: white;">
+    <h1 class="text-center">PS5 UMTX2 Jailbreak (1.00-5.50)</h1>
+    <div id="status-container" style="text-align: center; margin-top: 10px;">
+        <p style="text-align: center">
+            <img src="img/PS_Loaders.png" width="128" height="101" alt="" style="display: block; margin: 0 auto;">
+            <img id="statusImage" src="offline.png" width="32" height="32" alt="Connection Status" />
+        </p>
+    </div>
+        <p class="text-center" id="top-bar-text">Current firmware: <span class="fw-bold" id="current-fw"></span></p>		
+        <!-- This is absolute positioned to the body-->
+        <div id="toast-container"></div>
+    </div>
+
+ 
+    <div id="main-content">
+<div id="pre-jb-view"
+     class="d-flex align-items-center justify-content-center flex-row selected"
+     style="gap: 26px;">
+
+    <a tabindex="0"
+       class="btn fw-bold"
+       id="run-jb"
+       onclick="run()"
+       style="width: 375px; height: 150px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <img src="img/01.png" width="64" height="64" alt="">
+        <br>Jailbreak (1.xx-5.xx)
+    </a>
+
+    <a tabindex="0"
+       class="btn"
+       id="run-wk-only"
+       onclick="run(true)"
+       style="width: 375px; height: 150px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <img src="img/02.png" width="64" height="64" alt="">
+        <br>Payload Need JB
+    </a>
+
+</div>
+
+        <div id="console-view">
+            <div id="console" class="log"></div>
+        </div>
+
+        <div id="payloads-view">
+        </div>
+    </div>
+    
+    <script src="int64.js"></script>
+    <script src="rop.js"></script>
+    <script src="main.js"></script>
+    <script src="umtx2.js"></script>
+    <script src="custom_host_stuff.js"></script>
+    <script src="syscalls.js"></script>
+    <script type="module" src="psfree/psfree.js"></script>
+    <script src="payload_map.js"></script>
+
+    <script>
+        addEventListener('unhandledrejection', (event) => {
+            const reason = event.reason;
+            // We log the line and column numbers as well since some exceptions (like
+            // SyntaxError) do not show it in the stack trace.
+            alert(
+                `${reason}\n`
+                + `${reason.sourceURL}:${reason.line}:${reason.column}\n`
+                + `${reason.stack}`
+            );
+            throw reason;
+        });
+        document.getElementById("current-fw").innerHTML = fw_str;
+        registerAppCacheEventHandlers();
+        registerL2ButtonHandler();
+        window.onload = function () {
+            let autoload = sessionStorage.getItem(SESSIONSTORE_ON_LOAD_AUTORUN_KEY);
+            if (autoload) {
+                run(autoload == "wkonly", false);
+            }
+        };
+    </script>
+</body>
+
+</html>

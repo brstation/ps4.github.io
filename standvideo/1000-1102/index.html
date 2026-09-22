@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" manifest="CSSFontFace.manifest">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stand PS4 Exploit 10.00 - 11.02</title>
+  <link rel="stylesheet" href="includes/style.css">
+</head>
+<body>
+
+  <h1>CSSFontFace UAF Exploit</h1>
+  <h3 id="UA">Running on:</h3>
+
+  <hr>
+
+  <div class="btn-container">
+    <form id="kernel-options">
+      <input type="radio" name="kernel" id="netctrl-exploit" value="netctrl">
+      <label for="netctrl-exploit">NetCtrl</label>
+      <input type="radio" name="kernel" id="lapse-exploit" value="lapse">
+      <label for="lapse-exploit">Lapse</label>
+    </form>
+    <button id="jeilbrek">Jailbreak</button>
+    <div class="autoJb">
+      <label for="autoJbInput" id="autoJbLabel">Auto Jailbreak</label>
+      <input class="mt-2" id="autoJbInput" type="checkbox">
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <pre id="console">Caching offline files... 0%</pre>
+  </div>
+<script>
+    var scriptsLoaded = false;
+
+    function triggerScripts() {
+      if (scriptsLoaded) return;
+      scriptsLoaded = true;
+
+      var consoleLog = document.getElementById('console');
+      if (consoleLog) consoleLog.innerText += "\nLoading main.js & script.js...";
+
+      var s1 = document.createElement('script');
+      s1.src = 'src/main.js';
+      s1.onerror = function() {
+        if (consoleLog) consoleLog.innerText += "\n❌ Error: Gagal memuat src/main.js (Cek path/file)";
+      };
+      
+      s1.onload = function() {
+        var s2 = document.createElement('script');
+        s2.src = 'includes/script.js';
+        s2.onerror = function() {
+          if (consoleLog) consoleLog.innerText += "\n❌ Error: Gagal memuat includes/script.js (Cek path/file)";
+        };
+        document.body.appendChild(s2);
+      };
+
+      document.body.appendChild(s1);
+    }
+
+    if (window.applicationCache) {
+      var appCache = window.applicationCache;
+      var consoleLog = document.getElementById('console');
+
+      appCache.addEventListener('progress', function(e) {
+        if (e.lengthComputable && consoleLog) {
+          var percent = Math.round((e.loaded / e.total) * 100);
+          consoleLog.innerText = "Caching offline files... " + percent + "%";
+        }
+      }, false);
+
+      appCache.addEventListener('cached', function() {
+        if (consoleLog) consoleLog.innerText = "Offline cache complete (100%)!";
+        triggerScripts();
+      }, false);
+
+      appCache.addEventListener('noupdate', function() {
+        if (consoleLog) consoleLog.innerText = "Offline cache ready.";
+        triggerScripts();
+      }, false);
+
+      appCache.addEventListener('error', function() {
+        if (consoleLog) consoleLog.innerText = "Cache error/offline mode.";
+        triggerScripts();
+      }, false);
+
+      setTimeout(function() {
+        if (!scriptsLoaded) {
+          if (consoleLog) consoleLog.innerText += "\n[Timeout] ...";
+          triggerScripts();
+        }
+      }, 3000);
+
+    } else {
+      triggerScripts();
+    }
+  </script>
+</body>
+</html>
