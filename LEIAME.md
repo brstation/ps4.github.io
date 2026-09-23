@@ -14,7 +14,7 @@ Abra o navegador no seu PS4 e acesse https://ps4.dpdns.org
 - O use-after-free do `aio` e a estratégia de recuperação IPv6 `pktopts` por trás do
   `lapse` e `poops` são pesquisas públicas da comunidade PS4/PS5. Os blobs de
   patch do kernel vêm de fontes de patches publicadas.
-- **[rawgame4](https://github.com/rawgame4/rawgame4.github.io)**, **[raw13g](https://github.com/raw13g/raw13g.github.io)**, **[gamerhack](https://github.com/GamerHack/GamerHack.github.io)**, **[psx8](https://github.com/psx8/psx8.github.io)**, **[x-f1reball-x](https://github.com/X-F1REBALL-X/PS4JB)**, **[webkitty](https://github.com/ArabPixel/WebKitty)**, **[standvideo](https://github.com/StandVideo/All)**, **[nadarepublicano](https://github.com/vinasxexplosao/NADAREPUBLICANOPS4)** — hosts originais, cadeias de kernel, tabelas de offsets e trabalho na camada de entrega.
+- **[rawgame4](https://github.com/rawgame4/rawgame4.github.io)**, **[raw13g](https://github.com/raw13g/raw13g.github.io)**, **[gamerhack](https://github.com/GamerHack/GamerHack.github.io)**, **[psx8](https://github.com/psx8/psx8.github.io)**, **[x-f1reball-x](https://github.com/X-F1REBALL-X/PS4JB)**, **[webkitty](https://github.com/ArabPixel/WebKitty)**, **[standvideo](https://github.com/StandVideo/All)**, **[nadarepublicano](https://github.com/vinasxexplosao/NADAREPUBLICANOPS4)**, **[mansoor0x](https://github.com/mansoor0x/polpNO)** — hosts originais, cadeias de kernel, tabelas de offsets e trabalho na camada de entrega.
 
 ## Aviso
 
