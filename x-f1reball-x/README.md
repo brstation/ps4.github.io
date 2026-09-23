@@ -60,9 +60,9 @@ Thanks:
 - **raw13g** - Relapse / 13.xx offsets
 - **B4411M** - offsets and patches
 - **SiSTR0** - GoldHEN / HEN
-- **zecoxao** - support / dumps
-- **Yenyen** - support
-- **EchoStretch** - support
+- **zecoxao** - firmware dumps
+- **Yenyen** - offsets / research
+- **EchoStretch** - hosts / tools
 
 ## License
 
