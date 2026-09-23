@@ -184,11 +184,8 @@
         // Render Markdown as HTML.
         content.innerHTML = marked.parse(markdown);
 
-        // Keep loading message visible for 3 seconds.
-        setTimeout(() => {
-          status.style.display = "none";
-        }, 3000);
-
+        // Hide loading message after successful rendering.
+        status.style.display = "none";
       } catch (error) {
         status.classList.add("error");
         status.textContent =
