@@ -19,7 +19,7 @@ const logger = {
     } else {
       if (this.console === undefined) {
         this.console = document.getElementById("console");
-        this.consoleElement = document.getElementById("DebugConsole"); 
+        this.consoleElement = document.getElementById("DebugConsole") || this.console; 
       }
 
       this.console.append(`${msg}\n`);

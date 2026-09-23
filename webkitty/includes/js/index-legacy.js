@@ -356,7 +356,7 @@ function _relapseJailbreak() {
           log("Loading Raw Game's Relapse exploit chain implementation..");
           _context6.p = 1;
           _context6.n = 2;
-          return getScript("src/relapse/jb.js", true);
+          return getScript("src/relapse/jb.js?v=10", true);
         case 2:
           _context6.n = 4;
           break;

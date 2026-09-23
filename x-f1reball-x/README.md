@@ -10,52 +10,59 @@ PS4 jailbreak / HEN host.
 
 | Firmware | Chain | Status |
 | --- | --- | --- |
-| 13.02, 13.04, 13.50, 13.52 | Slopkit Relapse | Working on this host |
-| 12.50 – 13.00 | Slopkit Netctrl | Auto (untested on this host) |
-| 11.03 – 12.02 | Slopkit Lapse | Auto (untested on this host) |
-| 7.00 – 11.02 | CSSFontFace + Lapse | Auto (untested on this host) |
-| 7.00 – 9.60 | PSFree + Lapse | `?chain=psfree` (untested) |
-| 6.70 – 6.72 | BadHoist | Entry page (limited) |
-| 6.00 – 6.69 | CSSFontFace + Lapse | Auto (untested on this host) |
+| 13.02, 13.04, 13.50, 13.52 | Slopkit Relapse | Works |
+| 12.50 - 13.00 | Slopkit Netctrl | Auto (untested here) |
+| 11.03 - 12.02 | Slopkit Lapse | Auto (untested here) |
+| 7.00 - 11.02 | CSSFontFace + Lapse | Auto (untested here) |
+| 7.00 - 9.60 | PSFree + Lapse | `?chain=psfree` (untested) |
+| 6.70 - 6.72 | BadHoist | Entry page (limited) |
+| 6.00 - 6.69 | CSSFontFace + Lapse | Auto (untested here) |
 
-Router auto-picks the chain by firmware. Override with `?chain=cssfontface|psfree|slopkit|relapse|badhoist` or `?force=1`.
+Picks the chain by firmware. You can override with `?chain=` if needed.
 
 ## How to use
 
-### 1. Block Sony updates (DNS)
+### Block Sony updates (DNS)
 
-1. Settings → Network → Set Up Internet Connection.
+1. Settings > Network > Set Up Internet Connection.
 2. Use **Custom** setup.
 3. DNS Settings: **Manual**.
 4. Primary DNS: `62.210.38.117`
 5. Leave Secondary DNS empty.
 6. Save and test connection (fail to Sony is OK).
 
-DNS by **Nomadic** — blocks official system updates.
+DNS by **Nomadic** - blocks official system updates.
 
-### 2. Browser
+### Browser
 
 1. Open the PS4 Internet Browser.
 2. Clear Cookies and Clear Cache (Options menu).
 3. Open: https://x-f1reball-x.github.io/PS4JB/
 4. Add the page to **Favorites**.
 
-### 3. Jailbreak
+### Jailbreak
 
 1. Open the favorite / link.
 2. Wait for cache (`Cache ready`), then the jailbreak starts.
 3. Wait for success (the page tries to close).
-4. If it fails, restart the console and try again.
+4. If it fails: Jailbreak failed - restart your console.
 
-## Layout
+## Credits
 
-- `index.html` — FW detect, cache, Slopkit Relapse jailbreak (one page)
-- `jb.js` — Slopkit Relapse 13.02–13.52
-- `chains/cssfontface/` — CSSFontFace + Lapse/Netctrl
-- `chains/psfree-lapse/` — PSFree + Lapse
-- `chains/slopkit/` — Slopkit Lapse (11.xx–12.02) / Netctrl (12.50–13.00)
-- `chains/badhoist/` — assets only
-- `third_party/` — mirrored patches / offsets / licenses
+Thanks:
+
+- **Sleirsgoevy** - BadHoist (6.70 - 6.72)
+- **TheFloW** - NetControl / poops base (Netctrl)
+- **Nathan Fargo** - CSSFontFace
+- **abc** - PSFree
+- **SpecterDev** / **ChendoChap** - Lapse
+- **jordyidk** - Slopkit
+- **raw13g** - Relapse / 13.xx offsets
+- **B4411M** - offsets and patches
+- **SiSTR0** - GoldHEN / HEN
+- **zecoxao** - support / dumps
+- **Yenyen** - support
+- **EchoStretch** - support
 
 ## License
 

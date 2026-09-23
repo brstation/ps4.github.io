@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v2
+# v2.1
 # Generated on 2026-09-22
 
 CACHE:
@@ -81,6 +81,7 @@ CACHE:
 ../../../src/relapse/ps4_offsets.js
 ../../../src/relapse/rpc_worker.js
 ../../../src/relapse/jb.js
+../../../src/relapse/jb.js?v=10
 ../../../src/relapse/patches/1302.bin
 ../../../src/relapse/patches/1350.bin
 ../../../src/relapse/patches/1352.bin

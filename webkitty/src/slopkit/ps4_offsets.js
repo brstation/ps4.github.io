@@ -410,6 +410,22 @@ export const PS4 = {
     },
 };
 
+PS4["11.02"] = Object.assign({}, PS4["11.00"], {
+    alias_of: "11.02",
+    fw_status: "state=Tested-on-hardware shares=11.00 "
+        + "kernel_rvas=untested-vs-dump "
+        + "kpatch=1102.bin",
+    kpatch: "1102.bin",
+    wk_expm1_builtin: 0x2193f40,
+    wk_POP_RDI_RET: 0x272776,
+    wk_POP_RAX_RET: 0x116d4,
+    wk_MOV_RDI_RSI_30_CALL: 0x24dae68,
+    wk_MOV_RDX_RAX_18_CALL_10: 0x30f523,
+    wk_POP_R9_RET: 0x6403b1,
+    k_evf_cv: 0x7fc26f,
+});
+
+
 PS4["11.52"] = Object.assign({}, PS4["11.50"], {
     alias_of: "11.50",
     fw_status: "state=Tested-on-hardware shares=11.50 "

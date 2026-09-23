@@ -235,7 +235,7 @@ async function slopKit() {
 async function relapseJailbreak() {
   log("Loading Raw Game's Relapse exploit chain implementation..");
   try {
-    await getScript("src/relapse/jb.js", true);
+    await getScript("src/relapse/jb.js?v=10", true);
   } catch (error) {
     log(error);
   }
