@@ -43,6 +43,39 @@ body {
 }
 
 /* =========================
+   BANNER DE ALERTA
+   ========================= */
+
+.alert {
+    display: none;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto 25px;
+    padding: 14px 20px;
+    box-sizing: border-box;
+    background: #252d37;
+    border: 1px solid #596777;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.alert-title {
+    display: block;
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.alert-message {
+    color: #c8d1dc;
+}
+
+/* =========================
    BOTAO CREDITOS
    ========================= */
 
@@ -301,6 +334,11 @@ h1 {
     .select {
         font-size: 12px;
     }
+
+    .alert {
+        font-size: 13px;
+        padding: 13px 15px;
+    }
 }
 
 /* =========================
@@ -346,6 +384,16 @@ h1 {
 
     .select {
         font-size: 11px;
+    }
+
+    .alert {
+        margin-bottom: 20px;
+        padding: 12px 12px;
+        font-size: 12px;
+    }
+
+    .alert-title {
+        font-size: 13px;
     }
 }
 
@@ -395,6 +443,28 @@ h1 {
 <div class="wrapper">
 
 <!-- =========================
+     BANNER DE ALERTA
+     ========================= -->
+
+<div
+    class="alert"
+    id="alert">
+
+    <span
+        class="alert-title"
+        data-i18n="alertTitle">
+        UPDATE NOTICE
+    </span>
+
+    <span
+        class="alert-message"
+        data-i18n="alertMessage">
+        A new update is available.
+    </span>
+
+</div>
+
+<!-- =========================
      BOTAO CREDITOS
      ========================= -->
 
@@ -412,13 +482,17 @@ h1 {
 
 <div class="header">
 
-    <div class="small" data-i18n="platform">
+    <div
+        class="small"
+        data-i18n="platform">
         PlayStation 4
     </div>
 
     <h1>JAILBREAK</h1>
 
-    <p class="description" data-i18n="description">
+    <p
+        class="description"
+        data-i18n="description">
         Select the exploit compatible with your PS4 firmware version.
     </p>
 
@@ -556,7 +630,7 @@ h1 {
 
     </a>
 
-    <!-- WebKitty -->
+    <!-- WEBKITTY -->
 
     <a class="card" href="https://webkitty.arabpixel.net/">
 
@@ -703,6 +777,31 @@ h1 {
 <script>
 
 /* =========================
+   CONFIGURACAO DO ALERTA
+   ========================= */
+
+/*
+   true  = mostra o alerta para todos
+   false = desativa o alerta
+*/
+
+var showAlert = true;
+
+
+/*
+   Use uma versao/data diferente para cada
+   novo aviso que voce publicar.
+
+   Exemplo:
+   "2026-09-24"
+   "2026-10-01"
+   "update-13.52"
+*/
+
+var alertVersion = "2026-09-24";
+
+
+/* =========================
    TRADUCOES
    ========================= */
 
@@ -740,7 +839,7 @@ var translations = {
         firmwareNADAREPUBLICANO:
             "Firmware: 11.00 – 13.52",
 
-        firmwarefirmwaremansoor0x:
+        firmwaremansoor0x:
             "Firmware: 11.00 – 13.52",
 
         offline:
@@ -753,7 +852,13 @@ var translations = {
             "CRÉDITOS",
 
         creditsUrl:
-            "https://ps4.dpdns.org/leiame"
+            "https://ps4.dpdns.org/leiame",
+
+        alertTitle:
+            "AVISO DE ATUALIZAÇÃO",
+
+        alertMessage:
+            "Uma nova atualização está disponível. Confira as novidades nos créditos."
 
     },
 
@@ -789,7 +894,7 @@ var translations = {
         firmwareNADAREPUBLICANO:
             "Firmware: 11.00 – 13.52",
 
-        firmwarefirmwaremansoor0x:
+        firmwaremansoor0x:
             "Firmware: 11.00 – 13.52",
 
         offline:
@@ -802,11 +907,18 @@ var translations = {
             "CREDITS",
 
         creditsUrl:
-            "https://ps4.dpdns.org/readme"
+            "https://ps4.dpdns.org/readme",
+
+        alertTitle:
+            "UPDATE NOTICE",
+
+        alertMessage:
+            "A new update is available. Check the credits for more information."
 
     }
 
 };
+
 
 /* =========================
    DETECTAR IDIOMA
@@ -814,7 +926,8 @@ var translations = {
 
 function detectLanguage() {
 
-    var saved = localStorage.getItem("language");
+    var saved =
+        localStorage.getItem("language");
 
     if (saved === "pt" || saved === "en") {
         return saved;
@@ -836,29 +949,40 @@ function detectLanguage() {
 
 }
 
+
 /* =========================
    ALTERAR IDIOMA
    ========================= */
 
 function setLanguage(language) {
 
-    var texts = translations[language];
+    var texts =
+        translations[language];
 
-    document.documentElement.lang = language;
+    document.documentElement.lang =
+        language;
 
     var elements =
         document.querySelectorAll("[data-i18n]");
 
-    for (var i = 0; i < elements.length; i++) {
+    for (
+        var i = 0;
+        i < elements.length;
+        i++
+    ) {
 
         var key =
             elements[i].getAttribute("data-i18n");
 
         if (texts[key]) {
-            elements[i].innerHTML = texts[key];
+
+            elements[i].innerHTML =
+                texts[key];
+
         }
 
     }
+
 
     /* Botao PT */
 
@@ -872,6 +996,7 @@ function setLanguage(language) {
 
     }
 
+
     /* Botao EN */
 
     else {
@@ -884,12 +1009,14 @@ function setLanguage(language) {
 
     }
 
+
     /* =========================
        ATUALIZAR LINK DOS CREDITOS
        ========================= */
 
     document.getElementById("creditsLink").href =
         texts.creditsUrl;
+
 
     /* =========================
        SALVAR IDIOMA
@@ -902,6 +1029,31 @@ function setLanguage(language) {
 
 }
 
+
+/* =========================
+   CONTROLAR ALERTA
+   ========================= */
+
+function updateAlert() {
+
+    var alertElement =
+        document.getElementById("alert");
+
+    if (!showAlert) {
+
+        alertElement.style.display =
+            "none";
+
+        return;
+
+    }
+
+    alertElement.style.display =
+        "block";
+
+}
+
+
 /* =========================
    INICIALIZACAO
    ========================= */
@@ -909,6 +1061,8 @@ function setLanguage(language) {
 setLanguage(
     detectLanguage()
 );
+
+updateAlert();
 
 </script>
 
