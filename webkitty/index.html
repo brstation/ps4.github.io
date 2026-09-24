@@ -694,7 +694,7 @@
         if (isPS4 && is67x && jailbreakNow) {
             try {
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'src/badhoist/672entrypoint.js', false);
+                xhr.open('GET', 'webkitty/src/badhoist/672entrypoint.js', false);
                 xhr.send('');
                 if (xhr.status === 200) {
                     eval.call(top.window, xhr.responseText);
