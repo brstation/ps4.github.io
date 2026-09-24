@@ -446,9 +446,7 @@ h1 {
      BANNER DE ALERTA
      ========================= -->
 
-<div
-    class="alert"
-    id="alert">
+<div class="alert" id="alert">
 
     <span
         class="alert-title"
@@ -458,7 +456,7 @@ h1 {
 
     <span
         class="alert-message"
-        data-i18n="alertMessage">
+        id="alertMessage">
         A new update is available.
     </span>
 
@@ -782,23 +780,25 @@ h1 {
 
 /*
    true  = mostra o alerta para todos
-   false = desativa o alerta
+   false = desativa o alerta para todos
 */
 
 var showAlert = true;
 
 
-/*
-   Use uma versao/data diferente para cada
-   novo aviso que voce publicar.
+/* =========================
+   TEXTO DO ALERTA
+   ========================= */
 
-   Exemplo:
-   "2026-09-24"
-   "2026-10-01"
-   "update-13.52"
-*/
+var alertText = {
 
-var alertVersion = "2026-09-24";
+    pt:
+        "Nova atualização disponível! Confira as novidades nos créditos.",
+
+    en:
+        "New update available! Check the credits for more information."
+
+};
 
 
 /* =========================
@@ -855,10 +855,7 @@ var translations = {
             "https://ps4.dpdns.org/leiame",
 
         alertTitle:
-            "AVISO DE ATUALIZAÇÃO",
-
-        alertMessage:
-            "Uma nova atualização está disponível. Confira as novidades nos créditos."
+            "AVISO DE ATUALIZAÇÃO"
 
     },
 
@@ -910,10 +907,7 @@ var translations = {
             "https://ps4.dpdns.org/readme",
 
         alertTitle:
-            "UPDATE NOTICE",
-
-        alertMessage:
-            "A new update is available. Check the credits for more information."
+            "UPDATE NOTICE"
 
     }
 
@@ -984,6 +978,12 @@ function setLanguage(language) {
     }
 
 
+    /* Atualizar texto do alerta */
+
+    document.getElementById("alertMessage").innerHTML =
+        alertText[language];
+
+
     /* Botao PT */
 
     if (language === "pt") {
@@ -1031,7 +1031,7 @@ function setLanguage(language) {
 
 
 /* =========================
-   CONTROLAR ALERTA
+   MOSTRAR / OCULTAR ALERTA
    ========================= */
 
 function updateAlert() {
@@ -1039,17 +1039,17 @@ function updateAlert() {
     var alertElement =
         document.getElementById("alert");
 
-    if (!showAlert) {
+    if (showAlert) {
+
+        alertElement.style.display =
+            "block";
+
+    } else {
 
         alertElement.style.display =
             "none";
 
-        return;
-
     }
-
-    alertElement.style.display =
-        "block";
 
 }
 
@@ -1058,8 +1058,11 @@ function updateAlert() {
    INICIALIZACAO
    ========================= */
 
+var currentLanguage =
+    detectLanguage();
+
 setLanguage(
-    detectLanguage()
+    currentLanguage
 );
 
 updateAlert();
