@@ -120,7 +120,7 @@
     -webkit-transition: background 0.35s ease, box-shadow 0.35s ease;
     transition: background 0.35s ease, box-shadow 0.35s ease;
   }
-  /* One continuous CSS animation 0→100% — keeps moving if JS stalls (JS-stall safe). */
+  /* One continuous CSS animation 0→100% - keeps moving if JS stalls (JS-stall safe). */
   @-webkit-keyframes ps4jb-fill {
     from { width: 0%; }
     to { width: 100%; }
@@ -268,7 +268,7 @@
 <div id="bg" aria-hidden="true"></div>
 <div id="main">
   <p id="brand-title">PS4JB</p>
-  <p id="brand-sub">6.00–12.02 · 12.50–13.52</p>
+  <p id="brand-sub">6.00-12.02 · 12.50-13.52</p>
   <p id="fwMeta">detecting firmware...</p>
   <div id="cache"></div>
   <div id="stage">Jailbreak in progress</div>
@@ -332,7 +332,7 @@
     document.body.className = (document.body.className || "") + " device-blocked";
     function showBlocked(device) {
       if (brandSub) {
-        brandSub.textContent = device + " — not supported";
+        brandSub.textContent = device + " - not supported";
         brandSub.className = "blocked";
       }
       if (fwMeta) fwMeta.textContent = "";
@@ -602,15 +602,15 @@
     go();
   } else if (!navigator.onLine) {
     // Offline: use whatever is already cached.
-    setCache("Cache ready — you can jailbreak without internet", true);
+    setCache("Cache ready - you can jailbreak without internet", true);
     go();
   } else if (ac.status === ac.UPDATEREADY) {
     try { ac.swapCache(); } catch (e) {}
-    setCache("Cache ready — you can jailbreak without internet", true);
+    setCache("Cache ready - you can jailbreak without internet", true);
     location.reload();
   } else {
     // Wait for AppCache before starting the jailbreak.
-    // Do NOT start on IDLE alone — PS4 WebKit often reports IDLE while
+    // Do NOT start on IDLE alone - PS4 WebKit often reports IDLE while
     // it is still checking/downloading, which used to launch jb.js early.
     setCache("checking cache...");
     var started = false;
@@ -620,7 +620,7 @@
       go();
     }
     function markReady() {
-      setCache("Cache ready — you can jailbreak without internet", true);
+      setCache("Cache ready - you can jailbreak without internet", true);
       startOnce();
     }
     ac.addEventListener("checking",
@@ -635,7 +635,7 @@
     ac.addEventListener("noupdate", markReady, false);
     ac.addEventListener("updateready", function () {
       try { ac.swapCache(); } catch (e) {}
-      setCache("Cache ready — you can jailbreak without internet", true);
+      setCache("Cache ready - you can jailbreak without internet", true);
       location.reload();
     }, false);
     ac.addEventListener("error", function () {

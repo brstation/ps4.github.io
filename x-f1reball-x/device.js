@@ -1,5 +1,5 @@
 /* Device label for non-PS4 block screen. Prefer Client Hints; UA is fallback. */
-/* device.js?v=3 — bump query when changing maps (cache bust). */
+/* device.js?v=3 - bump query when changing maps (cache bust). */
 
 var DEVICE_MODEL_NAMES = {
   "2107113SG": "Xiaomi 11T Pro",

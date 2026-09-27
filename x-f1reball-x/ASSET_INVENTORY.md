@@ -3,11 +3,11 @@
 600.bin, 620.bin, 650.bin, 670.bin, 700.bin, 750.bin, 800.bin, 850.bin, 900.bin, 903.bin, 950.bin, 1000.bin, 1050.bin, 1100.bin, 1102.bin, 1150.bin, 1200.bin, 1250.bin, 1300.bin, 1302.bin, 1304.bin, 1350.bin, 1352.bin
 
 ## Chains layout
-- `chains/badhoist/` — 3 files; entry: `index.html`
-- `chains/cssfontface/` — 30 files; entry: `index.html`
-- `chains/psfree-lapse/` — 52 files; entry: `index.html`
-- `chains/relapse/` — 9 files; entry: `NONE`
-- `chains/slopkit/` — 16 files; entry: `index.html`
+- `chains/badhoist/` - 3 files; entry: `index.html`
+- `chains/cssfontface/` - 30 files; entry: `index.html`
+- `chains/psfree-lapse/` - 52 files; entry: `index.html`
+- `chains/relapse/` - 9 files; entry: `NONE`
+- `chains/slopkit/` - 16 files; entry: `index.html`
 
 ## Offset / constants tables
 - `chains/cssfontface/ps4/constants.js`
@@ -41,15 +41,15 @@
 - `third_party/webkitty/offsets/ps4_offsets.js`
 
 ## Licenses / notices
-- `LICENSE` — OK
-- `NOTICE` — OK
-- `chains/LICENSE.WebKitty-AGPL-3.0` — OK
-- `third_party/licenses/WebKitty-AGPL-3.0.txt` — OK
-- `third_party/licenses/CSSFontFace-Exploit-MIT.txt` — OK
-- `third_party/licenses/B4411M-all-LICENSE.txt` — OK
-- `third_party/ATTRIBUTION/SOURCES.md` — OK
+- `LICENSE` - OK
+- `NOTICE` - OK
+- `chains/LICENSE.WebKitty-AGPL-3.0` - OK
+- `third_party/licenses/WebKitty-AGPL-3.0.txt` - OK
+- `third_party/licenses/CSSFontFace-Exploit-MIT.txt` - OK
+- `third_party/licenses/B4411M-all-LICENSE.txt` - OK
+- `third_party/ATTRIBUTION/SOURCES.md` - OK
 
 ## Router wiring
-- Default: 700–1102 → `chains/cssfontface/` (untested); 1302/1304/1350/1352 → `jb.html` (proven)
+- Default: 700-1102 → `chains/cssfontface/` (untested); 1302/1304/1350/1352 → `jb.html` (proven)
 - Manual: `?chain=cssfontface|psfree|slopkit|relapse`
-- BadHoist 6.70–6.72: assets only
+- BadHoist 6.70-6.72: assets only
