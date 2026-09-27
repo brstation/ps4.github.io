@@ -1,0 +1,55 @@
+CACHE MANIFEST
+# ps4jb-cache-wait-1
+# ps4jb-brand-cachehtml-1
+# rev 20260922-continuous-css-fill
+ps-logo.jpg #95cab1d70cad3e48fbf67a5de86ab368a908e46b81c5ee1f547414afb44abf84
+ps-controller-bg.jpg #d373feec02ff0f3dd6992b9f0d5b9c459c09cff64a615d5d558d78db33743fbf
+
+index.html #f86a2ce3cef794518c5c9a48d537fd2b4f57ca74f08a8b395ee970f09a9c8cb1
+cache.html #5b70277ffbc0c8c376d1e5c15e65ef311b11ad74eb5a0ebcf6d62436a4bf5897
+jb.html #47b3202cfafc2f4c8865dfc8d5031dd10dd7071abf0a725b6dd232f7248609cd
+logo_raw.png
+ps4-bg.png
+device.js #6fa76e47563ea1714a217fe2a311df306c38dd2cd3f98703015471bd228fd589
+device.js?v=1 #6fa76e47563ea1714a217fe2a311df306c38dd2cd3f98703015471bd228fd589
+jb.js #58e4bb23f0036cc7d59187baa7ad5a0743ac5fe0eff7145b32ecce6c95727bea
+jb.js?v=40 #58e4bb23f0036cc7d59187baa7ad5a0743ac5fe0eff7145b32ecce6c95727bea
+core.js #a76c52afbc19b05d176be2059048a3c6a4fb61db084d56434cef2b17da00b2b3
+mem.js #ee5e52ea8c7ac349f3df4249e6245c6bb41aa9482081b452e629e589dead3b11
+int64.js #611da6a52da5ecf970a3718ab2a4561d3992c655c55342d066d12a9a50554f34
+ps4_offsets.js #0ec78d92052c9fbb69d2be88da1556f57bcb83e11487495eaccf28ae3d5535f0
+rpc_worker.js #2d030c4cc92f46f96e1e4aea0463e1cde84e7f9a2ec17411473880a0c3f4e682
+hen.bin #c05f6097dbc0707e8ec2fb5443ee507da6ac6e79c6fa8e9f78544658710efeff
+goldhen.bin #df3f27c1b35bc7c40e3a08caab948930914dc7d0301a73b68945cf6ffe40ea12
+ps4debug.bin #28829f48465d3dfdf97afc15f01edafd8802f8213c44635af6f21e0e8b48c8f6
+patches/1302.bin #76584f8a02be806816aa7987ff6f2aed3a4a7f9494c49643e32f9cb9d75ab71b
+patches/1350.bin #b9ab32fa10c272c341da97159a13818d98316b9998f3cf89d874e0b35e41cdbd
+patches/1352.bin #a4ca7dc1f31a342cd80cb3b4aee0fcd56e92685e3ce1491c34cbd656c1af562c
+core.js?v=10 #a76c52afbc19b05d176be2059048a3c6a4fb61db084d56434cef2b17da00b2b3
+
+# multi-fw phase 1
+NOTICE
+LICENSE
+chains/cssfontface/index.html
+chains/cssfontface/main.js
+chains/cssfontface/misc.js
+chains/cssfontface/loader.js
+chains/cssfontface/workers.js
+chains/cssfontface/worker.js
+chains/cssfontface/lapse.js
+chains/cssfontface/netctrl.js
+chains/cssfontface/ps4/constants.js
+chains/cssfontface/ps4/userland.js
+chains/cssfontface/ps4/kernel.js
+chains/psfree-lapse/index.html
+chains/psfree-lapse/bundle.js
+chains/slopkit/index.html
+chains/slopkit/chain_lapse.js
+chains/slopkit/chain_poops.js
+
+NETWORK:
+*
+
+FALLBACK:
+index.html index.html
+jb.html jb.html
