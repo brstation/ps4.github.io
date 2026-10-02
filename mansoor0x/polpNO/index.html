@@ -1,0 +1,135 @@
+<!-- © 2026 mansoor0x — PS4 Exploit -->
+<html manifest="cache.appcache">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>mansoor0x</title>
+    <style>
+        body {
+            background: #ffffff;
+            color: #111111;
+            font: 15px/1.5 monospace;
+            margin: 20px;
+        }
+        #console {
+            font-family: monospace;
+            white-space: pre;
+        }
+        .ok   { color: #1a7a1a; }
+        .bad  { color: #cc0000; }
+        .warn { color: #aa6600; }
+    </style>
+    <script>
+    if (window.applicationCache && window.applicationCache.status == 0) {
+        window.location.replace("cache.html");
+    }
+    </script>
+</head>
+<body>
+    mansoor0x · PS4 Exploit<br>
+    © 2026 mansoor0x<br>
+    <br>
+    <pre id="console"></pre>
+</body>
+<script>
+(function () {
+    var con = document.getElementById("console");
+
+    function print(msg, cls) {
+        var span = document.createElement("span");
+        if (cls) span.className = cls;
+        span.textContent = msg + "\n";
+        con.appendChild(span);
+    }
+
+    var params = new URLSearchParams(location.search);
+
+    // Firmwares with measured kernel table — KEEP IN SYNC with ps4_offsets.js
+    var SUPPORTED = { 1302: 1, 1304: 1, 1350: 1, 1352: 1 };
+
+    var key = null, fwnum = null;
+    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
+    if (m) {
+        var ms = parseInt(m[2], 16).toString(16);
+        if (ms.length < 2) ms = "0" + ms;
+        key = m[1] + "." + ms;
+        fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+    }
+
+    var forced    = params.get("force") === "1";
+    var supported = forced || (fwnum !== null && SUPPORTED[fwnum] === 1);
+
+    print("firmware: " + (key || "unknown"));
+    print("supported: " + (supported ? "yes" : "no"), supported ? "ok" : "bad");
+
+    var target = "jb.html" + location.search;
+
+    function go() {
+        print("loading exploit...", "warn");
+        location.replace(target);
+    }
+
+    function waitForTap(msg, action) {
+        print(msg, "warn");
+        function fire() {
+            window.removeEventListener("click",   fire);
+            window.removeEventListener("keydown", fire);
+            action();
+        }
+        window.addEventListener("click",   fire);
+        window.addEventListener("keydown", fire);
+    }
+
+    if (!supported) {
+        print("UNSUPPORTED FIRMWARE — tap / press X to run anyway", "bad");
+        waitForTap("", go);
+        return;
+    }
+
+    var ac = window.applicationCache;
+    if (!ac || !document.documentElement.hasAttribute("manifest")) {
+        go();
+    } else if (!navigator.onLine) {
+        print("offline — running from cache", "ok");
+        go();
+    } else if (ac.status === ac.IDLE) {
+        print("cached", "ok");
+        go();
+    } else if (ac.status === ac.UPDATEREADY) {
+        try { ac.swapCache(); } catch (e) {}
+        print("update downloaded", "ok");
+        waitForTap("UPDATE READY — tap / press X to reload", function () { location.reload(); });
+    } else {
+        print("checking cache...");
+        ac.addEventListener("downloading",
+            function () { print("caching for offline (first run)..."); }, false);
+        ac.addEventListener("progress", function (e) {
+            if (e && e.total)
+                print("caching " + Math.round((e.loaded / e.total) * 100) + "%");
+        }, false);
+        ac.addEventListener("cached", function () {
+            print("cached for offline use", "ok");
+            waitForTap("CACHED — tap / press X to run", go);
+        }, false);
+        ac.addEventListener("updateready", function () {
+            try { ac.swapCache(); } catch (e) {}
+            print("update downloaded", "ok");
+            waitForTap("UPDATE READY — tap / press X to reload",
+                       function () { location.reload(); });
+        }, false);
+        ac.addEventListener("noupdate", function () {
+            print("cached — offline ready", "ok");
+            go();
+        }, false);
+        ac.addEventListener("error", function () {
+            print("cache unavailable");
+            waitForTap("CACHE FAILED — tap / press X to run anyway", go);
+        }, false);
+        ac.addEventListener("obsolete", function () {
+            print("cache obsolete");
+            waitForTap("CACHE OBSOLETE — tap / press X to run", go);
+        }, false);
+    }
+})();
+</script>
+</html>

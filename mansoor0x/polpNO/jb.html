@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" manifest="cache.appcache">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>MANSOOR0X // NVS</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+      :root {
+        --color-bg: #05070a;
+        --color-initial: #52688f;
+        --color-ok: #00ff88;
+        --color-fail: #ff3333;
+        --color-text: #e0e6ed;
+        --glass: blur(20px) saturate(180%);
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--color-bg);
+        font-family: 'Inter', sans-serif;
+        color: var(--color-text);
+        overflow: hidden;
+        perspective: 1000px;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: 
+          radial-gradient(at 10% 20%, rgba(30, 58, 138, 0.15) 0px, transparent 50%),
+          radial-gradient(at 90% 80%, rgba(8, 145, 178, 0.15) 0px, transparent 50%);
+        opacity: 0.8;
+        z-index: -1;
+      }
+
+      #main-container {
+        position: relative;
+        width: 90%;
+        max-width: 400px;
+        aspect-ratio: 1/1;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: var(--glass);
+        -webkit-backdrop-filter: var(--glass);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.6s var(--ease);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4), 
+                    inset 0 0 0 1px rgba(255,255,255,0.05);
+      }
+
+      body.done #main-container {
+        box-shadow: 0 30px 80px rgba(0, 255, 136, 0.15), 
+                    inset 0 0 0 1px rgba(0, 255, 136, 0.3);
+        border-color: rgba(0, 255, 136, 0.3);
+      }
+
+      body.fail #main-container {
+        box-shadow: 0 30px 80px rgba(255, 51, 51, 0.15), 
+                    inset 0 0 0 1px rgba(255, 51, 51, 0.3);
+        border-color: rgba(255, 51, 51, 0.3);
+      }
+
+      #brand {
+        font-weight: 900;
+        font-size: 24px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 40px;
+        background: linear-gradient(to bottom right, #ffffff, #8b9bb4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: all 0.5s var(--ease);
+      }
+
+      body.done #brand {
+        filter: drop-shadow(0 0 15px var(--color-ok));
+        background: var(--color-ok);
+        -webkit-background-clip: text;
+      }
+
+      body.fail #brand {
+        filter: drop-shadow(0 0 15px var(--color-fail));
+        background: var(--color-fail);
+        -webkit-background-clip: text;
+      }
+
+      #visual-indicator {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid var(--color-initial);
+        animation: subtle-pulse 2s infinite;
+        transition: all 0.5s var(--ease);
+      }
+
+      .core {
+        width: 40%;
+        height: 40%;
+        background-color: var(--color-initial);
+        border-radius: 50%;
+        transition: all 0.5s var(--ease);
+        box-shadow: 0 0 15px var(--color-initial);
+      }
+
+      #spin {
+        position: absolute;
+        width: 140%;
+        height: 140%;
+        border: 3px solid transparent;
+        border-top-color: var(--color-text);
+        border-radius: 50%;
+        animation: real-spin 0.8s linear infinite;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+      }
+
+      body.done .pulse { border-color: var(--color-ok); animation: none; }
+      body.done .core { background-color: var(--color-ok); box-shadow: 0 0 25px var(--color-ok); }
+      body.done #spin { opacity: 0; }
+
+      body.fail .pulse { border-color: var(--color-fail); animation: none; }
+      body.fail .core { background-color: var(--color-fail); box-shadow: 0 0 25px var(--color-fail); }
+      body.fail #spin { opacity: 0; }
+
+      #msg {
+        position: fixed;
+        top: calc(50% + 110px);
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: var(--color-fail);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        display: none;
+      }
+      body.fail #msg { display: block; }
+
+      #wrap { padding: 0; }
+      #state, #out { display: none; }
+      body.log body::before,
+      body.log #main-container,
+      body.log #footer {
+        display: none;
+      }
+      body.log {
+        overflow: auto;
+        display: block;
+        padding: 20px;
+        background: var(--color-bg);
+      }
+      body.log #wrap {
+        display: block;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      body.log #state {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--color-text);
+        font-family: 'JetBrains Mono', monospace;
+      }
+      body.log #out {
+        display: block;
+        white-space: pre-wrap;
+        font: 12px/1.6 'JetBrains Mono', monospace;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 16px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        color: var(--color-text);
+      }
+
+      .ok { color: var(--color-ok); }
+      .bad { color: var(--color-fail); }
+      .warn { color: #e3b341; }
+      .safe { color: var(--color-ok); }
+      .danger { color: var(--color-fail); }
+      code { color: #8b9bb4; font-family: 'JetBrains Mono', monospace; }
+
+      @keyframes real-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes subtle-pulse {
+        0% { transform: scale(0.95); opacity: 0.5; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+        100% { transform: scale(0.95); opacity: 0.5; }
+      }
+
+      #footer {
+        position: fixed;
+        bottom: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.2);
+        letter-spacing: 0.2em;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="main-container">
+        <div id="brand">MANSOOR0X</div>
+        <div id="visual-indicator">
+            <div id="spin"></div>
+            <div class="pulse"></div>
+            <div class="core"></div>
+        </div>
+    </div>
+
+    <div id="msg">Restart your console</div>
+    
+    <div id="wrap">
+      <div id="state"></div>
+      <div id="out"></div>
+    </div>
+
+    <div id="footer">MANSOOR0X // NVS_CORE</div>
+
+    <script type="module">
+      import "./jb.js?v=10";
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<html manifest="cache.appcache">
+<head>
+<title>mansoor0x · PS4 Exploit</title>
+<style>
+body {
+    background-color: #ffffff;
+    color: #111111;
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    overflow: hidden;
+}
+.info {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    font-size: 22px;
+    font-family: monospace;
+    color: #111111;
+    transform: translate(-50%, -50%);
+}
+</style>
+<script>
+history.replaceState(null, null, 'index.html');
+var histlength = history.length;
+history.go(-histlength);
+
+function DLProgress(e) {
+    var pct = Math.round(e.loaded / e.total * 100);
+    msgs.innerHTML = "mansoor0x &middot; Installing ... " + pct + "%";
+}
+
+function DisplayCacheProgress() {
+    setTimeout(function () {
+        msgs.innerHTML = "mansoor0x &middot; Cache OK";
+    }, 2000);
+    setTimeout(function () {
+        location.reload();
+    }, 3000);
+}
+
+window.applicationCache.addEventListener("progress",    DLProgress,           false);
+window.applicationCache.oncached     = function (e) { DisplayCacheProgress(); };
+window.applicationCache.onupdateready = function (e) { DisplayCacheProgress(); };
+</script>
+</head>
+<body>
+<div id="msgs" class="info"></div>
+</body>
+</html>
