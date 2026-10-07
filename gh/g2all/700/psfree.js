@@ -835,4 +835,6 @@ async function main() {
   clear_log();
   import("./lapse.js");
 }
-main();
+setTimeout(() => {
+    main();
+}, 500);

