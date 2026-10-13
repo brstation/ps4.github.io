@@ -6,18 +6,22 @@ import { offsetsFor } from "./ps4_offsets.js";
 const outEl = document.getElementById("out");
 const stateEl = document.getElementById("state");
 const lines = [];
+const pageParams = new URLSearchParams(location.search);
+const TELEMETRY = pageParams.get("telemetry") === "1";
 
 function post(tag, detail) {
+    if (!TELEMETRY) return;
     try {
         const x = new XMLHttpRequest();
         x.open("POST", "t", true);
+        x.timeout = 2000;
         x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         x.send("PS4-S4Q&tag=" + encodeURIComponent(tag)
              + "&detail=" + encodeURIComponent(String(detail == null ? "" : detail)));
     } catch (e) { }
 }
 
-const VERBOSE = new URLSearchParams(location.search).get("verbose") === "1";
+const VERBOSE = pageParams.get("verbose") === "1";
 
 const PROSE = [
     / -- /, /\.\s/, /,\s+(which|so|and that|because|since|as that)\s/,

@@ -1,16 +1,18 @@
 CACHE MANIFEST
-# v1.7 - goldhen b18.12
+# v2.1 - payload state release 20261003
 # PS4 5.05 FW GoldHEN Host
 
-# Core Files
+CACHE:
+# Core files
 index.html
 exploit.js
+../pspulse.png
 
-# GoldHEN Payloads
+# GoldHEN payloads
 goldhen.bin
-goldhen5.bin
+goldhen10.bin
 
-# Utility Payloads
+# Utility payloads
 Kernel-Clock.bin
 app2usb.bin
 appcache-install.bin
@@ -23,3 +25,6 @@ ps4debug.bin
 pup-decrypt.bin
 restore.bin
 rif-renamer.bin
+
+NETWORK:
+*

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSPULSE // PS4 13.02-13.52 HOST / CACHE</title>
-    <link rel="icon" type="image/png" href="../../pspulse.png">
+    <link rel="icon" type="image/png" href="../pspulse.png">
     <style>
         :root {
             --bg: #151515;
@@ -126,29 +126,83 @@
     </div>
 
     <script>
-if (window.applicationCache.status == 2) { localStorage.is1352Cached = true; }
-        window.applicationCache.ondownloading = function () {
-            document.getElementById("progress").innerHTML = "Page Caching Started!!";
-            localStorage.is1352Cached = false;
-        };
-        window.applicationCache.onprogress = function (a) {
-            var progress = Math.round(100 * (a.loaded / a.total));
-            document.getElementById("myBar").style.width = progress + "%";
-            document.getElementById("progressText").innerHTML = progress + "%";
-        };
-        window.applicationCache.oncached = function () {
-            document.getElementById("progress").innerHTML = "Page Cached Successfully!!!";
-            localStorage.is1352Cached = true;
-            setTimeout(function () { window.location.replace("index.html"); }, 1500);
-        };
-        window.applicationCache.onupdateready = function () {
-            document.getElementById("progress").innerHTML = "Update Cache Successfully!!!";
-            localStorage.is1352Cached = true;
-            setTimeout(function () { window.location.replace("index.html"); }, 1500);
-        };
-        window.applicationCache.onnoupdate = function () { window.location.replace("index.html"); };
-        window.applicationCache.onerror = function () { window.location.replace("index.html"); };
+(function () {
+    var cache = window.applicationCache;
+    var progress = document.getElementById("progress");
+    var bar = document.getElementById("myBar");
+    var progressText = document.getElementById("progressText");
+    var redirected = false;
+
+    function storageSet(value) {
+        try { localStorage.setItem("is1352Cached", value ? "true" : "false"); }
+        catch (error) {}
+    }
+    function show(message) {
+        if (progress) progress.textContent = message;
+    }
+    function returnToHost(delay) {
+        if (redirected) return;
+        redirected = true;
+        setTimeout(function () { window.location.replace("index.html"); }, delay);
+    }
+
+    if (!cache || !document.documentElement.hasAttribute("manifest")) {
+        show("Application cache is unavailable. Returning to host...");
+        returnToHost(1500);
+        return;
+    }
+
+    cache.addEventListener("downloading", function () {
+        show("Page caching started...");
+        storageSet(false);
+    }, false);
+    cache.addEventListener("progress", function (event) {
+        if (!event || !(event.total > 0)) return;
+        var percent = Math.round(100 * event.loaded / event.total);
+        if (bar) bar.style.width = percent + "%";
+        if (progressText) progressText.textContent = percent + "%";
+    }, false);
+    cache.addEventListener("cached", function () {
+        show("Page cached successfully.");
+        storageSet(true);
+        returnToHost(750);
+    }, false);
+    cache.addEventListener("updateready", function () {
+        try { cache.swapCache(); } catch (error) {}
+        show("Cache updated successfully.");
+        storageSet(true);
+        returnToHost(750);
+    }, false);
+    cache.addEventListener("noupdate", function () {
+        storageSet(true);
+        returnToHost(250);
+    }, false);
+    cache.addEventListener("error", function () {
+        storageSet(false);
+        show("Cache failed. Returning to online host...");
+        returnToHost(1500);
+    }, false);
+    cache.addEventListener("obsolete", function () {
+        storageSet(false);
+        show("Cache is obsolete. Clear browser data and reopen the host.");
+    }, false);
+
+    if (cache.status === cache.UPDATEREADY) {
+        try { cache.swapCache(); } catch (error) {}
+        storageSet(true);
+        returnToHost(250);
+    } else if (cache.status === cache.IDLE) {
+        try { cache.update(); } catch (error) { returnToHost(750); }
+    }
+}());
     </script>
+
+<!-- PSPulse support link: intentionally lightweight for the PS4 browser. -->
+<style id="pspulse-support-style">
+.pspulse-support{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:block;padding:10px 15px;border:1px solid #9b87ff;border-radius:4px;background:#17151f;color:#b7a9ff!important;font:600 13px Arial,sans-serif;letter-spacing:.2px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.32)}
+.pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
+</style>
+<a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
 </body>
 
 </html>

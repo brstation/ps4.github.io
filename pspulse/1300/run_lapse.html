@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" manifest="cache.manifest">
 <head>
-    <link rel="icon" type="image/png" href="../../pspulse.png">
+    <link rel="icon" type="image/png" href="../pspulse.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PSPULSE // 11.00-13.00 LAPSE</title>
@@ -100,7 +100,9 @@
 // sessionStorage would loop forever -- fail closed instead.
 // Upstream core.js / chain_*.js are NOT modified.
 (function () {
-    var KEY = "pspulse-slopkit-reloads";
+    var fwMatch = /PlayStation\s+4[\/ ](\d+\.\d+)/.exec(navigator.userAgent || "");
+    var firmwareKey = fwMatch ? fwMatch[1] : "unknown";
+    var KEY = "pspulse-slopkit-reloads:" + location.pathname + ":" + firmwareKey;
     var MAX = 2;
     var WINDOW_MS = 10 * 60 * 1000;
     var handled = false;
@@ -122,13 +124,14 @@
         } catch (e) {}
         return null;
     }
-    setInterval(function () {
+    var monitor = setInterval(function () {
         try {
             if (handled) return;
             var st = document.getElementById("state");
             if (st && st.className === "ok") {
                 try { sessionStorage.removeItem(KEY); } catch (e) {}
                 handled = true;
+                clearInterval(monitor);
                 return;
             }
             if (!st || st.textContent.indexOf("FAILED") === -1) return;
@@ -136,6 +139,7 @@
             var txt = out ? out.textContent : "";
             if (txt.indexOf("attempt-ceiling") === -1) return;
             handled = true;
+            clearInterval(monitor);
             var rec = spendBudget();
             if (!rec || rec.n > MAX) return;
             st.textContent = "heap layout missed -- reloading for a fresh heap (" + rec.n + "/2)...";

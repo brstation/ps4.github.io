@@ -127,46 +127,62 @@
     </div>
 
     <script>
-if (window.applicationCache.status == 2) { localStorage.is755BCached = true; }
-        window.applicationCache.ondownloading = function () {
-            document.getElementById("progress").innerHTML = "Page Caching Started!!";
-            localStorage.is755BCached = false;
-        };
-        window.applicationCache.onprogress = function (a) {
-            const progress = Math.round(100 * (a.loaded / a.total));
-            document.getElementById("myBar").style.width = progress + "%";
-            document.getElementById("progressText").innerHTML = progress + "%";
-        };
-        window.applicationCache.oncached = function () {
-            document.getElementById("progress").innerHTML = "Page Cached Successfully!!!";
-            localStorage.is755BCached = true;
-            setTimeout(function () { window.location.reload("myBar"); }, 1500);
-        };
-        window.applicationCache.onupdateready = function () {
-            document.getElementById("progress").innerHTML = "Update Cache Successfully!!!";
-            localStorage.is755BCached = true;
-            setTimeout(function () { window.location.reload("myBar"); }, 1500);
-        };
-        window.applicationCache.onnoupdate = function () { window.location.replace("index.html"); };
-        window.applicationCache.onerror = function () { window.location.replace("index.html"); };
+        (function () {
+            var appCache = window.applicationCache;
+            var progressLabel = document.getElementById('progress');
+            var progressBar = document.getElementById('myBar');
+            var progressText = document.getElementById('progressText');
+            var redirectPending = false;
 
-        // Fallback progress animation
-        var width = 0;
-        function frame1() {
-            var elem = document.getElementById("myBar");
-            var text = document.getElementById("progressText");
-            var i = 0;
-            var id = setInterval(fra, 10);
-            function fra() {
-                if (i < 10 && width < 100) {
-                    width++;
-                    elem.style.width = width + "%";
-                    text.innerHTML = width + "%";
-                }
-                i++;
+            function setCached(value) {
+                try { localStorage.is755BCached = value ? 'true' : 'false'; } catch (error) {}
             }
-        }
+            function setProgress(value) {
+                var progress = Math.max(0, Math.min(100, value));
+                progressBar.style.width = progress + '%';
+                progressText.innerHTML = progress + '%';
+            }
+            function openHost(message) {
+                if (redirectPending) return;
+                redirectPending = true;
+                setCached(true);
+                setProgress(100);
+                progressLabel.innerHTML = message;
+                setTimeout(function () { window.location.replace('index.html'); }, 1200);
+            }
+            if (!appCache) {
+                progressLabel.innerHTML = 'Offline cache is not supported by this browser.';
+                return;
+            }
+            if (appCache.status === appCache.DOWNLOADING) setCached(false);
+            appCache.ondownloading = function () {
+                setCached(false);
+                progressLabel.innerHTML = 'Page Caching Started!!';
+            };
+            appCache.onprogress = function (event) {
+                if (event.lengthComputable && event.total > 0)
+                    setProgress(Math.round(100 * event.loaded / event.total));
+            };
+            appCache.oncached = function () { openHost('Page Cached Successfully!!!'); };
+            appCache.onupdateready = function () {
+                try { appCache.swapCache(); } catch (error) {}
+                openHost('Cache Updated Successfully!!!');
+            };
+            appCache.onnoupdate = function () { openHost('Offline Cache Ready'); };
+            appCache.onerror = function () {
+                setCached(false);
+                progressLabel.innerHTML = 'Offline cache failed. Clear browser data and reload while online.';
+            };
+            appCache.onobsolete = appCache.onerror;
+        }());
     </script>
+
+<!-- PSPulse support link: intentionally lightweight for the PS4 browser. -->
+<style id="pspulse-support-style">
+.pspulse-support{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:block;padding:10px 15px;border:1px solid #9b87ff;border-radius:4px;background:#17151f;color:#b7a9ff!important;font:600 13px Arial,sans-serif;letter-spacing:.2px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.32)}
+.pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
+</style>
+<a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
 </body>
 
 </html>

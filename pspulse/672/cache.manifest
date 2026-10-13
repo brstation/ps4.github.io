@@ -1,11 +1,11 @@
 CACHE MANIFEST 
-# v1.7 - goldhen b18.12
+# v1.8 - goldhen b18.12 offline-assets-20261003
 
 CACHE: 
 index.html
 pl_loader.js
 goldhen.bin
-goldhen5.bin
+goldhen10.bin
 ftp.bin
 ps4debug.bin
 app2usb.bin
@@ -17,6 +17,7 @@ rif-renamer.bin
 appcache-install.bin
 history-blocker.bin
 pup-decrypt.bin
+../pspulse.png
 
 NETWORK: 
 * 

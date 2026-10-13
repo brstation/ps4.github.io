@@ -209,7 +209,7 @@
             <p class="sub">Offline auto GoldHEN loader by PlayStation Pulse.</p>
             <ul class="boot">
                 <li>[ <b>ok</b> ] cssfontface chain ready</li>
-                <li>[ <b>ok</b> ] goldhen v2.4b18.5 staged</li>
+                <li>[ <b>ok</b> ] goldhen v2.4b18.10 staged</li>
                 <li>[ <b>ok</b> ] offline cache ready</li>
             </ul>
             <p id="UA">Running on:</p>
@@ -255,69 +255,76 @@
     <script src="includes/script.js"></script>
 
     <script>
-    (function () {var cacheEl = document.getElementById("cache");
-        function setCache(text, ok) {
-            if (!cacheEl) return;
-            cacheEl.textContent = text;
-            cacheEl.className = ok ? "cacheok" : "";
+    (function () {
+        var cache = window.applicationCache;
+        var status = document.getElementById('cache');
+        var reloadPending = false;
+
+        function show(message, ready) {
+            if (!status) return;
+            status.textContent = message;
+            status.className = ready ? 'cacheok' : '';
         }
 
-        var ac = window.applicationCache;
-
-        if (!ac || !document.documentElement.hasAttribute("manifest")) {
-            setCache("application cache unavailable");
-        } else if (!navigator.onLine) {
-            setCache("offline -- using cached resources", true);
-        } else if (ac.status === ac.IDLE) {
-            setCache("cached -- offline ready", true);
-        } else if (ac.status === ac.UPDATEREADY) {
+        function reloadWithNewCache() {
+            if (reloadPending) return;
+            reloadPending = true;
             try {
-                ac.swapCache();
-            } catch (e) {}
-            setCache("update downloaded -- offline ready", true);
-        } else {
-            setCache("checking cache...");
-
-            ac.addEventListener("downloading", function () {
-                setCache("caching for offline (first run)...");
-            }, false);
-
-            ac.addEventListener("progress", function (e) {
-                if (e && e.total) {
-                    setCache(
-                        "caching " +
-                        Math.round((e.loaded / e.total) * 100) +
-                        "%"
-                    );
-                }
-            }, false);
-
-            ac.addEventListener("cached", function () {
-                setCache("cached for offline use", true);
-            }, false);
-
-            ac.addEventListener("updateready", function () {
-                try {
-                    ac.swapCache();
-                } catch (e) {}
-                setCache("update downloaded -- offline ready", true);
-            }, false);
-
-            ac.addEventListener("noupdate", function () {
-                setCache("cached -- offline ready", true);
-            }, false);
-
-            ac.addEventListener("error", function () {
-                setCache("cache unavailable");
-            }, false);
-
-            ac.addEventListener("obsolete", function () {
-                setCache("cache obsolete");
-            }, false);
+                cache.swapCache();
+            } catch (error) {}
+            show('Cache updated — reloading once...', true);
+            setTimeout(function () {
+                window.location.reload();
+            }, 750);
         }
-    })();
+
+        if (!cache || !document.documentElement.hasAttribute('manifest')) {
+            show('Application cache unavailable');
+            return;
+        }
+
+        cache.addEventListener('checking', function () {
+            show('Checking offline cache...');
+        }, false);
+        cache.addEventListener('downloading', function () {
+            show('Installing offline cache...');
+        }, false);
+        cache.addEventListener('progress', function (event) {
+            if (event && event.total > 0) {
+                show('Caching ' + Math.round(event.loaded / event.total * 100) + '%');
+            }
+        }, false);
+        cache.addEventListener('cached', function () {
+            show('Cached for offline use', true);
+        }, false);
+        cache.addEventListener('noupdate', function () {
+            show('Cached — offline ready', true);
+        }, false);
+        cache.addEventListener('updateready', reloadWithNewCache, false);
+        cache.addEventListener('error', function () {
+            show('Cache failed — check the connection and retry manually');
+        }, false);
+        cache.addEventListener('obsolete', function () {
+            show('Cache obsolete — clear browser data and reload');
+        }, false);
+
+        if (!navigator.onLine) {
+            show('Offline — using cached resources', true);
+        } else if (cache.status === cache.UPDATEREADY) {
+            reloadWithNewCache();
+        } else if (cache.status === cache.IDLE) {
+            show('Cached — offline ready', true);
+        }
+    }());
     </script>
 
+
+<!-- PSPulse support link: intentionally lightweight for the PS4 browser. -->
+<style id="pspulse-support-style">
+.pspulse-support{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:block;padding:10px 15px;border:1px solid #9b87ff;border-radius:4px;background:#17151f;color:#b7a9ff!important;font:600 13px Arial,sans-serif;letter-spacing:.2px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.32)}
+.pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
+</style>
+<a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
 </body>
 
 </html>

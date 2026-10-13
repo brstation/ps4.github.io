@@ -1,10 +1,11 @@
 CACHE MANIFEST
-# v3 - flat host, goldhen b18.12 for 13.02-13.52
+# v4 - startup, AppCache and telemetry reliability 20261003
 
 CACHE:
 index.html
 jb.html
 cache.html
+../pspulse.png
 jb.js
 core.js
 mem.js

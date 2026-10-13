@@ -181,11 +181,11 @@
                         <span class="card-action">[ SELECT ]</span>
                     </div>
 
-                    <div class="version-card" onclick="selectVersion('v2.4b18.5')" tabindex="0" data-version="stable">
+                    <div class="version-card" onclick="selectVersion('v2.4b18.10')" tabindex="0" data-version="stable">
                         <span class="card-index">02</span>
                         <span>
                             <span class="version-badge">Stable</span>
-                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.5</span></span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.10</span></span>
                             <span class="version-description">Previous stable release with proven reliability. Choose this if the latest version causes issues or you prefer maximum stability.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
@@ -212,7 +212,7 @@
             // Redirect to appropriate cache page based on version
             if (version === 'v2.4b18.12') {
                 window.location.href = 'cache.html';
-            } else if (version === 'v2.4b18.5') {
+            } else if (version === 'v2.4b18.10') {
                 window.location.href = 'cache5.html';
             }
         }
@@ -255,6 +255,13 @@
             });
         }
     </script>
+
+<!-- PSPulse support link: intentionally lightweight for the PS4 browser. -->
+<style id="pspulse-support-style">
+.pspulse-support{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:block;padding:10px 15px;border:1px solid #9b87ff;border-radius:4px;background:#17151f;color:#b7a9ff!important;font:600 13px Arial,sans-serif;letter-spacing:.2px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.32)}
+.pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
+</style>
+<a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
 </body>
 
 </html>

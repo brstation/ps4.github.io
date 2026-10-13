@@ -1,12 +1,12 @@
 CACHE MANIFEST
-# v8 - goldhen b18.12 (stable branch)
+# v9 - goldhen b18.12 (stable branch) cache-error-guard dom-error-target-fix support-link-20261003
 
 CACHE:
 index5.html
 alert5.mjs
 config.mjs
 psfree5.mjs
-goldhen5.bin
+goldhen10.bin
 send.mjs
 lapse5.mjs
 loader5.js

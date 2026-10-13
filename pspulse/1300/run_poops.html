@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" manifest="cache.manifest">
 <head>
-    <link rel="icon" type="image/png" href="../../pspulse.png">
+    <link rel="icon" type="image/png" href="../pspulse.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PSPULSE // 11.00-13.00 LAPSE</title>
+<title>PSPULSE // 11.00-13.00 POOPS</title>
 <style>
     :root {
         --bg: #151515;
@@ -82,67 +82,21 @@
     <div class="app">
         <header class="bar">
             <span><b>PSPULSE</b> // ps4 hosts</span>
-            <span class="bar-chain">lapse chain</span>
+            <span class="bar-chain">poops chain</span>
         </header>
 
-        <div id="state">loading lapse chain...</div>
+        <div id="state">loading poops chain...</div>
         <div id="out"></div>
     </div>
-<script type="module">import "./chain_lapse.js";</script>
+<script type="module">import "./chain_poops.js";</script>
 <script>
-// PSPULSE: bounded auto-reload when the primitive gives up.
-// Repeated SSV placement misses mean this page-load heap layout does not
-// suit the groom, and only a fresh load reshuffles it (PS4 WebKit exposes
-// no GC). The chain reports ceiling exhaustion as "attempt-ceiling" in the
-// visible log on both lapse and poops runners; on sight, reload up to 2
-// times, then stop and leave FAILED visible for manual retry.
-// The budget write must verifiably persist, otherwise a broken
-// sessionStorage would loop forever -- fail closed instead.
-// Upstream core.js / chain_*.js are NOT modified.
-(function () {
-    var KEY = "pspulse-slopkit-reloads";
-    var MAX = 2;
-    var WINDOW_MS = 10 * 60 * 1000;
-    var handled = false;
-    function readBudget() {
-        var rec = null;
-        try { rec = JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) { rec = null; }
-        var now = Date.now();
-        if (!rec || typeof rec.n !== "number" || (now - rec.t) > WINDOW_MS) return { n: 0, t: now };
-        return rec;
-    }
-    function spendBudget() {
-        var rec = readBudget();
-        rec.n++;
-        rec.t = Date.now();
-        try {
-            sessionStorage.setItem(KEY, JSON.stringify(rec));
-            var check = JSON.parse(sessionStorage.getItem(KEY) || "null");
-            if (check && check.n === rec.n) return rec;
-        } catch (e) {}
-        return null;
-    }
-    setInterval(function () {
-        try {
-            if (handled) return;
-            var st = document.getElementById("state");
-            if (st && st.className === "ok") {
-                try { sessionStorage.removeItem(KEY); } catch (e) {}
-                handled = true;
-                return;
-            }
-            if (!st || st.textContent.indexOf("FAILED") === -1) return;
-            var out = document.getElementById("out");
-            var txt = out ? out.textContent : "";
-            if (txt.indexOf("attempt-ceiling") === -1) return;
-            handled = true;
-            var rec = spendBudget();
-            if (!rec || rec.n > MAX) return;
-            st.textContent = "heap layout missed -- reloading for a fresh heap (" + rec.n + "/2)...";
-            st.className = "warn";
-            setTimeout(function () { location.reload(); }, 2000);
-        } catch (e) { /* never break the exploit page */ }
-    }, 3000);
-})();
+// PSPULSE: auto-reload DISABLED for poops (12.50/12.52/13.00).
+// The attempt-ceiling monitor was removed here because its trigger
+// (primitive "attempt-ceiling" in the log + FAILED state) persists in the
+// visible log after the kernel has been touched (DOUBLE/TRIPLE-FREE).
+// Reloading at that point re-enters on a dirty kernel without a reboot,
+// which is a kernel-panic shape. Upstream (rawgame4 README) does manual
+// reload only: a failed poops attempt means reboot, then retry.
+// run_lapse.html keeps its own monitor; this file intentionally has none.
 </script></body>
 </html>
