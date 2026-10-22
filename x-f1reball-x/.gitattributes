@@ -1,0 +1,4 @@
+* -text
+# Keep the GitHub language bar on the host page's own code.
+# Bundled exploit chains
+chains/** linguist-vendored
