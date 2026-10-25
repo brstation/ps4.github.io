@@ -1,11 +1,13 @@
-CACHE MANIFEST 
+CACHE MANIFEST
+# resource-path-fix-20261021-main-v2
+# offline-manifests-v1-20261021
 # v1.8 - goldhen b18.12 offline-assets-20261003
 
-CACHE: 
+CACHE:
+goldhen10.bin
 index.html
 pl_loader.js
 goldhen.bin
-goldhen10.bin
 ftp.bin
 ps4debug.bin
 app2usb.bin
@@ -19,5 +21,6 @@ history-blocker.bin
 pup-decrypt.bin
 ../pspulse.png
 
-NETWORK: 
-* 
+
+NETWORK:
+*

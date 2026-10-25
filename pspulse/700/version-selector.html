@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="../navigation.manifest">
 
 <head>
     <link rel="icon" type="image/png" href="../pspulse.png">
@@ -206,6 +206,8 @@
 
     <script>
         function selectVersion(version) {
+            // Normalize the old selector value; the shipped previous build is b18.10.
+            if (version === 'v2.4b18.5') version = 'v2.4b18.10';
             // Storage may be unavailable in privacy mode; selection must still continue.
             try { localStorage.setItem('selectedGoldHENVersion', version); } catch (error) {}
 

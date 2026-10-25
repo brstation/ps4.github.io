@@ -1,8 +1,11 @@
 CACHE MANIFEST
+# resource-path-fix-20261021-main-v2
+# offline-manifests-v1-20261021
 # v2.1 - payload state release 20261003
 # PS4 5.05 FW GoldHEN Host
 
 CACHE:
+goldhen10.bin
 # Core files
 index.html
 exploit.js
@@ -10,7 +13,6 @@ exploit.js
 
 # GoldHEN payloads
 goldhen.bin
-goldhen10.bin
 
 # Utility payloads
 Kernel-Clock.bin
@@ -25,6 +27,7 @@ ps4debug.bin
 pup-decrypt.bin
 restore.bin
 rif-renamer.bin
+
 
 NETWORK:
 *

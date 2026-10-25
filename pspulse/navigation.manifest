@@ -1,0 +1,14 @@
+CACHE MANIFEST
+# version-label-audit-20261021-v3
+# navigation-v1-20261021: menu only; host caches install separately
+
+CACHE:
+./
+index.html
+pspulse.png
+700/version-selector.html
+900/version-selector.html
+css/version-selector.html
+
+NETWORK:
+*

@@ -1,4 +1,6 @@
 CACHE MANIFEST
+# resource-path-fix-20261021-main-v2
+# offline-manifests-v1-20261021
 # v10 - goldhen b18.12 cache-error-guard dom-error-target-fix support-link-20261003
 
 CACHE:
@@ -46,6 +48,9 @@ payloads/pup-decrypt.bin
 payloads/restore.bin
 payloads/rif-renamer.bin
 payloads/WebRTE_900.bin
+
+../pspulse.png
+cache.html
 
 NETWORK:
 *

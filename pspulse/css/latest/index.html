@@ -246,7 +246,6 @@
 
             <footer class="foot">
                 <div>Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a></div>
-                <div>Upstream: <a href="https://github.com/itskenethb?tab=repositories">itskenethb</a></div>
             </footer>
         </main>
     </div>
@@ -258,24 +257,11 @@
     (function () {
         var cache = window.applicationCache;
         var status = document.getElementById('cache');
-        var reloadPending = false;
 
         function show(message, ready) {
             if (!status) return;
             status.textContent = message;
             status.className = ready ? 'cacheok' : '';
-        }
-
-        function reloadWithNewCache() {
-            if (reloadPending) return;
-            reloadPending = true;
-            try {
-                cache.swapCache();
-            } catch (error) {}
-            show('Cache updated — reloading once...', true);
-            setTimeout(function () {
-                window.location.reload();
-            }, 750);
         }
 
         if (!cache || !document.documentElement.hasAttribute('manifest')) {
@@ -300,9 +286,16 @@
         cache.addEventListener('noupdate', function () {
             show('Cached — offline ready', true);
         }, false);
-        cache.addEventListener('updateready', reloadWithNewCache, false);
+        cache.addEventListener('updateready', function () {
+            show('Cache update ready', true);
+        }, false);
         cache.addEventListener('error', function () {
-            show('Cache failed — check the connection and retry manually');
+            if (cache.status === cache.IDLE ||
+                cache.status === cache.UPDATEREADY) {
+                show('Cached — offline ready', true);
+            } else {
+                show('Cache failed — check the connection and retry manually');
+            }
         }, false);
         cache.addEventListener('obsolete', function () {
             show('Cache obsolete — clear browser data and reload');
@@ -311,7 +304,7 @@
         if (!navigator.onLine) {
             show('Offline — using cached resources', true);
         } else if (cache.status === cache.UPDATEREADY) {
-            reloadWithNewCache();
+            show('Cache updated — reloading...', true);
         } else if (cache.status === cache.IDLE) {
             show('Cached — offline ready', true);
         }

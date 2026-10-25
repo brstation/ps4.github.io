@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ps4jb guide</title>
+<meta name="description" content="PS4 jailbreak and HEN host that runs in the PS4 browser."/>
+<style>
+:root{--bg:#060b1a;--card:#0e1630;--edge:#1f2c52;--ink:#e6edff;--mute:#8a9acb;--pri:#7b7cff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:16px/1.6 "Inter","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--pri)}
+.in{max-width:980px;margin:0 auto;padding:0 24px}
+header{border-bottom:1px solid var(--edge);padding:16px 0;position:sticky;top:0;background:rgba(6,11,26,.92);backdrop-filter:blur(6px);z-index:2}
+header .in{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.name{font-size:1.3rem;font-weight:800}
+.ver{color:var(--mute);font-size:.9rem}
+nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem}
+.banner{display:block;width:100%;border-radius:16px;border:1px solid var(--edge);margin:28px 0 8px}
+section{padding:40px 0;border-bottom:1px solid var(--edge)}
+h1{font-size:2rem;line-height:1.25;margin-bottom:12px}
+h2{font-size:1.5rem;margin-bottom:14px}
+h3{font-size:1.1rem;margin:18px 0 8px}
+p{color:var(--mute);margin-bottom:12px}
+.btn{display:inline-block;margin:8px 10px 0 0;padding:10px 18px;border-radius:999px;border:1px solid var(--edge);color:var(--ink);text-decoration:none;font-weight:700}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#04122b}
+ol,ul{margin-left:22px}
+li{margin:8px 0;color:var(--mute)}
+li b,p b,td b{color:var(--ink)}
+code{background:var(--card);border:1px solid var(--edge);border-radius:6px;padding:1px 6px;color:var(--ink);font-size:.9em;word-break:break-word}
+pre{background:var(--card);border:1px solid var(--edge);border-radius:10px;padding:14px;overflow:auto;margin:10px 0 14px}
+pre code{border:0;padding:0;background:none}
+.card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:.95rem}
+th,td{border:1px solid var(--edge);padding:8px 10px;text-align:left;color:var(--mute);vertical-align:top}
+th{background:var(--card);color:var(--ink)}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+figure img{width:100%;border-radius:12px;border:1px solid var(--edge)}
+figcaption{color:var(--mute);margin-top:6px;text-align:center;font-size:.9rem}
+footer{padding:28px 0;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="in">
+<div><div class="name">ps4jb</div><div class="ver">v1.0.0</div></div>
+<nav><a href="#req">Requirements</a><a href="#install">2. Open the host</a><a href="#jb">3. Jailbreak</a><a href="#fw">Supported firmwares</a><a href="#credits">Credits</a></nav>
+</div></header>
+<div class="in"><img class="banner" src="../img/banner.png" alt="ps4jb"/></div>
+<section><div class="in">
+<h1>PS4 jailbreak host in the browser.</h1><p>ps4jb is a PS4 jailbreak and HEN host that runs in the PS4 Internet Browser. It picks a jailbreak chain from your firmware. Coverage <b>6.00–12.02</b> and <b>12.50–13.52</b>, proven on 13.02, 13.04, 13.50 and 13.52.</p><p>Live host: <a href="https://x-f1reball-x.github.io/ps4jb/">https://x-f1reball-x.github.io/ps4jb/</a></p>
+<a class="btn pri" href="https://x-f1reball-x.github.io/ps4jb/">Open the host</a><a class="btn" href="https://github.com/X-F1REBALL-X/ps4jb">Source on GitHub</a>
+</div></section>
+
+<section id="req"><div class="in">
+<h2>Requirements</h2>
+<ul><li>A PS4 on a supported firmware (see below).</li><li>The PS4 Internet Browser.</li><li>Optional: the update-blocking DNS.</li></ul>
+</div></section>
+
+<section id="dns"><div class="in">
+<h2>1. Block updates (DNS)</h2>
+<p>Optional but recommended. DNS by <b>Nomadic</b> blocks official system updates.</p><ol>
+<li>Settings → Network → Set Up Internet Connection</li><li>Choose <b>Custom</b> setup</li><li>DNS Settings: <b>Manual</b></li>
+<li>Primary DNS: <code>62.210.38.117</code></li><li>Leave Secondary DNS empty</li><li>Save and test the connection (failing to reach Sony is OK)</li></ol>
+</div></section>
+
+<section id="install"><div class="in">
+<h2>2. Open the host</h2>
+<ol><li>Open the PS4 Internet Browser.</li><li>Clear Cookies and Clear Cache (Options menu).</li><li>Go to <code>https://x-f1reball-x.github.io/ps4jb/</code></li><li>Add the page to <b>Favorites</b>.</li></ol>
+</div></section>
+
+<section id="jb"><div class="in">
+<h2>3. Jailbreak</h2>
+<ol><li>Open the favorite / link.</li><li>Wait for <code>Cache ready</code>, then the jailbreak starts by itself.</li><li>Wait for success (the page tries to close).</li><li>If it fails, restart the console and try again.</li></ol>
+<p>To override the automatic choice, add <code>?chain=</code> with <code>cssfontface</code>, <code>psfree</code>, <code>slopkit</code> or <code>relapse</code>.</p>
+</div></section>
+
+<section id="fw"><div class="in">
+<h2>Supported firmwares</h2>
+<table><tr><th>Firmware</th><th>Chain</th><th>Status</th></tr>
+<tr><td>13.02, 13.04, 13.50, 13.52</td><td>Slopkit Relapse</td><td>Works</td></tr>
+<tr><td>12.50 - 13.00</td><td>Slopkit Netctrl</td><td>Auto (untested here)</td></tr>
+<tr><td>11.03 - 12.02</td><td>Slopkit Lapse</td><td>Auto (untested here)</td></tr>
+<tr><td>7.00 - 11.02</td><td>CSSFontFace + Lapse</td><td>Auto (untested here)</td></tr>
+<tr><td>7.00 - 9.60</td><td>PSFree + Lapse</td><td><code>?chain=psfree</code> (untested)</td></tr>
+<tr><td>6.70 - 6.72</td><td>BadHoist</td><td>Entry page (limited)</td></tr>
+<tr><td>6.00 - 6.69</td><td>CSSFontFace + Lapse</td><td>Auto (untested here)</td></tr></table>
+<p>Payloads included: <code>hen.bin</code>, <code>goldhen.bin</code>, <code>ps4debug.bin</code>.</p>
+</div></section>
+
+<section id="credits"><div class="in">
+<h2>Credits</h2>
+<p>Sleirsgoevy (BadHoist), TheFloW (NetControl / poops base), Nathan Fargo (CSSFontFace), abc (PSFree), SpecterDev / ChendoChap (Lapse), jordyidk (Slopkit), raw13g (Relapse / 13.xx offsets), B4411M (offsets and patches), SiSTR0 (GoldHEN / HEN), zecoxao (firmware dumps), Yenyen (offsets / research), EchoStretch (hosts / tools), Nomadic (update-blocking DNS).</p>
+</div></section>
+
+<footer><div class="in">Developed by <a href="https://github.com/X-F1REBALL-X">X-F1REBALL-X</a>. Source: <a href="https://github.com/X-F1REBALL-X/ps4jb">github.com/X-F1REBALL-X/ps4jb</a>.</div></footer>
+</body>
+</html>

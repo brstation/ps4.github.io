@@ -1,12 +1,15 @@
 CACHE MANIFEST
-# v9.1 - goldhen b18.10 (stable branch) cache-error-guard dom-error-target-fix support-link-20261003
+# version-label-audit-20261021-v3
+# resource-path-fix-20261021-main-v2
+# offline-manifests-v1-20261021
+# v9 - goldhen b18.10 (stable branch) cache-error-guard dom-error-target-fix support-link-20261003
 
 CACHE:
+goldhen10.bin
 index5.html
 alert5.mjs
 config.mjs
 psfree5.mjs
-goldhen10.bin
 send.mjs
 lapse5.mjs
 loader5.js
@@ -46,6 +49,9 @@ payloads/pup-decrypt.bin
 payloads/restore.bin
 payloads/rif-renamer.bin
 payloads/WebRTE_900.bin
+
+../pspulse.png
+cache5.html
 
 NETWORK:
 *

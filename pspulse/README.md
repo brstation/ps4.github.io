@@ -16,7 +16,7 @@
 ```text
 $ ./launch --pspulse
 
-[ ok ] 6 host routes detected
+[ ok ] 7 host routes detected
 [ ok ] goldhen v2.4b18.12 / v2.4b18.10 staged
 [ ok ] offline cache ready
 [ ok ] gamepad navigation enabled
@@ -168,7 +168,7 @@ The repository also includes small generator scripts for rebuilding cache files 
 5. On the host page, wait for the ready/status message before starting the exploit.
 6. After GoldHEN has loaded, use only the tools shown by that host branch.
 
-For the CSSFontFace host, **Auto Jailbreak** is enabled by default. After the page loads it starts a five-second countdown and then runs the chain automatically, or press `Jailbreak` manually at any time. During the countdown you can still select `Lapse`/`NetCtrl` or switch Auto Jailbreak off (the choice persists in `localStorage`). On the very first visit the countdown waits until the AppCache install settles — the heavy exploit chain never runs on top of an unfinished cache download, which is what used to stall caching progress. If the cache errors, the page asks for a manual start instead of running blind.
+For the CSSFontFace host, **Auto Jailbreak** is enabled by default. After the page loads it starts a five-second countdown and then runs the chain automatically, or press `Jailbreak` manually at any time. During the countdown you can still select `Lapse`/`NetCtrl` or switch Auto Jailbreak off (the choice persists in `localStorage`). On the very first visit the countdown waits until the AppCache install settles — the heavy exploit chain never runs on top of an unfinished cache download. A newly installed cache reloads the page once, then the countdown restarts; an update discovered in the background is applied on the next launch. When the browser is offline, a failed manifest refresh is treated as non-fatal as long as the installed cache is still valid, so the cached host still auto-starts.
 
 The CSSFontFace page stores the selected chain in `localStorage` under `exploitChain` and the Auto Jailbreak preference under `autoJb`. The root selector and GoldHEN selectors also keep their selected values locally so the browser can preserve the last choice between page loads.
 
@@ -205,7 +205,7 @@ Make sure the repository is served over HTTP/HTTPS, the manifest has the correct
 
 ### The exploit does not complete
 
-Verify the console firmware and selected branch, close unrelated browser tabs, and retry from a clean browser state. On the CSSFontFace page the auto-start runs by itself after the cache settles; after any failure use `Reload` (the countdown restarts automatically) instead of re-running the chain over a dirty state. Exploit reliability can vary with browser memory, cached state, and console conditions.
+Verify the console firmware and selected branch, close unrelated browser tabs, and retry from a clean browser state. On the CSSFontFace page the auto-start runs by itself after the cache settles; after any failure fully close and reopen the browser (and reboot the console if it repeats) instead of re-running the chain over a dirty state. Exploit reliability can vary with browser memory, cached state, and console conditions.
 
 ### Out of memory during the exploit ("not enough RAM")
 
@@ -214,7 +214,7 @@ The CSSFontFace chain only wins when its heap spray lands well — this is a hea
 1. Install the cache first, then **fully close the PS4 browser** (do not just navigate away).
 2. Reopen the browser, open **only** the host page, and touch nothing while it runs.
 3. Let the auto-start countdown run by itself; do not move the cursor during execution.
-4. After any failure use **Reload** — the countdown restarts on its own.
+4. After any failure fully close and reopen the browser — a page reload alone does not clear a dirty kernel state.
 5. If one chain keeps failing with out-of-memory on your firmware, try the other chain (`Lapse` vs `NetCtrl`) — their allocation patterns differ.
 
 Raising timeouts does not help: out-of-memory happens *during* the spray itself, and the page is only ~10 KB against tens of megabytes of exploit allocations. Do not modify spray sizes or attempt counts — they are researcher-tuned upstream constants.
@@ -261,3 +261,21 @@ $ exit
 
 PSPULSE // offline ps4 host collection
 ```
+
+## Offline cache update
+
+Previous-build pages now load the existing goldhen10.bin rather than the absent goldhen5.bin. Its Git blob matches css/stable/src/payload.bin. The project owner confirms: goldhen10.bin is b18.10, goldhen.bin is b18.12, css/stable/src/payload.bin is b18.10, and css/latest/src/payload.bin is b18.12. Git blob identities independently confirm these copies are identical within each build. Device compatibility still requires hardware testing. No binaries were modified.
+
+Cache the menu online, then install each required host/version cache online. Test menu navigation and host loading with networking disabled. A cached menu does not install every host cache.
+
+### Payload naming
+
+| Path | GoldHEN build |
+| --- | --- |
+| `*/goldhen.bin` | b18.12 |
+| `*/goldhen10.bin` | b18.10 |
+| `css/latest/src/payload.bin` | b18.12 |
+| `css/stable/src/payload.bin` | b18.10 |
+| `1300/payload.bin` | b18.12 (identical Git blob to latest) |
+
+The suffix `5` in historical filenames (`cache5.html`, `index5.html`, `loader5.js`, `PSPulse5.*`) identifies the previous-build route, now b18.10; it is not a b18.5 version label. Legacy selector input `v2.4b18.5` is normalized to `v2.4b18.10` before storage and navigation. Historical PS4-HEN annotations in firmware diagnostic notes do not determine which binary is loaded; current `1352/goldhen.bin` matches b18.12.

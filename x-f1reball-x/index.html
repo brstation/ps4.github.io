@@ -6,121 +6,132 @@
 <meta http-equiv="Accept-CH" content="Sec-CH-UA-Model, Sec-CH-UA-Platform-Version, Sec-CH-UA-Platform">
 <title>PS4JB</title>
 <style>
+  * { -webkit-box-sizing: border-box; box-sizing: border-box; }
   html, body {
     margin: 0;
     padding: 0;
     min-height: 100%;
-    background: #000;
-    color: #2a9fff;
-    font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+    background: #0a0e1a;
+    background: -webkit-linear-gradient(160deg, #0a0e1a 0%, #0d1b3a 45%, #0a1628 100%);
+    background: linear-gradient(160deg, #0a0e1a 0%, #0d1b3a 45%, #0a1628 100%);
+    color: #e8f0ff;
+    font: 15px/1.45 Arial, Helvetica, "Segoe UI", system-ui, sans-serif;
     overflow-x: hidden;
   }
-  #bg {
-    position: fixed;
-    top: 0; right: 0; bottom: 0; left: 0;
-    z-index: 0;
-    background: #000 url("ps-logo.jpg") center center no-repeat;
-    background-size: cover;
-    pointer-events: none;
-  }
-  #bg:after {
-    content: "";
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background: rgba(0,0,0,0.55);
-    pointer-events: none;
-  }
-  #main {
+  #wrap-page {
     position: relative;
     z-index: 2;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 28px 20px 80px;
-    box-sizing: border-box;
-    max-width: 420px;
-    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 28px 18px 72px;
+  }
+  .hdr {
+    text-align: center;
+    margin-bottom: 22px;
   }
   #brand-title {
     margin: 0;
-    font-size: 28px;
+    font-size: 42px;
     font-weight: 700;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #2a9fff;
-    text-shadow: 0 0 18px rgba(42,159,255,0.45);
+    color: #5ee7ff;
+    text-shadow: 0 0 12px #1a9fff, 0 0 28px #0066cc;
   }
   #brand-sub {
     margin: 8px 0 0;
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.12em;
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+    color: #7a9cc8;
+    text-shadow: none;
+  }
+  #brand-sub.blocked {
+    color: #ff6473;
+    text-shadow: 0 0 12px rgba(255,100,115,0.35);
+  }
+  .card {
+    background: #121a2e;
+    border: 1px solid #2a4a7a;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    -webkit-box-shadow: 0 0 20px rgba(0, 140, 255, 0.12), inset 0 1px 0 rgba(94, 231, 255, 0.08);
+    box-shadow: 0 0 20px rgba(0, 140, 255, 0.12), inset 0 1px 0 rgba(94, 231, 255, 0.08);
+  }
+  .card h2 {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #5ee7ff;
   }
   #fwMeta {
-    margin: 10px 0 0;
-    color: #facc15;
-    font-size: 18px;
+    margin: 0;
+    color: #ffffff;
+    font-size: 22px;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-shadow: 0 0 12px rgba(250, 204, 21, 0.45);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 12px rgba(94, 231, 255, 0.35);
   }
   #cache {
-    margin: 8px 0 0;
-    font-size: 17px;
+    margin: 0;
+    font-size: 15px;
     font-weight: 600;
-    color: #4a9fd8;
+    color: #8aa4c8;
     min-height: 20px;
-    text-shadow: 0 0 10px rgba(74, 159, 216, 0.35);
   }
-  #cache.cacheok { color: #5eb6ff; }
+  #cache.cacheok { color: #3dff9a; text-shadow: 0 0 10px rgba(61, 255, 154, 0.35); }
   #stage {
     display: none;
-    margin: 16px 0 16px;
-    font-size: 18px;
+    margin: 12px 0 0;
+    font-size: 16px;
     font-weight: 700;
-    color: #ffffff;
+    color: #e8f0ff;
     text-align: left;
-    text-shadow: 0 0 14px rgba(255,255,255,0.4);
+    text-shadow: 0 0 14px rgba(94, 231, 255, 0.35);
     width: 100%;
   }
   #stage.on { display: block; }
   #stage.ok {
-    color: #22c55e;
-    text-shadow: 0 0 14px rgba(34,197,94,0.55);
+    color: #3dff9a;
+    text-shadow: 0 0 14px rgba(61, 255, 154, 0.55);
   }
   #stage.bad {
-    color: #ef4444;
-    text-shadow: 0 0 14px rgba(239,68,68,0.55);
+    color: #ff6473;
+    text-shadow: 0 0 14px rgba(255,100,115,0.55);
   }
   #progress-wrap {
     display: none;
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 420px;
-    margin: 8px 0 8px;
+    margin: 12px 0 8px;
     height: 14px;
+    -webkit-border-radius: 8px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(10, 20, 40, 0.85);
+    border: 1px solid #2a4a7a;
     overflow: hidden;
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
+    -webkit-box-shadow: 0 0 14px rgba(0, 140, 255, 0.18);
+    box-shadow: 0 0 14px rgba(0, 140, 255, 0.18);
   }
   #progress-wrap.on { display: block; }
   #progress-bar {
     height: 100%;
     width: 0%;
+    -webkit-border-radius: 8px;
     border-radius: 8px;
-    background: linear-gradient(90deg, #e8e8e8, #ffffff, #f5f5f5);
-    box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+    background: #5ee7ff;
+    background: -webkit-linear-gradient(90deg, #2ab8ff, #5ee7ff, #7ef0ff);
+    background: linear-gradient(90deg, #2ab8ff, #5ee7ff, #7ef0ff);
+    -webkit-box-shadow: 0 0 14px rgba(46, 184, 255, 0.55);
+    box-shadow: 0 0 14px rgba(46, 184, 255, 0.55);
     -webkit-transition: background 0.35s ease, box-shadow 0.35s ease;
     transition: background 0.35s ease, box-shadow 0.35s ease;
   }
-  /* One continuous CSS animation 0→100% - keeps moving if JS stalls (JS-stall safe). */
   @-webkit-keyframes ps4jb-fill {
     from { width: 0%; }
     to { width: 100%; }
@@ -145,12 +156,12 @@
     position: relative;
     z-index: 2;
     text-align: left;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     letter-spacing: 0.06em;
-    color: #ffffff;
-    text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
-    margin: 0 0 6px;
+    color: #5ee7ff;
+    text-shadow: 0 0 14px rgba(46, 184, 255, 0.45);
+    margin: 0 0 4px;
     width: 100%;
   }
   #progress-pct.on { display: block; }
@@ -162,9 +173,9 @@
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: #e5e5e5;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-    margin: 0 0 10px;
+    color: #8aa4c8;
+    text-shadow: none;
+    margin: 0 0 4px;
     width: 100%;
   }
   #elapsed.on { display: block; }
@@ -178,9 +189,9 @@
     font-size: 18px;
     font-weight: 800;
     letter-spacing: 0.02em;
-    color: #22c55e;
+    color: #3dff9a;
     text-align: left;
-    text-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+    text-shadow: 0 0 16px rgba(61, 255, 154, 0.45);
     width: 100%;
   }
   #successMsg .check {
@@ -188,8 +199,8 @@
     width: 16px;
     height: 9px;
     margin: 0 10px 3px 0;
-    border-left: 3px solid #2a9fff;
-    border-bottom: 3px solid #2a9fff;
+    border-left: 3px solid #5ee7ff;
+    border-bottom: 3px solid #5ee7ff;
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
     vertical-align: middle;
@@ -200,22 +211,30 @@
   body.done #successMsg { display: none !important; }
   body.done #stage { display: none !important; }
   body.done #progress-bar {
+    background: #22c55e !important;
+    background: -webkit-linear-gradient(90deg, #15803d, #22c55e, #86efac) !important;
     background: linear-gradient(90deg, #15803d, #22c55e, #86efac) !important;
+    -webkit-box-shadow: 0 0 14px rgba(34, 197, 94, 0.55) !important;
     box-shadow: 0 0 14px rgba(34, 197, 94, 0.55) !important;
   }
   body.done #progress-pct { color: #86efac !important; }
   body.done #elapsed { color: #86efac !important; }
   body.fail #progress-bar {
+    background: #ef4444 !important;
+    background: -webkit-linear-gradient(90deg, #991b1b, #ef4444, #fca5a5) !important;
     background: linear-gradient(90deg, #991b1b, #ef4444, #fca5a5) !important;
+    -webkit-box-shadow: 0 0 14px rgba(239, 68, 68, 0.55) !important;
     box-shadow: 0 0 14px rgba(239, 68, 68, 0.55) !important;
   }
   body.fail #progress-pct { color: #fca5a5 !important; }
   body.fail #elapsed { color: #fca5a5 !important; }
   body.fail #stage {
     display: block !important;
-    color: #ef4444 !important;
-    text-shadow: 0 0 14px rgba(239,68,68,0.55) !important;
+    color: #ff6473 !important;
+    text-shadow: 0 0 14px rgba(255,100,115,0.55) !important;
   }
+  #log-card { display: none; }
+  body.log #log-card { display: block; }
   #msg, #spin, #wrap, #state, #out { display: none; }
   body.log #wrap, body.log #state, body.log #out { display: block; }
   body.log #progress-wrap,
@@ -223,35 +242,34 @@
   body.log #elapsed,
   body.log #stage,
   body.log #successMsg { display: none !important; }
-  body.log #wrap { padding: 14px 18px; width: 100%; max-width: none; }
+  body.log #wrap { padding: 0; width: 100%; max-width: none; }
   body.log #state {
-    font-size: 22px; font-weight: 700; margin: 0 0 8px; color: #2a9fff;
+    font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #5ee7ff;
   }
   body.log #out {
     white-space: pre-wrap;
     font: 12px/1.45 Consolas, monospace;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid rgba(42,159,255,0.35);
-    border-radius: 5px;
+    background: #0a1424;
+    border: 1px solid #1e3a5c;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
     padding: 10px 12px;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 220px);
     overflow-y: auto;
     color: #9ad2ff;
   }
   #foot {
-    position: fixed;
-    left: 0; right: 0; bottom: 10px;
     text-align: center;
-    font-size: 12px;
-    color: #ffffff;
-    letter-spacing: 0.08em;
-    pointer-events: none;
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid #1e3050;
+    font-size: 13px;
+    color: #5a7398;
+    letter-spacing: 0.04em;
     line-height: 1.5;
-    text-shadow: 0 0 12px rgba(255,255,255,0.35);
-    z-index: 2;
   }
-  #foot b { color: #ffffff; font-weight: 600; }
-  #foot a { color: inherit; text-decoration: none; pointer-events: auto; }
+  #foot b { color: #8ab4e8; font-weight: 700; }
+  #foot a { color: inherit; text-decoration: none; }
   body.device-blocked #cache,
   body.device-blocked #progress-wrap,
   body.device-blocked #progress-pct,
@@ -259,32 +277,48 @@
   body.device-blocked #stage,
   body.device-blocked #successMsg,
   body.device-blocked #fwMeta { display: none !important; }
-  #brand-sub.blocked {
-    color: #ff6473;
-    text-shadow: 0 0 12px rgba(255,100,115,0.35);
+  .meta {
+    margin-top: 8px;
+    color: #8aa4c8;
+    font-size: 13px;
+    line-height: 1.55;
   }
 </style>
 </head>
 <body>
-<div id="bg" aria-hidden="true"></div>
-<div id="main">
-  <p id="brand-title">PS4JB</p>
-  <p id="brand-sub">6.00-12.02 · 12.50-13.52</p>
-  <p id="fwMeta">detecting firmware...</p>
-  <div id="cache"></div>
-  <div id="stage">Jailbreak in progress</div>
-  <div id="progress-wrap" aria-hidden="true"><div id="progress-bar"></div></div>
-  <div id="progress-pct">0%</div>
-  <div id="elapsed">Elapsed 0:00</div>
-  <div id="successMsg" style="display:none" aria-hidden="true"></div>
-  <div id="spin"></div>
-  <div id="msg"></div>
-  <div id="wrap">
-    <div id="state"></div>
-    <div id="out"></div>
+<div id="wrap-page">
+  <div class="hdr">
+    <p id="brand-title">PS4JB</p>
+    <p id="brand-sub">6.00-12.02 · 12.50-13.52</p>
   </div>
+
+  <div class="card">
+    <h2>Firmware</h2>
+    <p id="fwMeta">detecting firmware...</p>
+    <div class="meta">Detected from User-Agent · Exploit chain ready when supported</div>
+  </div>
+
+  <div class="card">
+    <h2>Cache / Status</h2>
+    <div id="cache"></div>
+    <div id="stage">Jailbreak in progress</div>
+    <div id="progress-wrap" aria-hidden="true"><div id="progress-bar"></div></div>
+    <div id="progress-pct">0:00</div>
+    <div id="elapsed">Elapsed 0:00</div>
+    <div id="successMsg" style="display:none" aria-hidden="true"></div>
+  </div>
+
+  <div class="card" id="log-card">
+    <div id="spin"></div>
+    <div id="msg"></div>
+    <div id="wrap">
+      <div id="state"></div>
+      <div id="out"></div>
+    </div>
+  </div>
+
+  <div id="foot"><b>Developed by <a href="https://github.com/X-F1REBALL-X" target="_blank" rel="noopener">X-F1REBALL-X</a></b></div>
 </div>
-<div id="foot"><b>Developed by <a href="https://github.com/X-F1REBALL-X" target="_blank" rel="noopener">X-F1REBALL-X</a></b></div>
 
 <script src="device.js?v=1"></script>
 <script>
@@ -437,11 +471,14 @@
       if (v < 0) v = 0;
       if (v > 100) v = 100;
       shownPct = v;
-      pct.textContent = Math.floor(v + 0.0001) + "%";
+      // Text shows elapsed time, not percent.
+      pct.textContent = formatElapsed((finished && window.__ps4jbElapsedMs != null) ? window.__ps4jbElapsedMs : (Date.now() - t0));
     }
     function paintElapsed(now) {
       if (!elapsedEl) return;
-      elapsedEl.textContent = "Elapsed " + formatElapsed(now - t0);
+      elapsedEl.textContent = "";
+      elapsedEl.style.display = "none";
+      if (pct) pct.textContent = formatElapsed(now - t0);
     }
     function stopLoop() {
       if (timer) {
@@ -560,9 +597,9 @@
     startCssFill();
     if (typeof requestAnimationFrame === "function") {
       rafId = requestAnimationFrame(loop);
-    } else {
-      timer = setInterval(tick, 50);
     }
+    // 100ms timer keeps the clock ticking even if rAF stalls.
+    timer = setInterval(tick, 100);
   }
 
   function startRelapse() {

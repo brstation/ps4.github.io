@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="../navigation.manifest">
 
 <head>
     <meta charset="UTF-8">
@@ -201,15 +201,16 @@
 
             <footer class="foot">
                 <div>Author: <a href="https://t.me/sudoBlackArch">BlackArch</a> // Telegram: <a href="https://t.me/PlayStation_Pulse">PlayStation Pulse</a></div>
-                <div>Upstream: <a href="https://github.com/itskenethb?tab=repositories">itskenethb</a></div>
             </footer>
         </main>
     </div>
 
     <script>
         function selectVersion(version) {
+            // Normalize the old selector value; the shipped previous build is b18.10.
+            if (version === 'v2.4b18.5') version = 'v2.4b18.10';
             // Store the selected version in localStorage
-            localStorage.setItem('selectedGoldHENVersion', version);
+            try { localStorage.setItem('selectedGoldHENVersion', version); } catch (error) {}
 
             // Redirect to appropriate cache page based on version
             if (version === 'v2.4b18.12') {

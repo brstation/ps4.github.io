@@ -1,4 +1,6 @@
 CACHE MANIFEST
+# resource-path-fix-20261021-main-v2
+# offline-manifests-v1-20261021
 # v4 - startup, AppCache and telemetry reliability 20261003
 
 CACHE:
@@ -16,6 +18,8 @@ goldhen.bin
 patches/1302.bin
 patches/1350.bin
 patches/1352.bin
+
+jb.html?log=1
 
 NETWORK:
 *

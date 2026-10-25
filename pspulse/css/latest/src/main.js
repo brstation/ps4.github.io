@@ -55,7 +55,7 @@ function report_boot_error(error) {
 }
 
 async function doJb() {
-    if (cssJailbreakStarted) throw new Error('Jailbreak already started. Reload before retrying.');
+    if (cssJailbreakStarted) throw new Error('Jailbreak already started. Close and reopen the browser before retrying.');
     cssJailbreakStarted = true;
     try {
         await load_script('src/misc.js');
@@ -77,6 +77,10 @@ async function doJb() {
         await load_script('src/loader.js');
         await load_script('src/workers.js');
         await load_script('src/ps4/kernel.js');
+        if (fn.setuid.invoke(0) !== -1) {
+            logger.info('GoldHEN is already loaded; skipping exploit.');
+            return true;
+        }
         await load_script('src/' + exploitChain + '.js');
         logger.info('===' + exploitChain.toUpperCase() + '===');
         try {

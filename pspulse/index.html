@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="navigation.manifest">
 <head>
     <link rel="icon" type="image/png" href="pspulse.png">
     <meta charset="UTF-8">
@@ -154,7 +154,7 @@
             <p class="sub">Pick the host matching the firmware installed on your PlayStation 4.</p>
             <ul class="boot">
                 <li>[ <b>ok</b> ] 7 host routes detected</li>
-                <li>[ <b>ok</b> ] offline cache ready</li>
+                <li id="navigation-cache-status">[ <b>...</b> ] checking offline menu cache</li>
             </ul>
 
             <section class="menu" aria-label="Firmware host menu">
@@ -228,5 +228,31 @@
 .pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
 </style>
 <a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
+
+    <script>
+        (function () {
+            var label = document.getElementById('navigation-cache-status');
+            var cache = window.applicationCache;
+            function show(message) { label.textContent = message; }
+            if (!cache) { show('[ -- ] offline menu cache unavailable'); return; }
+            function ready() { show('[ ok ] menu cached; open a host online to cache its resources'); }
+            cache.addEventListener('checking', function () { show('[ ... ] checking offline menu cache'); }, false);
+            cache.addEventListener('downloading', function () { show('[ ... ] downloading offline menu cache'); }, false);
+            cache.addEventListener('cached', ready, false);
+            cache.addEventListener('noupdate', ready, false);
+            cache.addEventListener('updateready', function () {
+                try { cache.swapCache(); } catch (error) {}
+                show('[ ok ] menu cache updated; reopen this page to use it');
+            }, false);
+            cache.addEventListener('error', function () {
+                if (cache.status === cache.IDLE || cache.status === cache.UPDATEREADY) {
+                    show('[ ok ] saved menu available; update could not be checked');
+                } else { show('[ ! ] menu cache installation failed'); }
+            }, false);
+            cache.addEventListener('obsolete', function () { show('[ ! ] menu cache removed; reconnect to reinstall'); }, false);
+            if (cache.status === cache.IDLE) ready();
+            else if (cache.status === cache.UPDATEREADY) show('[ ok ] menu update available; reopen this page');
+        }());
+    </script>
 </body>
 </html>

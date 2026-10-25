@@ -11,7 +11,7 @@
     var netctrlRadio = document.getElementById('netctrl-exploit');
     var lapseRadio = document.getElementById('lapse-exploit');
     var form = document.getElementById('kernel-options');
-    var preflightKey = 'cssPreflightReady:' + window.location.pathname;
+    var autoStarted = false;
 
     function storageGet(name, fallback) {
         try {
@@ -25,26 +25,6 @@
     function storageSet(name, value) {
         try {
             localStorage.setItem(name, String(value));
-        } catch (error) {}
-    }
-
-    function sessionGet(name) {
-        try {
-            return sessionStorage.getItem(name);
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function sessionSet(name, value) {
-        try {
-            sessionStorage.setItem(name, String(value));
-        } catch (error) {}
-    }
-
-    function sessionRemove(name) {
-        try {
-            sessionStorage.removeItem(name);
         } catch (error) {}
     }
 
@@ -105,8 +85,9 @@
                 var message = error && error.message ?
                     error.message : String(error);
                 appendOutput('[-] ' + message);
+                appendOutput('[-] Fully close the browser before retrying. If it repeats, reboot the console.');
                 label.textContent =
-                    'Failed — reload before retrying';
+                    'Failed — fully close the browser and reopen';
             });
     }
 
@@ -129,6 +110,16 @@
         }, 1000);
     }
 
+    function beginAutoJailbreak() {
+        if (autoStarted || jailbreakRunning ||
+            jailbreakButton.disabled || !checkbox.checked) {
+            return;
+        }
+
+        autoStarted = true;
+        jailbreakCountdown();
+    }
+
     function startAutoJb() {
         if (cacheWaitActive || jailbreakRunning ||
             jailbreakButton.disabled || !checkbox.checked) {
@@ -139,18 +130,29 @@
         var hasManifest =
             document.documentElement.hasAttribute('manifest');
         if (!cache || !hasManifest) {
-            jailbreakCountdown();
+            beginAutoJailbreak();
             return;
         }
 
         cacheWaitActive = true;
         var finished = false;
         var watchdog = null;
+        var reloadScheduled = false;
+
+        function clearWatchdog() {
+            if (watchdog !== null) {
+                clearTimeout(watchdog);
+                watchdog = null;
+            }
+        }
 
         function detach() {
-            if (watchdog !== null) clearTimeout(watchdog);
+            clearWatchdog();
             cache.removeEventListener(
                 'downloading', onDownloading, false
+            );
+            cache.removeEventListener(
+                'progress', onProgress, false
             );
             cache.removeEventListener(
                 'cached', onCached, false
@@ -164,6 +166,9 @@
             cache.removeEventListener(
                 'error', onError, false
             );
+            cache.removeEventListener(
+                'obsolete', onObsolete, false
+            );
         }
 
         function finish() {
@@ -174,55 +179,33 @@
         }
 
         function onDownloading() {
+            if (jailbreakRunning) return;
+            clearWatchdog();
+            autoStarted = false;
             stopCountdown();
             label.textContent =
                 'Installing offline cache...';
         }
 
-        function startAfterSettledCache() {
-            sessionRemove('cssCleanCacheReload');
-            if (!checkbox.checked || jailbreakRunning) return;
-
-            if (sessionGet(preflightKey) !== 'yes') {
-                sessionSet(preflightKey, 'yes');
+        function onProgress(event) {
+            if (jailbreakRunning) return;
+            clearWatchdog();
+            if (event && event.total > 0) {
                 label.textContent =
-                    'Preparing a clean memory state — reloading once...';
-                setTimeout(function () {
-                    window.location.reload();
-                }, 750);
-                return;
+                    'Installing offline cache: ' +
+                    Math.round(event.loaded / event.total * 100) +
+                    '%';
             }
-
-            jailbreakCountdown();
         }
 
         function onReady() {
+            if (jailbreakRunning) return;
             finish();
-            startAfterSettledCache();
-        }
-
-        function reloadForCleanStart(message, swapCache) {
-            finish();
-            if (swapCache) {
-                try {
-                    cache.swapCache();
-                } catch (error) {}
-            }
-
-            if (sessionGet('cssCleanCacheReload') === 'yes') {
-                startAfterSettledCache();
-                return;
-            }
-
-            sessionSet('cssCleanCacheReload', 'yes');
-            sessionSet(preflightKey, 'yes');
-            label.textContent = message;
-            setTimeout(function () {
-                window.location.reload();
-            }, 750);
+            beginAutoJailbreak();
         }
 
         function onCached() {
+            if (jailbreakRunning) return;
             reloadForCleanStart(
                 'Cache installed — reloading for a clean start...',
                 false
@@ -230,6 +213,7 @@
         }
 
         function onUpdate() {
+            if (jailbreakRunning) return;
             reloadForCleanStart(
                 'Cache updated — reloading for a clean start...',
                 true
@@ -237,34 +221,92 @@
         }
 
         function onError() {
+            if (jailbreakRunning) return;
+
+            if (cache.status === cache.IDLE ||
+                cache.status === cache.UPDATEREADY) {
+                finish();
+                beginAutoJailbreak();
+                return;
+            }
+
             finish();
             stopCountdown();
-            sessionRemove('cssCleanCacheReload');
             label.textContent =
                 'Cache failed — retry manually';
+        }
+
+        function onObsolete() {
+            if (jailbreakRunning) return;
+            finish();
+            stopCountdown();
+            label.textContent =
+                'Cache obsolete — clear browser data and reload';
+        }
+
+        function reloadForCleanStart(message, swapCache) {
+            if (jailbreakRunning || reloadScheduled) return;
+            reloadScheduled = true;
+            finish();
+            if (swapCache) {
+                try {
+                    cache.swapCache();
+                } catch (error) {}
+            }
+
+            label.textContent = message;
+            setTimeout(function () {
+                window.location.reload();
+            }, 750);
+        }
+
+        function armWatchdog() {
+            clearWatchdog();
+            watchdog = setTimeout(function () {
+                if (cache.status === cache.IDLE ||
+                    cache.status === cache.UPDATEREADY) {
+                    finish();
+                    beginAutoJailbreak();
+                } else if (cache.status === cache.DOWNLOADING) {
+                    armWatchdog();
+                } else {
+                    onError();
+                }
+            }, 60000);
         }
 
         cache.addEventListener(
             'downloading', onDownloading, false
         );
+        cache.addEventListener('progress', onProgress, false);
         cache.addEventListener('cached', onCached, false);
         cache.addEventListener('noupdate', onReady, false);
         cache.addEventListener(
             'updateready', onUpdate, false
         );
         cache.addEventListener('error', onError, false);
+        cache.addEventListener(
+            'obsolete', onObsolete, false
+        );
 
         if (cache.status === cache.UPDATEREADY) {
             onUpdate();
+        } else if (cache.status === cache.IDLE) {
+            finish();
+            beginAutoJailbreak();
+        } else if (cache.status === cache.CHECKING &&
+                   !navigator.onLine) {
+            finish();
+            beginAutoJailbreak();
         } else if (cache.status === cache.CHECKING ||
                    cache.status === cache.DOWNLOADING ||
                    cache.status === cache.UNCACHED) {
             label.textContent =
                 'Waiting for offline cache...';
-            watchdog = setTimeout(onError, 60000);
+            armWatchdog();
         } else {
-            cacheWaitActive = false;
-            startAfterSettledCache();
+            finish();
+            beginAutoJailbreak();
         }
     }
 
@@ -313,8 +355,10 @@
     checkbox.addEventListener('change', function () {
         storageSet('autoJb', checkbox.checked);
         if (checkbox.checked) {
+            autoStarted = false;
             startAutoJb();
         } else {
+            autoStarted = false;
             stopCountdown();
         }
     });
