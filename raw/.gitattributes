@@ -1,0 +1,8 @@
+# Every file here is byte-frozen. cache.appcache pins a sha256 next to each
+# entry, so any end-of-line translation silently changes a file's hash: the
+# console then treats the entry as stale, and a self-hosted copy reports
+# CACHE FAILED or keeps serving an old build.
+#
+# Disable all text/EOL conversion so a checkout is byte-identical on every
+# platform. Use -text (not "binary") so diffs still work on the JS.
+* -text

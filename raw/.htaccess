@@ -1,0 +1,33 @@
+# Static hosting for the ps4 launcher. No PHP gate, no rewrites --
+# every file in this directory is meant to be fetched directly over HTTP.
+#
+# Two things the console needs and a default Apache does not do:
+#
+# 1. cache.appcache MUST be sent as text/cache-manifest. Served as
+#    application/octet-stream (the default for an unknown extension) the
+#    browser rejects the manifest and the page reports CACHE FAILED.
+#
+# 2. The manifest itself must never be cached. AppCache re-checks the manifest
+#    on every load; if a proxy or the browser hands back a stale copy the
+#    console keeps running the old build forever. The per-file #sha256 inside
+#    the manifest is what busts the *entries*, but only if the manifest text
+#    itself is fetched fresh.
+AddType text/cache-manifest .appcache
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.appcache$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# The kernel-patch blobs and the payload are plain downloads. Make sure no
+# host-level handler tries to interpret them.
+<IfModule mod_mime.c>
+    AddType application/octet-stream .bin
+</IfModule>
+
+# Directory listings off -- the launcher is entered at index.html.
+Options -Indexes
+DirectoryIndex index.html

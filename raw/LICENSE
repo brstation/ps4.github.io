@@ -1,0 +1,65 @@
+MIT License
+
+Copyright (c) 2026 rawgame4
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+---------------------------------------------------------------------------
+
+The MIT grant above covers only our own work in this repository: the PS4 port
+of the kernel chains (chain_lapse.js, chain_poops.js), the per-firmware offset
+tables (ps4_offsets.js), and the firmware detection, routing and offline
+delivery layer.
+
+The following bundled files are third-party work, are NOT covered by that
+grant, and remain subject to the terms of their respective authors:
+
+  core.js, mem.js, int64.js, rpc_worker.js
+      SLOPKIT, by Jordy. The JavaScriptCore primitive and memory interface,
+      originally written for the PlayStation 5 and rebuilt here against the
+      PlayStation 4's WebKit build. All rights in the kit and its primitive
+      design remain with its author.
+
+  payload.bin
+      GoldHEN, by the GoldHEN team. Redistributed unmodified.
+      https://github.com/GoldHEN/GoldHEN
+
+  patches/*.bin
+      Kernel patch blobs derived from publicly published PS4 kernel patch
+      sources, by their respective authors.
+
+The underlying vulnerability research embodied in chain_lapse.js and
+chain_poops.js is public work by the PS4/PS5 security research community and
+is credited in README.md.
+
+If you hold rights to any bundled component and wish its attribution or
+licensing terms corrected or its inclusion withdrawn, please open an issue.
+
+
+---------------------------------------------------------------------------
+NO WARRANTY - HARDWARE RISK
+---------------------------------------------------------------------------
+
+This software exploits memory-corruption vulnerabilities in console firmware.
+It can crash the console, corrupt stored data, or leave the system requiring a
+reinstall. It is provided for education and security research on hardware you
+own. You run it entirely at your own risk.
