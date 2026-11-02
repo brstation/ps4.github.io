@@ -1,7 +1,7 @@
 import { establishPrimitive } from "./core.js?v=28";
 import { installWindowP, pairStatus } from "./mem.js";
 import { int64 } from "./int64.js";
-import { offsetsFor, PS4 } from "./ps4_offsets.js?v=9";
+import { offsetsFor, PS4 } from "./ps4_offsets.js?v=10";
 
 const outEl = document.getElementById("out");
 const stateEl = document.getElementById("state");
@@ -1140,7 +1140,7 @@ let allDone = false,
               return;
             }
             try { sessionStorage.removeItem("kv-kbase-retry"); } catch (e) {}
-            const kvb = await import("./hx_kevent.js?v=9");
+            const kvb = await import("./hx_kevent.js?v=10");
             const kvOk = await kvb.runKevent({
               p: p, sc: sc, callAddr: callAddr, bufAddr: bufAddr, errno: errno,
               webkitBase: webkitBase, libkernelBase: libkernelBase, G: G,

