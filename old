@@ -524,58 +524,6 @@ h1 {
 
 <div class="container">
 
-    <!-- MPS -->
-
-    <a class="card" href="/mps/index.html">
-
-        <img
-            src="./img/mansoor0x.webp"
-            alt="MPS">
-
-        <h2>
-            Fork MPS
-        </h2>
-
-        <span
-            class="version"
-            data-i18n="firmwaremps">
-            Firmware: 14.00
-        </span>
-
-        <span
-            class="select"
-            data-i18n="offline">
-            OFFLINE MODE (CACHED)
-        </span>
-
-    </a>
-
-    <!-- AMINEGOLD0 -->
-
-    <a class="card" href="/aminegold0/index.html">
-
-        <img
-            src="./img/aminegold0.webp"
-            alt="aminegold0">
-
-        <h2>
-            Fork aminegold0
-        </h2>
-
-        <span
-            class="version"
-            data-i18n="firmwareAMINEGOLD0">
-            Firmware: 14.00
-        </span>
-
-        <span
-            class="select"
-            data-i18n="exploit">
-            EXPLOIT
-        </span>
-
-    </a>
-
     <!-- RAW GAME -->
 
     <a class="card" href="/raw/index.html">
@@ -867,12 +815,6 @@ var translations = {
         description:
             "Selecione o exploit compatível com a versão de firmware do seu PS4.",
 
-        firmwaremps:
-            "Firmware: 14.00",
-        
-        firmwareAMINEGOLD0:
-            "Firmware: 14.00",
-
         firmwareRaw:
             "Firmware: 11.00 – 13.00",
 
@@ -924,12 +866,6 @@ var translations = {
 
         description:
             "Select the exploit compatible with your PS4 firmware version.",
-
-        firmwaremps:
-            "Firmware: 14.00",
-        
-        firmwareAMINEGOLD0:
-            "Firmware: 14.00",
 
         firmwareRaw:
             "Firmware: 11.00 – 13.00",
@@ -984,22 +920,27 @@ var translations = {
 
 function detectLanguage() {
 
-    // O armazenamento pode estar bloqueado em alguns navegadores.
-    try {
-        var saved = localStorage.getItem("language");
-        if (saved === "pt" || saved === "en") {
-            return saved;
-        }
-    } catch (error) {
-        // Continua usando o idioma do navegador.
+    var saved =
+        localStorage.getItem("language");
+
+    if (saved === "pt" || saved === "en") {
+        return saved;
     }
 
     var browserLanguage =
-        navigator.language || navigator.userLanguage || "en";
+        navigator.language ||
+        navigator.userLanguage ||
+        "en";
 
-    browserLanguage = browserLanguage.toLowerCase();
+    browserLanguage =
+        browserLanguage.toLowerCase();
 
-    return browserLanguage.indexOf("pt") === 0 ? "pt" : "en";
+    if (browserLanguage.indexOf("pt") === 0) {
+        return "pt";
+    }
+
+    return "en";
+
 }
 
 
@@ -1007,46 +948,87 @@ function detectLanguage() {
    ALTERAR IDIOMA
    ========================= */
 
-window.setLanguage = function(language) {
+function setLanguage(language) {
 
-    // Impede que um valor inválido interrompa a tradução.
-    if (language !== "pt" && language !== "en") {
-        return;
-    }
+    var texts =
+        translations[language];
 
-    var texts = translations[language];
-    document.documentElement.lang = language;
+    document.documentElement.lang =
+        language;
 
-    var elements = document.querySelectorAll("[data-i18n]");
+    var elements =
+        document.querySelectorAll("[data-i18n]");
 
-    for (var i = 0; i < elements.length; i++) {
-        var key = elements[i].getAttribute("data-i18n");
+    for (
+        var i = 0;
+        i < elements.length;
+        i++
+    ) {
 
-        if (Object.prototype.hasOwnProperty.call(texts, key)) {
-            elements[i].textContent = texts[key];
+        var key =
+            elements[i].getAttribute("data-i18n");
+
+        if (texts[key]) {
+
+            elements[i].innerHTML =
+                texts[key];
+
         }
+
     }
 
-    // Atualiza o texto do alerta.
-    var alertMessage = document.getElementById("alertMessage");
-    if (alertMessage) {
-        alertMessage.textContent = alertText[language];
+
+    /* Atualizar texto do alerta */
+
+    document.getElementById("alertMessage").innerHTML =
+        alertText[language];
+
+
+    /* Botao PT */
+
+    if (language === "pt") {
+
+        document.getElementById("pt").className =
+            "active";
+
+        document.getElementById("en").className =
+            "";
+
     }
 
-    // Atualiza o estado visual dos botões.
-    document.getElementById("pt").className = language === "pt" ? "active" : "";
-    document.getElementById("en").className = language === "en" ? "active" : "";
 
-    // Atualiza o link dos créditos.
-    document.getElementById("creditsLink").href = texts.creditsUrl;
+    /* Botao EN */
 
-    // Salva a preferência sem impedir a troca caso o armazenamento falhe.
-    try {
-        localStorage.setItem("language", language);
-    } catch (error) {
-        // A tradução continua funcionando mesmo sem localStorage.
+    else {
+
+        document.getElementById("pt").className =
+            "";
+
+        document.getElementById("en").className =
+            "active";
+
     }
-};
+
+
+    /* =========================
+       ATUALIZAR LINK DOS CREDITOS
+       ========================= */
+
+    document.getElementById("creditsLink").href =
+        texts.creditsUrl;
+
+
+    /* =========================
+       SALVAR IDIOMA
+       ========================= */
+
+    localStorage.setItem(
+        "language",
+        language
+    );
+
+}
+
 
 /* =========================
    MOSTRAR / OCULTAR ALERTA
