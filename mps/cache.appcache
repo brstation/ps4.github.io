@@ -1,0 +1,21 @@
+CACHE MANIFEST
+# Version 2026-11-03-02
+# Copyright (c) 2026 mansoor0x | 1_X @ZeroMan
+CACHE:
+./
+./index.html
+./cache.html
+./exploit.html
+./launch.js
+./exploit.js
+./core.js
+./mem.js
+./int64.js
+./ps4_offsets.js
+./afterglow.js
+./goldhen.bin
+./oup/1352.bin
+./oup/1400.bin
+
+NETWORK:
+*

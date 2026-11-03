@@ -415,6 +415,8 @@ function makeAioSet() {
     waitStatus: allocBuffer(5 * 4),
     pollStatus: allocBuffer(5 * 4),
     timeout: allocBuffer(8),
+    deleteStatus: allocBuffer(5 * 4),
+    savedIds: [],
   };
 
   for (let i = 0; i < 5; i++) {
@@ -438,6 +440,29 @@ function makeAioSet() {
   );
 
   return set;
+}
+
+function cleanupWashIds(set) {
+  const c = context();
+  const saved = set.savedIds.length;
+  let deleted = 0, failed = 0;
+  for (let offset = 0; offset < saved; offset += 5) {
+    const count = Math.min(5, saved - offset);
+    set.submitStatus.u8.fill(0);
+    set.deleteStatus.u8.fill(0);
+    for (let i = 0; i < count; i++)
+      putU32(set.submitStatus, i * 4, set.savedIds[offset + i]);
+    const rv = c.sc(S.aio_multi_delete, set.submitStatus.addr, count,
+                    set.deleteStatus.addr).i32;
+    if (rv !== 0) { failed += count; continue; }
+    for (let i = 0; i < count; i++) {
+      if (getU32(set.deleteStatus, i * 4) === 0) deleted++;
+      else failed++;
+    }
+  }
+  log("HX1400-AIO-CLEANUP", "saved=" + saved + " deleted=" + deleted + " failed=" + failed);
+  set.savedIds.length = 0;
+  if (failed) throw new Error("AIO ID cleanup incomplete");
 }
 
 
@@ -501,14 +526,10 @@ function wash(set, rounds) {
     let zeroId = false;
 
     for (let i = 0; i < 5; i++) {
-      if (
-        getI32(
-          set.submitStatus,
-          i * 4,
-        ) === 0
-      ) {
+      const id = getU32(set.submitStatus, i * 4);
+      if (id === 0) {
         zeroId = true;
-      }
+      } else set.savedIds.push(id);
     }
 
     if (zeroId) {
@@ -756,6 +777,8 @@ async function discoverKbase() {
     pinCpu();
 
     const aio = makeAioSet();
+    let keepWashIds = false;
+    try {
 
     for (
       let segment = 1;
@@ -779,8 +802,6 @@ async function discoverKbase() {
       const message =
         "wash stalled " +
         washText(result);
-
-      restorePin();
 
       throw new Error(message);
     }
@@ -833,13 +854,14 @@ async function discoverKbase() {
     );
 
       if (kbase) {
-        restorePin();
-
+        keepWashIds = true;
         return kbase;
       }
     }
-
-    restorePin();
+    } finally {
+      try { if (!keepWashIds) cleanupWashIds(aio); }
+      finally { restorePin(); }
+    }
 
     if (round < 5) {
       await new Promise((r) => setTimeout(r, 100));

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" manifest="cache.appcache">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="author" content="mansoor0x">
+  <meta name="copyright" content="Copyright 2026 mansoor0x">
+  <title>PS4 14.00 · Offline Cache</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0; padding: 22px; background: #fff; color: #000;
+      font: 14px 'Courier New', monospace; text-align: center;
+    }
+    main { max-width: 720px; margin: 12vh auto 0; }
+    h1 { font-size: 19px; margin: 0 0 12px; }
+    #message { margin: 26px 0 14px; min-height: 1.5em; }
+    #percent { font-weight: bold; color: #b00000; }
+    #track { height: 8px; max-width: 420px; margin: 18px auto; background: #eee; overflow: hidden; }
+    #bar { height: 100%; width: 0; background: #b00000; transition: width .15s linear; }
+    a { color: #b00000; }
+    footer { margin-top: 42px; color: #777; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>PS4 14.00 · Offline Cache</h1>
+    <p id="message">Checking offline cache...</p>
+    <div id="track"><div id="bar"></div></div>
+    <div id="percent">Please wait</div>
+    <p><a href="index.html">Open GoldHEN launcher</a></p>
+  </main>
+  <footer>© 2026 mansoor0x · 1_X @ZeroMan · All rights reserved</footer>
+  <script>
+    (function () {
+      var msg = document.getElementById("message");
+      var pct = document.getElementById("percent");
+      var bar = document.getElementById("bar");
+      var app = window.applicationCache;
+
+      function setStatus(text, value) {
+        msg.textContent = text;
+        if (typeof value === "number") {
+          value = Math.max(0, Math.min(100, value));
+          bar.style.width = value + "%";
+          pct.textContent = value + "%";
+        } else {
+          pct.textContent = "";
+        }
+      }
+
+      if (!app) {
+        setStatus("Offline cache is not supported by this browser.", null);
+        return;
+      }
+
+      app.addEventListener("checking", function () {
+        setStatus("Checking cache...", null);
+      }, false);
+      app.addEventListener("downloading", function () {
+        setStatus("Installing offline cache...", 0);
+      }, false);
+      app.addEventListener("progress", function (event) {
+        if (event.lengthComputable && event.total > 0) {
+          setStatus("Installing offline cache...", Math.round(event.loaded / event.total * 100));
+        } else {
+          setStatus("Downloading offline files...", null);
+        }
+      }, false);
+      app.addEventListener("cached", function () {
+        setStatus("Offline cache installed successfully.", 100);
+      }, false);
+      app.addEventListener("noupdate", function () {
+        setStatus("Offline cache is already up to date.", 100);
+      }, false);
+      app.addEventListener("updateready", function () {
+        try { app.swapCache(); } catch (e) {}
+        setStatus("Offline cache updated successfully.", 100);
+      }, false);
+      app.addEventListener("obsolete", function () {
+        setStatus("Cache manifest is obsolete. Reload this page.", null);
+      }, false);
+      app.addEventListener("error", function () {
+        setStatus("Cache update failed. Check the connection and reload.", null);
+      }, false);
+    })();
+  </script>
+</body>
+</html>
