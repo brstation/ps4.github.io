@@ -43,7 +43,7 @@ const FILES = [
     "./payloads/elfldr-ps5-1360.elf",
     "./payloads/etaHEN.elf",
     "./payloads/kexp_2026_05_25.bin",
-    "./payloads/kstuff.elf",
+    "./payloads/kstuff1.13-fpkg-dr-test7-restmode.elf",
     "./payloads/shadowmountplus.elf",
 
     "./src/firmware.js",

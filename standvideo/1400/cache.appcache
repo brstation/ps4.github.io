@@ -1,0 +1,25 @@
+CACHE MANIFEST
+# Stand PS4 14.00 offline cache - revision 20261102-1
+
+CACHE:
+index.html
+jb.html
+style.css
+launch.js
+jb.js
+core.js
+mem.js
+int64.js
+ps4_offsets.js
+afterglow.js
+patchset.bin
+hen.bin
+goldhen.bin
+img/BG.jpg
+README.md
+TECHNICAL.md
+LICENSE
+serve.sh
+
+NETWORK:
+*

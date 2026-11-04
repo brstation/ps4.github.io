@@ -1,0 +1,96 @@
+<!doctype html>
+<html manifest="cache.appcache" class="landing" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Stand PS4 14.00</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Every run starts from here. The referrer guard in jb.js arms the chain
+         only when it was reached from this page, so that a browser restoring
+         its last session cannot re-run it unattended. -->
+    <div id="brand"><b>Stand PS4 14.00</b></div>
+    <div id="cache-status" role="status" aria-live="polite">
+      <div id="cache-label">Cache hors ligne : vérification…</div>
+      <div id="cache-track"><div id="cache-fill"></div></div>
+      <div id="cache-percent">0%</div>
+    </div>
+
+    <div class="shell">
+      <img class="stand" src="" alt="" />
+
+      <main class="panel">
+        <p class="lede">PS4 kernel exploit &middot; firmware 14.00</p>
+
+        <form class="pick" id="pick">
+          <label class="opt">
+            <input type="radio" name="payload" value="hen" />
+            <span>ps4-hen</span>
+          </label>
+          <label class="opt">
+            <input type="radio" name="payload" value="goldhen" checked />
+            <span>GoldHEN</span>
+          </label>
+
+          <label class="opt opt-auto">
+            <input type="checkbox" id="auto" checked />
+            <span>autostart</span>
+          </label>
+
+          <button class="btn" type="submit">start</button>
+          <p class="count" id="count"></p>
+        </form>
+      </main>
+    </div>
+
+    <p class="byline">by Stand</p>
+
+    <script>
+      (() => {
+        const box = document.getElementById("cache-status");
+        const label = document.getElementById("cache-label");
+        const fill = document.getElementById("cache-fill");
+        const percent = document.getElementById("cache-percent");
+
+        function update(value, message) {
+          const n = Math.max(0, Math.min(100, Math.round(value)));
+          fill.style.width = n + "%";
+          percent.textContent = n + "%";
+          if (message) label.textContent = message;
+        }
+
+        if (!("applicationCache" in window)) {
+          update(0, "Cache hors ligne non pris en charge");
+          box.classList.add("cache-unavailable");
+          return;
+        }
+
+        const appCache = window.applicationCache;
+        appCache.addEventListener("checking", () => update(0, "Vérification du cache…"));
+        appCache.addEventListener("downloading", () => update(0, "Téléchargement du cache…"));
+        appCache.addEventListener("progress", event => {
+          if (event.lengthComputable && event.total > 0) {
+            update((event.loaded / event.total) * 100, "Téléchargement du cache…");
+          } else {
+            label.textContent = "Téléchargement du cache…";
+          }
+        });
+        appCache.addEventListener("cached", () => update(100, "Cache hors ligne prêt"));
+        appCache.addEventListener("noupdate", () => update(100, "Cache hors ligne déjà à jour"));
+        appCache.addEventListener("obsolete", () => update(0, "Cache hors ligne obsolète"));
+        appCache.addEventListener("error", () => {
+          label.textContent = "Erreur du cache hors ligne";
+          box.classList.add("cache-error");
+        });
+
+        if (appCache.status === appCache.UPDATEREADY || appCache.status === appCache.IDLE) {
+          // The manifest may already have been cached on a previous visit.
+          update(100, "Cache hors ligne disponible");
+        }
+      })();
+    </script>
+
+    <script src="launch.js"></script>
+  </body>
+</html>
