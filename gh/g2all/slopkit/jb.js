@@ -32,7 +32,7 @@ const STOP_BEFORE_DOUBLE = params.get("stop") === "beforedouble";
 function hostOk() {
   var m = document.getElementById("msgs");
   if (m) {
-    m.innerHTML = "GoldHEN v2.4b18.12 Loaded ...";
+    m.innerHTML = "GoldHEN v2.4b18.13 Loaded ...";
   }
 }
 
@@ -237,7 +237,7 @@ let allDone = false,
 
     const KPATCH_FILE =
       "slopkit/patches/" + (off.kpatch || fwKey.replace(".", "") + ".bin");
-    const PAYLOAD_FILE = "goldhen_2.4b18.12.bin";
+    const PAYLOAD_FILE = "goldhen_2.4b18.13.bin";
     const needPatch = ["k_sysent_661", "k_jmp_rsi"].filter(
       (k) => off[k] === undefined,
     );
