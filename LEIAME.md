@@ -1,4 +1,4 @@
-# Fork - Exploit WebKit do PS4 (5.05 – 13.52)
+# Fork - Exploit WebKit do PS4 (4.50 – 14.00)
 
 Uma coleção de hosts de exploits WebKit do PlayStation 4 e seus forks, todos hospedados em um único repositório e executados no navegador do console.
 
