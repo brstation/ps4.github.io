@@ -514,14 +514,6 @@ h1 {
             EN
         </button>
 
-        <span>•</span>
-
-        <button
-            id="es"
-            onclick="setLanguage('es')">
-            ES
-        </button>
-
     </div>
 
 </div>
@@ -882,10 +874,7 @@ var alertText = {
         "Exploit desligando o console? Reinicie o PS4, limpe a cache do navegador e tente novamente.",
 
     en:
-        "Exploit shutting down the console? Restart the PS4, clear the browser cache, and try again.",
-
-    es:
-        "¿El exploit está apagando la consola? Reinicia la PS4, borra la caché del navegador e inténtalo de nuevo."
+        "Exploit shutting down the console? Restart the PS4, clear the browser cache, and try again."
 
 };
 
@@ -1016,67 +1005,6 @@ var translations = {
         alertTitle:
             "WARNING"
 
-    },
-
-    es: {
-
-        platform:
-            "PlayStation 4",
-
-        description:
-            "Selecciona el exploit compatible con la versión de firmware de tu PS4.",
-
-        firmwarewell0nez:
-            "Firmware: 12.00 - 14.00",
-
-        firmwaremps:
-            "Firmware: 13.52 - 14.00",
-
-        firmwareAMINEGOLD0:
-            "Firmware: 14.00",
-
-        firmwareRaw:
-            "Firmware: 10.01 – 13.00",
-
-        firmwareRaw13g:
-            "Firmware: 13.02 – 13.52",
-
-        firmwareGH:
-            "Firmware: 5.05 – 14.00",
-
-        firmwarePSPulse:
-            "Firmware: 5.05 – 13.52",
-
-        firmwareWebKitty:
-            "Firmware: 4.50 - 14.00",
-
-        firmwareXF1REBALLX:
-            "Firmware: 6.00 – 13.52",
-
-        firmwareStandVideo:
-            "Firmware (PS4): 5.05 – 14.00",
-
-        firmwareNADAREPUBLICANO:
-            "Firmware: 11.00 – 13.52",
-
-        firmwaremansoor0x:
-            "Firmware: 11.00 – 13.52",
-
-        offline:
-            "MODO SIN CONEXIÓN (EN CACHÉ)",
-
-        footer:
-            "SELECCIONA TU EXPLOIT",
-
-        credits:
-            "CRÉDITOS",
-
-        creditsUrl:
-            "https://ps4.dpdns.org/readme",
-
-        alertTitle:
-            "AVISO"
-
     }
 
 };
@@ -1091,7 +1019,7 @@ function detectLanguage() {
     // O armazenamento pode estar bloqueado em alguns navegadores.
     try {
         var saved = localStorage.getItem("language");
-        if (saved === "pt" || saved === "en" || saved === "es") {
+        if (saved === "pt" || saved === "en") {
             return saved;
         }
     } catch (error) {
@@ -1103,15 +1031,7 @@ function detectLanguage() {
 
     browserLanguage = browserLanguage.toLowerCase();
 
-    if (browserLanguage.indexOf("pt") === 0) {
-        return "pt";
-    }
-
-    if (browserLanguage.indexOf("es") === 0) {
-        return "es";
-    }
-
-    return "en";
+    return browserLanguage.indexOf("pt") === 0 ? "pt" : "en";
 }
 
 
@@ -1122,7 +1042,7 @@ function detectLanguage() {
 window.setLanguage = function(language) {
 
     // Impede que um valor inválido interrompa a tradução.
-    if (language !== "pt" && language !== "en" && language !== "es") {
+    if (language !== "pt" && language !== "en") {
         return;
     }
 
@@ -1148,7 +1068,6 @@ window.setLanguage = function(language) {
     // Atualiza o estado visual dos botões.
     document.getElementById("pt").className = language === "pt" ? "active" : "";
     document.getElementById("en").className = language === "en" ? "active" : "";
-    document.getElementById("es").className = language === "es" ? "active" : "";
 
     // Atualiza o link dos créditos.
     document.getElementById("creditsLink").href = texts.creditsUrl;
