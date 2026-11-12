@@ -32,12 +32,27 @@ function showRetry() {
 }
 
 const WATCHDOG_MS = 45000;
+let terminal = false;
 const watchdog = setInterval(function () {
+  if (terminal) return;
   if (Date.now() - lastMark > WATCHDOG_MS) {
-    try { clearInterval(watchdog); } catch (e) {}
+    endWatchdog();
     showRetry();
   }
 }, 5000);
+
+/* Every outcome is terminal for the watchdog: it only covers a chain that
+   stalls without a word, and once the run has ended -- well or badly -- there
+   is nothing left to stall. Without this the interval kept polling after a
+   SUCCESSFUL run and put "exploit failed" on the television 45 s later, with
+   nothing wrong: on a console the obvious answer to that is to run again,
+   which costs an apm unit out of a supply that lasts one boot. Reported by
+   pengu1nsec. The flag as well as the clear, because a callback can already
+   be queued when the interval goes. */
+function endWatchdog() {
+  terminal = true;
+  try { clearInterval(watchdog); } catch (e) {}
+}
 
 /* The referrer guard. The console's browser restores the page it had open
    last. If that was the armed chain it would run again with nobody in front
@@ -223,6 +238,7 @@ if (SHOW_LOG && !SENT_HOME && document.body) document.body.className = "log";
    costs nothing and a reload is enough; a failure after it may leave the
    handles armed, and then only a cold start is safe. */
 function finishUI(ok, ran) {
+  endWatchdog();
   if (SHOW_LOG || !document.body) return;
   const m = document.getElementById("msg");
   if (m)
@@ -398,6 +414,7 @@ let mainMf = null,
         "This build has a kernel stage for firmware " + SUPPORTED.join(", ") +
         " only. Detected " + fwKey + " - nothing was run.",
       );
+      endWatchdog();
       return;
     }
 
@@ -931,7 +948,7 @@ let mainMf = null,
     try { finishUI(false); } catch (e) {}
   } catch (eOuter) {
     try { mark("JB-THREW", (eOuter && eOuter.message) || String(eOuter)); } catch (e) {}
-    try { clearInterval(watchdog); } catch (e) {}
+    endWatchdog();
     // Put it on the television. A failure in the WebKit stage touched
     // NOTHING -- no apm unit spent, no kernel byte written. Reopening the
     // browser is enough; rebooting the console would waste a cycle.
