@@ -94,13 +94,6 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* The note sits on the same line as the supported versions and must read as
-   a note, not as a third supported one -- dimmer, and never broken apart. */
-.lede .soon {
-  opacity: 0.62;
-  white-space: nowrap;
-}
-
 .pick {
   margin: 0;
 }

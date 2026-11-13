@@ -17,6 +17,7 @@ var countEl = document.getElementById("count");
 var cacheEl = document.getElementById("cache");
 var ticker = null;
 var waitingForCache = false;
+var cacheTimer = null;
 var gone = false;
 
 /* How long the start may wait for the cache before it goes anyway.
@@ -27,6 +28,7 @@ var gone = false;
  * case here, not an edge case: the files are already on disk, and a run
  * from them is exactly as good. So the wait is a courtesy with an upper
  * bound, never a gate. */
+var CACHE_WAIT_MS = 4000;
 
 /* The offline cache, and the one state that must not be run through.
  *
@@ -55,6 +57,27 @@ function cacheBusy() {
   }
 }
 
+/* UPDATEREADY used to print "reopen this page" and leave it at that -- while
+   the autostart clock kept running and navigated with the files the page had
+   loaded with, which are the OLD ones. On a console that is not a hint anyone
+   can act on: there is no keyboard here, and nobody retypes a URL with a
+   controller. So swap the cache and reload, which is what reopening the page
+   would have done.
+   The timestamp guard, not a once-per-session flag: a second update later in
+   the same session must still be picked up, and two reloads inside ten
+   seconds would be a loop. */
+var SWAP_KEY = "afterglow.swapped";
+
+function swapAndReload() {
+  var last = 0;
+  try { last = parseInt(sessionStorage.getItem(SWAP_KEY) || "0", 10) || 0; } catch (e) {}
+  if (Date.now() - last < 10000) return false;
+  try { sessionStorage.setItem(SWAP_KEY, String(Date.now())); } catch (e) {}
+  try { appCache.swapCache(); } catch (e) {}
+  location.reload();
+  return true;
+}
+
 function cacheNote() {
   if (!cacheEl) return;
   if (!appCache) { cacheEl.textContent = ""; return; }
@@ -62,18 +85,22 @@ function cacheNote() {
   try {
     if (appCache.status === appCache.CHECKING) text = "checking for updates";
     else if (appCache.status === appCache.DOWNLOADING) text = "loading files - hold on";
-    else if (appCache.status === appCache.UPDATEREADY) text = "a newer version is cached - reopen this page to use it";
+    else if (appCache.status === appCache.UPDATEREADY) text = "newer version cached - reloading";
     else if (appCache.status === appCache.OBSOLETE) text = "the cache was dropped - the server answers directly";
-    /* Not a reason to refuse -- it works wherever the server answers. But it
-       means the manifest was not accepted, and offline that is the state in
-       which a fetch stalls instead of failing, so say it out loud. */
-    else if (appCache.status === appCache.UNCACHED) text = "no offline cache - the manifest was not accepted";
   } catch (e) {}
   cacheEl.textContent = text;
 }
 
 function cacheChanged() {
   cacheNote();
+  /* A newer build is on disk. Take it before anything starts. */
+  try {
+    if (appCache && appCache.status === appCache.UPDATEREADY) {
+      stopClock();
+      cacheNote();
+      if (swapAndReload()) return;
+    }
+  } catch (e) {}
   /* Someone pressed start while the files were still coming down. Go now
      that they are here, rather than making them press again. */
   if (waitingForCache && !cacheBusy()) {
@@ -124,30 +151,42 @@ function picked() {
   return radio ? radio.value : "goldhen";
 }
 
+function start() {
+  stopClock();
+  /* A newer build is already on disk: take it and come back as a fresh page
+     load. UPDATEREADY is deliberately NOT part of cacheBusy() -- if the
+     timestamp guard refuses the swap, we must go on rather than wait for an
+     event that will not come again. */
+  try {
+    if (appCache && appCache.status === appCache.UPDATEREADY) {
+      if (swapAndReload()) return;
+    }
+  } catch (e) {}
+  /* Not a refusal -- a bounded wait, and offline none at all. */
+  if (!offline() && cacheBusy()) {
+    waitingForCache = true;
+    countEl.textContent = "waiting for the cache";
+    cacheNote();
+    if (cacheTimer === null) {
+      cacheTimer = setTimeout(function () {
+        cacheTimer = null;
+        if (!gone) { countEl.textContent = "cache did not answer - going anyway"; go(); }
+      }, CACHE_WAIT_MS);
+    }
+    return;
+  }
+  go();
+}
+
 function go() {
   if (gone) return;
   gone = true;
+  if (cacheTimer !== null) { clearTimeout(cacheTimer); cacheTimer = null; }
   location.href = "jb.html?" + TARGET[picked()];
 }
 
 function offline() {
   try { return navigator.onLine === false; } catch (e) { return false; }
-}
-
-function start() {
-  stopClock();
-  /* Not a refusal -- a wait that ends by itself. Starting while the manifest
-     is being checked or fetched can mix two builds, so there is no deadline
-     here that would run through that state: the cache events call back in
-     and the run begins the moment the files are in. Offline it does not wait
-     at all, because then there is nothing to wait for. */
-  if (!offline() && cacheBusy()) {
-    waitingForCache = true;
-    countEl.textContent = "waiting for the cache";
-    cacheNote();
-    return;
-  }
-  go();
 }
 
 function stopClock() {
@@ -162,14 +201,6 @@ function startClock() {
   var left = AUTOSTART_SECONDS;
   countEl.textContent = "starting in " + left + "s";
   ticker = setInterval(function () {
-    /* Hold, do not overtake: while the cache is moving the clock stands
-       still and picks up where it left off once the files are in. The old
-       behaviour let it run out mid-download and started anyway. */
-    if (!offline() && cacheBusy()) {
-      countEl.textContent = "cache is loading - start held";
-      cacheNote();
-      return;
-    }
     left -= 1;
     if (left <= 0) {
       start();

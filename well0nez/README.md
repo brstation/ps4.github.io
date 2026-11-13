@@ -1,7 +1,7 @@
 # afterglow (web)
 
 Kernel exploit for the PlayStation 4 on firmware **12.00, 12.02, 12.50, 12.52,
-13.00, 13.02, 13.04, 13.50, 13.52 and 14.00**, run from the console's own
+13.00, 13.02, 13.04, 13.50, 13.52, 14.00 and 14.02**, run from the console's own
 browser. It leaves the kernel readable and writable, `uid 0`, `mmap` handing
 out RWX and `syscall 11` as a kexec gate — so the usual payloads work as they
 do after any other kernel exploit.
@@ -11,7 +11,7 @@ afterglow is not Lapse.
 ## You need
 
 * PS4 on firmware 12.00, 12.02, 12.50, 12.52, 13.00, 13.02, 13.04, 13.50,
-  13.52 or 14.00, on your network
+  13.52, 14.00 or 14.02, on your network
 * A machine on the same network with `python3`
 
 Nothing is installed on the console. The pages are static files.
@@ -65,10 +65,11 @@ Expect to repeat one now and then. Ten hand-run rounds on 14.00 landed nine
 times; a failure in the WebKit stage costs nothing, so going again is cheap.
 13.52 has fewer runs behind it and no number worth quoting yet.
 
-**All ten firmwares are confirmed on hardware.** 13.04 ran here on
+**All eleven firmwares are confirmed on hardware.** 13.04 ran here on
 05.11.2026 — first attempt, `uid 0`, payload started. 13.00, 13.02 and 13.50
 were confirmed by testers on 06.11.2026, and 12.00, 12.02, 12.50 and 12.52
-on 07.11.2026.
+on 07.11.2026. 14.02 ran here on 08.11.2026 — `uid 0`, and GoldHEN came up
+with its own services answering.
 
 The page tells you which of these happened.
 
@@ -108,7 +109,6 @@ which model and firmware you tried.
 * **Shiroe Galleu** — testing 13.02
 * **al-azif** — <https://github.com/al-azif/>
 * **SiSTRo** — GoldHEN
-* **Big_Wadger**
 * **Pharaoh2k**
 * **TheFlow, ChendoChap, abc, AlAzif, LightningMods, @egycnq** — the PS4 kernel
   patch and sandbox escape lineage these payloads build on

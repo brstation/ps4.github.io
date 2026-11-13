@@ -137,7 +137,7 @@ export const PS4 = {
   },
   "12.00": {
     fw_status:
-      "state=proven-on-hardware webkit=offline-from-sprx " +
+      "state=UNTESTED-on-hardware webkit=offline-from-sprx " +
       "anchor=findcaller-validated-on-11.50 " +
       "kernel_rvas=verified-vs-kernel_1202.elf kpatch=10/10-sites-verified",
 
@@ -217,7 +217,7 @@ export const PS4 = {
   },
   "13.00": {
     fw_status:
-      "state=proven step10=32/0-x3 reboot=0 webkit=step7-20/20 anchor=findcaller kernel_rvas=verified-on-hardware kpatch=1300.bin-10-sites-verified",
+      "state=proven step10=32/0-x3 reboot=0 webkit=step7-20/20 anchor=findcaller kernel_rvas=verified-on-hardware kpatch=1300.bin-10-sites-verified bug=poops",
 
     k_idt_rsvd: 0x1c1d40,
 
@@ -310,7 +310,7 @@ export const PS4 = {
   },
   "12.50": {
     fw_status:
-      "state=proven-on-hardware " +
+      "state=UNTESTED-on-hardware " +
       "webkit=addfw-from-decrypted-12.50-modules (15/15 gadgets, 35/35 stubs) " +
       "anchor=findcaller-offline (self-check reproduces the known 11.50 and " +
       "12.00 anchors) " +
@@ -319,7 +319,7 @@ export const PS4 = {
       "AND in kernel_1202.elf at the identical RVAs, and 12.02<->13.00 share their " +
       "first megabyte 96.7% at ZERO shift (11.00<->12.02 is 3.7%), so 12.50/12.52 " +
       "sit between two builds whose low text does not move " +
-      "kpatch=1250.bin",
+      "kpatch=1250.bin bug=poops",
 
     wk_expm1_builtin: 0x2585110,
     wk_JSFunction_m_function: 0x28,
@@ -398,9 +398,9 @@ export const PS4 = {
 
 PS4["13.50"] = {
   fw_status:
-    "state=proven-on-hardware webkit=13.00-module libkernel=13.50-stubs " +
+    "state=663-JB-PROVEN-on-hw webkit=13.00-module libkernel=13.50-stubs " +
     "kernel_rvas=MEASURED-from-kernel_1350.elf (kderive 16/16, adversarial 16/16 GO) " +
-    "kpatch=1350.bin-BUILT-10/10-neg-controls-pass-UNTESTED-on-hw payload=payload2.bin-PS4HEN(works<=13.52)",
+    "kpatch=1350.bin-BUILT-10/10-neg-controls-pass-UNTESTED-on-hw payload=payload2.bin-PS4HEN(works<=13.52) bug=663",
 
   wk_expm1_builtin: 0x2586880,
   wk_JSFunction_m_function: 0x28,
@@ -520,10 +520,11 @@ PS4["13.52"] = Object.assign({}, PS4["13.50"], {
 
   payload: "goldhen.bin",
   fw_status:
-    "state=live-on-hardware shares=13.50 (webkit+libkernel) " +
+    "state=663-LIVE-on-hardware shares=13.50 (webkit+libkernel) " +
     "kernel_rvas=MEASURED-from-kernel_1352.elf (kdump5 tier1 36MB pass=39/0, " +
     "kderive 16/16 recipes) kpatch=1352.bin-24-sites-verified-OFFLINE-ONLY " +
-    "payload=payload2.bin-PS4HEN-native-1352 (patched-GoldHEN KP'd 2/2) ",
+    "payload=payload2.bin-PS4HEN-native-1352 (patched-GoldHEN KP'd 2/2) " +
+    "bug=663",
 });
 
 PS4["13.02"] = Object.assign({}, PS4["13.00"], {
@@ -548,9 +549,9 @@ PS4["13.02"] = Object.assign({}, PS4["13.00"], {
   kpatch: "1302.bin", // ported from 1300.c, 18 sites +0x10; HW-PROVEN on 13.02 (KEXEC rc=0, pass=51)
   payload: "payload2.bin", // PS4-HEN, works through 13.52; replaces the non-shipped 13.00 placeholder
   fw_status:
-    "state=proven-on-hardware pass=51 shares=13.00 (webkit+libkernel, PRIMITIVE-OK) " +
+    "state=663-JB+KPATCH-PROVEN-on-hw-pass=51 shares=13.00 (webkit+libkernel, PRIMITIVE-OK) " +
     "kernel_rvas=MEASURED-from-kernel_1302.elf (16/16 GO) same-kernel-as=13.04 " +
-    "kpatch=1302.bin-HW-PROVEN-KEXEC-rc0 payload=payload2.bin-PS4HEN(works<=13.52)",
+    "kpatch=1302.bin-HW-PROVEN-KEXEC-rc0 payload=payload2.bin-PS4HEN(works<=13.52) bug=663",
 });
 
 PS4["13.04"] = Object.assign({}, PS4["13.00"], {
@@ -575,27 +576,27 @@ PS4["13.04"] = Object.assign({}, PS4["13.00"], {
   kpatch: "1302.bin", // SAME kernel as 13.02 -> reuses the one blob (HW-PROVEN on 13.02)
   payload: "payload2.bin", // PS4-HEN, works through 13.52
   fw_status:
-    "state=proven-on-hardware via-13.02(pass=51) shares=13.00 (webkit+libkernel, PRIMITIVE-OK) " +
+    "state=663-JB+KPATCH-via-13.02(pass=51) shares=13.00 (webkit+libkernel, PRIMITIVE-OK) " +
     "kernel_rvas=SAME-KERNEL-AS-13.02 (measured from kernel_1302.elf, 16/16 GO) " +
-    "kpatch=1302.bin-shared-HW-PROVEN payload=payload2.bin-PS4HEN(works<=13.52)",
+    "kpatch=1302.bin-shared-HW-PROVEN payload=payload2.bin-PS4HEN(works<=13.52) bug=663",
 });
 
 PS4["12.02"] = Object.assign({}, PS4["12.00"], {
   alias_of: "12.00",
   fw_status:
-    "state=proven-on-hardware shares=12.00 " +
+    "state=UNTESTED-on-hardware shares=12.00 " +
     "kernel_rvas=verified-vs-kernel_1202.elf (this firmware) " +
-    "kpatch=1200.bin-10-sites-verified",
+    "kpatch=1200.bin-10-sites-verified bug=lapse",
   kpatch: "1200.bin",
 });
 
 PS4["12.52"] = Object.assign({}, PS4["12.50"], {
   alias_of: "12.50",
   fw_status:
-    "state=proven-on-hardware shares=12.50 " +
+    "state=UNTESTED-on-hardware shares=12.50 " +
     "webkit=assumed-identical-to-12.50 (no 12.52 module dump) " +
     "kernel_rvas=STILL-UNVERIFIED but corroborated via 12.02+13.00 dumps " +
-    "kpatch=1250.bin",
+    "kpatch=1250.bin bug=poops",
   kpatch: "1250.bin",
 });
 
@@ -634,6 +635,24 @@ PS4["14.00"] = Object.assign({}, PS4["13.52"], {
 
   k_prison0: undefined,
   k_rootvnode: undefined,
+});
+
+/* 14.02 inherits the userland offsets from 14.00.
+ *
+ * Between 13.52 and 14.00, 21 of 22 wk_ fields were already bit-identical --
+ * 14.00 runs WebKit from 13.52 verbatim. That 14.02 does the same is assumed,
+ * not measured. The assumption is not dangerous: jb.js compares each of the
+ * 15 WebKit gadgets byte for byte before it uses one, and stops with
+ * GADGET-BAD <name> rather than running on a wrong address. afterglow checks
+ * all 14 libc gadgets and the HOST room the same way.
+ *
+ * The kernel addresses are derived, not inherited -- they live in afterglow.js
+ * and they are the only ones written without a check.
+ */
+PS4["14.02"] = Object.assign({}, PS4["14.00"], {
+  fw_status:
+    "state=14.02 webkit=inherited-from-14.00 (unmeasured, checked at runtime) " +
+    "kernel=afterglow (apm-UAF, own kernel stage) payload=hen.bin|goldhen.bin",
 });
 
 export function offsetsFor(uaString) {

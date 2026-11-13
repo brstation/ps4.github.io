@@ -404,8 +404,8 @@ let mainMf = null,
        re-checks the key. On a firmware it has no stage for, the chain would
        come up in WebKit and then write foreign addresses into the kernel --
        so it is refused here, before anything is touched. */
-    const SUPPORTED = ["14.00", "13.52", "13.50", "13.04", "13.02", "13.00",
-                   "12.52", "12.50", "12.02", "12.00"];
+    const SUPPORTED = ["14.02", "14.00", "13.52", "13.50", "13.04", "13.02",
+                   "13.00", "12.52", "12.50", "12.02", "12.00"];
     if (params.get("afterglow") && SUPPORTED.indexOf(fwKey) < 0) {
       mark("FW-UNSUPPORTED", fwKey + " -- this build has a kernel stage for "
            + SUPPORTED.join(", ") + " only");

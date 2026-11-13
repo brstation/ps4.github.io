@@ -140,7 +140,7 @@ function growCarrier(minSlots) {
   // in place this branch is only reached on a build the oracle does not
   // recognise, and that is the last place to be spending twice the heap.
   if (minSlots > cap) return false;
-  CARRIER_SLOTS = Math.min(cap, Math.max(minSlots, CARRIER_SLOTS * 4));
+  CARRIER_SLOTS = Math.min(cap, Math.max(minSlots * 2, CARRIER_SLOTS * 4));
   CARRIER_BYTES = CARRIER_SLOTS * 8;
   return true;
 }
