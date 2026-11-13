@@ -279,40 +279,6 @@ h1 {
 }
 
 /* =========================
-   AVISO INFERIOR
-   ========================= */
-
-.bottom-notice {
-    width: 100%;
-    max-width: 1250px;
-    margin: 32px auto 0;
-    padding: 14px 20px 16px;
-    box-sizing: border-box;
-    background: #171d25;
-    border: 1px solid #303944;
-    border-radius: 12px;
-    color: #c8d1dc;
-    text-align: left;
-    font-size: 16px;
-    line-height: 1.7;
-}
-
-.bottom-notice-title {
-    display: block;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #303944;
-    color: #ffffff;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.bottom-notice-message {
-    color: #aeb9c7;
-}
-
-/* =========================
    RODAPE
    ========================= */
 
@@ -373,15 +339,6 @@ h1 {
         font-size: 13px;
         padding: 13px 15px;
     }
-
-    .bottom-notice {
-        padding: 13px 15px;
-        font-size: 15px;
-    }
-
-    .bottom-notice-title {
-        font-size: 18px;
-    }
 }
 
 /* =========================
@@ -437,16 +394,6 @@ h1 {
 
     .alert-title {
         font-size: 13px;
-    }
-
-    .bottom-notice {
-        margin-top: 25px;
-        padding: 12px;
-        font-size: 14px;
-    }
-
-    .bottom-notice-title {
-        font-size: 17px;
     }
 }
 
@@ -909,14 +856,6 @@ h1 {
     SELECT YOUR EXPLOIT
 </div>
 
-<!-- AVISO LEGAL / SEGURANCA -->
-<div class="bottom-notice">
-    <span class="bottom-notice-title" data-i18n="noticeTitle">Aviso</span>
-    <div class="bottom-notice-message" data-i18n="noticeMessage">
-        Para pesquisas e homebrew em dispositivos de sua propriedade. Exploits de kernel podem causar travamentos no console ou corromper o armazenamento, portanto, não execute este conteúdo em um sistema que contenha dados que você não pode perder. Nada aqui permite pirataria e nenhum conteúdo de jogos está incluído.
-    </div>
-</div>
-
 </div>
 
 <script>
@@ -1014,13 +953,7 @@ var translations = {
             "https://ps4.dpdns.org/about/leiame",
 
         alertTitle:
-            "AVISO",
-
-        noticeTitle:
-            "INFORMAÇÕES",
-
-        noticeMessage:
-            "Para pesquisas e homebrew em dispositivos de sua propriedade. Exploits de kernel podem causar travamentos no console ou corromper o armazenamento, portanto, não execute este conteúdo em um sistema que contenha dados que você não pode perder. Nada aqui permite pirataria e nenhum conteúdo de jogos está incluído."
+            "AVISO"
 
     },
 
@@ -1081,13 +1014,7 @@ var translations = {
             "https://ps4.dpdns.org/about/readme",
 
         alertTitle:
-            "WARNING",
-
-        noticeTitle:
-            "INFORMATION",
-
-        noticeMessage:
-            "For research and homebrew on devices you own. Kernel exploits may cause console crashes or corrupt storage, so do not run this content on a system containing data you cannot afford to lose. Nothing here enables piracy, and no game content is included."
+            "WARNING"
 
     },
 
@@ -1148,13 +1075,7 @@ var translations = {
             "https://ps4.dpdns.org/about/leeme",
 
         alertTitle:
-            "AVISO",
-
-        noticeTitle:
-            "INFORMACIÓN",
-
-        noticeMessage:
-            "Para investigación y homebrew en dispositivos de tu propiedad. Los exploits de kernel pueden provocar bloqueos de la consola o corromper el almacenamiento, por lo que no debes ejecutar este contenido en un sistema que contenga datos que no puedas permitirte perder. Nada de aquí permite la piratería y no se incluye ningún contenido de juegos."
+            "AVISO"
 
     }
 
