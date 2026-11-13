@@ -1,4 +1,4 @@
-# Exploit WebKit de PS4 (4.50 – 14.00)
+# Exploit WebKit de PS4 (4.50 – 14.02)
 
 Una colección de hosts de exploits WebKit de PlayStation 4 y sus forks, todos alojados en un único repositorio y ejecutados en el navegador de la consola.
 
