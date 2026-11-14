@@ -109,6 +109,7 @@ which model and firmware you tried.
 * **Shiroe Galleu** — testing 13.02
 * **al-azif** — <https://github.com/al-azif/>
 * **SiSTRo** — GoldHEN
+* **Big_Wadger**
 * **Pharaoh2k**
 * **TheFlow, ChendoChap, abc, AlAzif, LightningMods, @egycnq** — the PS4 kernel
   patch and sandbox escape lineage these payloads build on
