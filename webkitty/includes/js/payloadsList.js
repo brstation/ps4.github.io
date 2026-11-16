@@ -159,7 +159,7 @@ var payloadsList = [
     id: "Linux1024mb",
     name: "Linux Loader 1GB",
     author: "ps4boot<br>ArabPixel, rmux",
-    description: "Linux Loader for all consoles. 1GB VRAM. Select for first install",
+    description: "Linux Loader for all consoles. 1GB VRAM.",
     specificFW: "5.05, 6.72 - latest",
     category: "linux",
     src: linuxPath + "linux-1024mb.elf",
@@ -329,13 +329,13 @@ var payloadsList = [
     needsPayloadLoader: true
   },
   {
-    id: "PS4Xplorer2.0",
+    id: "PS4Xplorer2.10",
     name: "File Xplorer 2.0",
     author: "Lapy",
     description: "A File Manager for the PlayStation 4 console.<br>You need an internet connection to use this payload.",
     specificFW: "4.73 - latest",
     category: "homebrew",
-    src: homebrewPath + "PS4-Xplorer-209.bin",
+    src: homebrewPath + "PS4-Xplorer-210.bin",
     needsPayloadLoader: true
   }
 ];
