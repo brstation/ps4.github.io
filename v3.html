@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSPULSE // PS4 JAILBREAK HOSTS</title>
+<style>
+:root{--bg:#151515;--panel:#1c1c1c;--panel2:#242424;--line:#2e2e2e;--bright:#454545;--text:#f5f5f5;--muted:#b5b5b5;--dim:#828282;--accent:#a294ff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg)}
+body{background-image:linear-gradient(rgba(162,148,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(162,148,255,.045) 1px,transparent 1px);background-size:36px 36px;color:var(--text);font:16px/1.45 Consolas,"Liberation Mono",monospace}
+a{color:inherit}.app{display:flex;flex-direction:column;margin:0 auto;max-width:1220px;min-height:100vh;padding:14px 26px 24px}
+.topbar{align-items:center;border:1px solid var(--bright);display:flex;justify-content:space-between;gap:14px;padding:10px 16px;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.topbar b{color:var(--accent);font-weight:400}.ready{color:var(--dim);white-space:nowrap}.ready:before{color:var(--accent);content:"● "}
+.layout{display:flex;flex:1 0 auto;flex-direction:column;padding-top:23px}.kicker{color:var(--accent);font-size:13px;letter-spacing:.13em;margin:0 0 12px}
+h1{font-size:clamp(38px,5vw,60px);font-weight:400;letter-spacing:-.065em;line-height:1.02;margin:0}h1 em{color:var(--accent);font-style:normal}
+.description{color:var(--muted);font-size:17px;margin:13px 0 0;max-width:760px}
+.header-tools{align-items:center;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:18px}
+.language{display:flex;gap:7px}.language button{background:var(--panel);border:1px solid var(--line);color:var(--muted);cursor:pointer;font:inherit;font-size:12px;min-width:42px;padding:6px 10px}
+.language button:hover,.language button.active{border-color:var(--accent);color:var(--accent);background:#211f2b}
+.credits{border:1px solid var(--bright);color:var(--muted);font-size:12px;letter-spacing:.08em;padding:7px 11px;text-decoration:none;text-transform:uppercase}
+.credits:hover{border-color:var(--accent);color:var(--accent)}
+.alert{display:none;border:1px solid var(--accent);background:rgba(162,148,255,.07);color:var(--muted);font-size:13px;line-height:1.55;margin:18px 0 0;padding:11px 14px}
+.alert-title{color:var(--accent);display:block;font-size:12px;letter-spacing:.12em;margin-bottom:3px}
+.menu{border:1px solid var(--line);margin-top:22px;padding:13px}.menu-top{align-items:baseline;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 4px 10px}
+.menu-title{font-size:13px;letter-spacing:.12em;text-transform:uppercase}.menu-hint{color:var(--dim);font-size:12px}
+.host-grid{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.host-card{align-items:center;background:var(--panel);border:1px solid var(--line);display:flex;gap:12px;min-height:94px;min-width:0;padding:11px 12px;text-decoration:none;transition:background .15s,border-color .15s}
+.host-card:hover,.host-card:focus{background:var(--panel2);border-color:var(--accent);outline:0}.host-card:focus{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent)}
+.host-number{color:var(--dim);font-size:12px;min-width:22px}.host-card:hover .host-number,.host-card:focus .host-number{color:var(--accent)}
+.host-image{align-items:center;background:#141414;border:1px solid #34313f;display:flex;flex:0 0 58px;height:58px;justify-content:center;overflow:hidden;width:58px}
+.host-image img{display:block;height:100%;object-fit:contain;padding:5px;width:100%}
+.host-info{display:block;min-width:0}.host-name{color:var(--text);display:block;font-size:16px;line-height:1.25;overflow-wrap:anywhere}
+.host-meta{color:var(--muted);display:block;font-size:12px;margin-top:5px}.host-status{color:var(--dim);display:block;font-size:10px;letter-spacing:.035em;margin-top:3px}
+.host-go{color:var(--dim);font-size:11px;margin-left:auto;opacity:0;padding-left:5px;white-space:nowrap}.host-card:hover .host-go,.host-card:focus .host-go{color:var(--accent);opacity:1}
+.bottom-notice{background:rgba(28,28,28,.88);border:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.65;margin-top:13px;padding:12px 15px}
+.bottom-notice-title{border-bottom:1px solid var(--line);color:var(--accent);display:block;font-size:12px;letter-spacing:.12em;margin-bottom:8px;padding-bottom:7px;text-transform:uppercase}
+.footer{border-top:1px solid var(--line);color:var(--dim);font-size:12px;margin-top:15px;padding:11px 4px 0;text-align:center}
+.pspulse-support{background:#17151f;border:1px solid #9b87ff;bottom:18px;color:#b7a9ff!important;display:block;font:600 12px Arial,sans-serif;letter-spacing:.2px;padding:9px 13px;position:fixed;right:18px;text-decoration:none;z-index:1000}
+.pspulse-support:hover,.pspulse-support:focus{background:#9b87ff;color:#101014!important;outline:none}
+@media(max-width:760px){.app{padding:9px 11px 22px}.topbar{font-size:11px;padding:8px 11px}.layout{padding-top:17px}h1{font-size:40px}.description{font-size:15px}.host-grid{grid-template-columns:1fr}.host-card{min-height:82px}.host-go{opacity:1}.menu-hint{display:none}}
+@media(max-width:420px){.app{padding-left:8px;padding-right:8px}h1{font-size:35px}.host-card{gap:9px;padding:9px}.host-image{flex-basis:50px;height:50px;width:50px}.host-name{font-size:14px}.host-meta{font-size:11px}.host-status{font-size:9px}.host-go{font-size:9px}.credits{font-size:10px}.pspulse-support{bottom:10px;right:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar"><span><b>PSPULSE</b> // PS4 JAILBREAK HOSTS</span><span class="ready">READY</span></header>
+<main class="layout">
+<p class="kicker">$ ./launch --select-exploit</p>
+<h1>Choose <em>your exploit</em></h1>
+<p class="description" data-i18n="description">Select the exploit compatible with your PS4 firmware version.</p>
+<div class="header-tools">
+<div class="language" aria-label="Language">
+<button id="pt" onclick="setLanguage('pt')">PT</button><button id="en" onclick="setLanguage('en')">EN</button><button id="es" onclick="setLanguage('es')">ES</button>
+</div>
+<a class="credits" id="creditsLink" href="https://ps4.dpdns.org/about/readme" data-i18n="credits">CREDITS</a>
+</div>
+<div class="alert" id="alert"><span class="alert-title" data-i18n="alertTitle">WARNING</span><span class="alert-message" id="alertMessage">A new update is available.</span></div>
+<section class="menu" aria-label="Exploit menu">
+<div class="menu-top"><span class="menu-title">Available hosts</span><span class="menu-hint">12 routes detected &nbsp; // &nbsp; select a host</span></div>
+<nav class="host-grid">
+
+                    <a class="host-card" href="https://ps4.dpdns.org/well0nez/index.html">
+                        <span class="host-number">01</span>
+                        <span class="host-image"><img src="./img/well0nez.webp" alt="well0nez" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork well0nez</span>
+                            <span class="host-meta" data-i18n="firmwarewell0nez">Firmware: 12.00 - 14.02</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/webkitty/index.html">
+                        <span class="host-number">02</span>
+                        <span class="host-image"><img src="./img/webkitty.webp" alt="WebKitty" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork WebKitty</span>
+                            <span class="host-meta" data-i18n="firmwareWebKitty">Firmware: 4.50 - 14.02</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/gh/index.html">
+                        <span class="host-number">03</span>
+                        <span class="host-image"><img src="./img/gamerhack.webp" alt="GamerHack" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork GamerHack</span>
+                            <span class="host-meta" data-i18n="firmwareGH">Firmware: 5.05 – 14.02</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/pspulse/index.html">
+                        <span class="host-number">04</span>
+                        <span class="host-image"><img src="./img/pspulse.webp" alt="PSPulse" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork PSPulse</span>
+                            <span class="host-meta" data-i18n="firmwarePSPulse">Firmware: 5.05 – 13.52</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/standvideo/index.html">
+                        <span class="host-number">05</span>
+                        <span class="host-image"><img src="./img/standvideo.webp" alt="StandVideo" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork StandVideo</span>
+                            <span class="host-meta" data-i18n="firmwareStandVideo">Firmware (PS4): 5.05 – 14.02</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/mps/index.html">
+                        <span class="host-number">06</span>
+                        <span class="host-image"><img src="./img/mansoor0x.webp" alt="MPS" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork MPS</span>
+                            <span class="host-meta" data-i18n="firmwaremps">Firmware: 13.52 - 14.00</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/aminegold0/index.html">
+                        <span class="host-number">07</span>
+                        <span class="host-image"><img src="./img/aminegold0.webp" alt="aminegold0" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork aminegold0</span>
+                            <span class="host-meta" data-i18n="firmwareAMINEGOLD0">Firmware: 14.00</span>
+                            <span class="host-status" data-i18n="exploit">EXPLOIT</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/raw/index.html">
+                        <span class="host-number">08</span>
+                        <span class="host-image"><img src="./img/rawgame.webp" alt="Raw Games" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork Raw Game</span>
+                            <span class="host-meta" data-i18n="firmwareRaw">Firmware: 10.01 – 13.00</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/raw13g/index.html">
+                        <span class="host-number">09</span>
+                        <span class="host-image"><img src="./img/rawgame.webp" alt="Raw Games 13G" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork raw13g (FIX AIO)</span>
+                            <span class="host-meta" data-i18n="firmwareRaw13g">Firmware: 13.02 – 13.52</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/x-f1reball-x/index.html">
+                        <span class="host-number">10</span>
+                        <span class="host-image"><img src="./img/xf1reballx.webp" alt="X-F1REBALL" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork x-f1reball-x</span>
+                            <span class="host-meta" data-i18n="firmwareXF1REBALLX">Firmware: 6.00 – 13.52</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/nadarepublicano/index.html">
+                        <span class="host-number">11</span>
+                        <span class="host-image"><img src="./img/nadarepublicano.webp" alt="NADAREPUBLICANO" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork Nada Republicano</span>
+                            <span class="host-meta" data-i18n="firmwareNADAREPUBLICANO">Firmware: 11.00 – 13.52</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+
+                    <a class="host-card" href="https://ps4.dpdns.org/mansoor0x/index.html">
+                        <span class="host-number">12</span>
+                        <span class="host-image"><img src="./img/mansoor0x.webp" alt="NADAREPUBLICANO" loading="lazy"></span>
+                        <span class="host-info">
+                            <span class="host-name">Fork mansoor0x</span>
+                            <span class="host-meta" data-i18n="firmwaremansoor0x">Firmware: 11.00 – 13.52</span>
+                            <span class="host-status" data-i18n="offline">OFFLINE MODE (CACHED)</span>
+                        </span>
+                        <span class="host-go">[ SELECT ]</span>
+                    </a>
+</nav>
+</section>
+<div class="bottom-notice">
+<span class="bottom-notice-title" data-i18n="noticeTitle">INFORMATION</span>
+<div class="bottom-notice-message" data-i18n="noticeMessage">For research and homebrew on devices you own. Kernel exploits may cause console crashes or corrupt storage, so do not run this content on a system containing data you cannot afford to lose. Nothing here enables piracy, and no game content is included.</div>
+</div>
+<footer class="footer" data-i18n="footer">SELECT YOUR EXPLOIT</footer>
+</main>
+</div>
+<a class="pspulse-support" href="https://sudoblackarch.github.io/support/" aria-label="Support me">Support me!</a>
+<script>
+/* =========================
+   CONFIGURACAO DO ALERTA
+   ========================= */
+
+/*
+   true  = mostra o alerta para todos
+   false = desativa o alerta para todos
+*/
+
+var showAlert = true;
+
+
+/* =========================
+   TEXTO DO ALERTA
+   ========================= */
+
+var alertText = {
+
+    pt:
+        "Exploit desligando o console? Reinicie o PS4, limpe a cache do navegador e tente novamente.",
+
+    en:
+        "Exploit shutting down the console? Restart the PS4, clear the browser cache, and try again.",
+
+    es:
+        "¿El exploit está apagando la consola? Reinicia la PS4, borra la caché del navegador e inténtalo de nuevo."
+
+};
+
+
+/* =========================
+   TRADUCOES
+   ========================= */
+
+var translations = {
+
+    pt: {
+
+        platform:
+            "PlayStation 4",
+
+        description:
+            "Selecione o exploit compatível com a versão de firmware do seu PS4.",
+
+        firmwarewell0nez:
+            "Firmware: 12.00 - 14.02",
+
+        firmwareWebKitty:
+            "Firmware: 4.50 - 14.02",       
+  
+        firmwareGH:
+            "Firmware: 5.05 – 14.02",
+
+        firmwarePSPulse:
+            "Firmware: 5.05 – 13.52",
+        
+        firmwareStandVideo:
+            "Firmware (PS4): 5.05 – 14.02",
+
+        firmwaremps:
+            "Firmware: 13.52 - 14.00",
+        
+        firmwareAMINEGOLD0:
+            "Firmware: 14.00",
+
+        firmwareRaw:
+            "Firmware: 10.01 – 13.00",
+
+        firmwareRaw13g:
+            "Firmware: 13.02 – 13.52",
+
+        firmwareXF1REBALLX:
+            "Firmware: 6.00 – 13.52",
+
+        firmwareNADAREPUBLICANO:
+            "Firmware: 11.00 – 13.52",
+
+        firmwaremansoor0x:
+            "Firmware: 11.00 – 13.52",
+
+        offline:
+            "MODO OFFLINE (EM CACHE)",
+
+        footer:
+            "SELECIONE SEU EXPLOIT",
+
+        credits:
+            "CRÉDITOS",
+
+        creditsUrl:
+            "https://ps4.dpdns.org/about/leiame",
+
+        alertTitle:
+            "AVISO",
+
+        noticeTitle:
+            "INFORMAÇÃO",
+
+        noticeMessage:
+            "Para pesquisas e homebrew em dispositivos de sua propriedade. Exploits de kernel podem causar travamentos no console ou corromper o armazenamento, portanto, não execute este conteúdo em um sistema que contenha dados que você não pode perder. Nada aqui permite pirataria e nenhum conteúdo de jogos está incluído."
+
+    },
+
+    en: {
+
+        platform:
+            "PlayStation 4",
+
+        description:
+            "Select the exploit compatible with your PS4 firmware version.",
+
+        firmwarewell0nez:
+            "Firmware: 12.00 - 14.02",
+
+        firmwareWebKitty:
+            "Firmware: 4.50 - 14.02",       
+  
+        firmwareGH:
+            "Firmware: 5.05 – 14.02",
+
+        firmwarePSPulse:
+            "Firmware: 5.05 – 13.52",
+        
+        firmwareStandVideo:
+            "Firmware (PS4): 5.05 – 14.02",
+
+        firmwaremps:
+            "Firmware: 13.52 - 14.00",
+        
+        firmwareAMINEGOLD0:
+            "Firmware: 14.00",
+
+        firmwareRaw:
+            "Firmware: 10.01 – 13.00",
+
+        firmwareRaw13g:
+            "Firmware: 13.02 – 13.52",
+
+        firmwareXF1REBALLX:
+            "Firmware: 6.00 – 13.52",
+
+        firmwareNADAREPUBLICANO:
+            "Firmware: 11.00 – 13.52",
+
+        firmwaremansoor0x:
+            "Firmware: 11.00 – 13.52",
+
+        offline:
+            "OFFLINE MODE (CACHED)",
+
+        footer:
+            "SELECT YOUR EXPLOIT",
+
+        credits:
+            "CREDITS",
+
+        creditsUrl:
+            "https://ps4.dpdns.org/about/readme",
+
+        alertTitle:
+            "WARNING",
+
+        noticeTitle:
+            "INFORMATION",
+
+        noticeMessage:
+            "For research and homebrew on devices you own. Kernel exploits may cause console crashes or corrupt storage, so do not run this content on a system containing data you cannot afford to lose. Nothing here enables piracy, and no game content is included."
+
+    },
+
+    es: {
+
+        platform:
+            "PlayStation 4",
+
+        description:
+            "Selecciona el exploit compatible con la versión de firmware de tu PS4.",
+
+        firmwarewell0nez:
+            "Firmware: 12.00 - 14.02",
+
+        firmwareWebKitty:
+            "Firmware: 4.50 - 14.02",       
+  
+        firmwareGH:
+            "Firmware: 5.05 – 14.02",
+
+        firmwarePSPulse:
+            "Firmware: 5.05 – 13.52",
+        
+        firmwareStandVideo:
+            "Firmware (PS4): 5.05 – 14.02",
+
+        firmwaremps:
+            "Firmware: 13.52 - 14.00",
+        
+        firmwareAMINEGOLD0:
+            "Firmware: 14.00",
+
+        firmwareRaw:
+            "Firmware: 10.01 – 13.00",
+
+        firmwareRaw13g:
+            "Firmware: 13.02 – 13.52",
+
+        firmwareXF1REBALLX:
+            "Firmware: 6.00 – 13.52",
+
+        firmwareNADAREPUBLICANO:
+            "Firmware: 11.00 – 13.52",
+
+        firmwaremansoor0x:
+            "Firmware: 11.00 – 13.52",
+
+        offline:
+            "MODO SIN CONEXIÓN (EN CACHÉ)",
+
+        footer:
+            "SELECCIONA TU EXPLOIT",
+
+        credits:
+            "CRÉDITOS",
+
+        creditsUrl:
+            "https://ps4.dpdns.org/about/leeme",
+
+        alertTitle:
+            "AVISO",
+
+        noticeTitle:
+            "INFORMACIÓN",
+
+        noticeMessage:
+            "Para investigación y homebrew en dispositivos de tu propiedad. Los exploits de kernel pueden provocar bloqueos de la consola o corromper el almacenamiento, por lo que no debes ejecutar este contenido en un sistema que contenga datos que no puedas permitirte perder. Nada de aquí permite la piratería y no se incluye ningún contenido de juegos."
+
+    }
+
+};
+
+
+/* =========================
+   DETECTAR IDIOMA
+   ========================= */
+
+function detectLanguage() {
+
+    // O armazenamento pode estar bloqueado em alguns navegadores.
+    try {
+        var saved = localStorage.getItem("language");
+        if (saved === "pt" || saved === "en" || saved === "es") {
+            return saved;
+        }
+    } catch (error) {
+        // Continua usando o idioma do navegador.
+    }
+
+    var browserLanguage =
+        navigator.language || navigator.userLanguage || "en";
+
+    browserLanguage = browserLanguage.toLowerCase();
+
+    if (browserLanguage.indexOf("pt") === 0) {
+        return "pt";
+    }
+
+    if (browserLanguage.indexOf("es") === 0) {
+        return "es";
+    }
+
+    return "en";
+}
+
+
+/* =========================
+   ALTERAR IDIOMA
+   ========================= */
+
+window.setLanguage = function(language) {
+
+    // Impede que um valor inválido interrompa a tradução.
+    if (language !== "pt" && language !== "en" && language !== "es") {
+        return;
+    }
+
+    var texts = translations[language];
+    document.documentElement.lang = language;
+
+    var elements = document.querySelectorAll("[data-i18n]");
+
+    for (var i = 0; i < elements.length; i++) {
+        var key = elements[i].getAttribute("data-i18n");
+
+        if (Object.prototype.hasOwnProperty.call(texts, key)) {
+            elements[i].textContent = texts[key];
+        }
+    }
+
+    // Atualiza o texto do alerta.
+    var alertMessage = document.getElementById("alertMessage");
+    if (alertMessage) {
+        alertMessage.textContent = alertText[language];
+    }
+
+    // Atualiza o estado visual dos botões.
+    document.getElementById("pt").className = language === "pt" ? "active" : "";
+    document.getElementById("en").className = language === "en" ? "active" : "";
+    document.getElementById("es").className = language === "es" ? "active" : "";
+
+    // Atualiza o link dos créditos.
+    document.getElementById("creditsLink").href = texts.creditsUrl;
+
+    // Salva a preferência sem impedir a troca caso o armazenamento falhe.
+    try {
+        localStorage.setItem("language", language);
+    } catch (error) {
+        // A tradução continua funcionando mesmo sem localStorage.
+    }
+};
+
+/* =========================
+   MOSTRAR / OCULTAR ALERTA
+   ========================= */
+
+function updateAlert() {
+
+    var alertElement =
+        document.getElementById("alert");
+
+    if (showAlert) {
+
+        alertElement.style.display =
+            "block";
+
+    } else {
+
+        alertElement.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================
+   INICIALIZACAO
+   ========================= */
+
+var currentLanguage =
+    detectLanguage();
+
+setLanguage(
+    currentLanguage
+);
+
+updateAlert();
+</script>
+</body>
+</html>
