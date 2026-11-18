@@ -69,31 +69,17 @@ if (!isPS4) {
             };
             document.head.appendChild(script);
         }
-        else if (fwNum >= 11.50 && fwNum <= 12.02) {
+        else if (fwNum == 11.50 || fwNum == 11.52) {
             var script = document.createElement('script');
             script.type = 'module';
             script.src = "slopkit/chain_lapse.js";
             script.onerror = onScriptError;
             document.head.appendChild(script);
         }
-        else if (fwNum >= 12.50 && fwNum <= 13.00) {
+        else if (fwNum >= 12.00 && fwNum <= 14.02) {
             var script = document.createElement('script');
             script.type = 'module';
-            script.src = "slopkit/chain_poops.js";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
-        else if (fwNum >= 13.02 && fwNum <= 13.52) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "slopkit/jb.js?v=19";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
-		else if (fwNum == 14.00 || fwNum == 14.02) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "slopkit/jb2.js";
+            script.src = "slopkit/jb.js";
             script.onerror = onScriptError;
             document.head.appendChild(script);
         }
