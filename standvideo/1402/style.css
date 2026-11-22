@@ -305,3 +305,19 @@ body.log #out {
 code {
   color: #9fb3d0;
 }
+
+/* Keep the offline-cache progress visible in the PS4 browser. */
+#cache {
+  display: block !important;
+  position: relative;
+  z-index: 9999;
+  margin: 10px;
+  padding: 8px;
+  color: #7fd0a0;
+  background: #0e1116;
+  border: 1px solid #1e2732;
+  font: 12px Consolas, monospace;
+  text-align: right;
+  visibility: visible;
+  opacity: 1;
+}

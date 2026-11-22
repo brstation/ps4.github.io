@@ -8,7 +8,7 @@ var TARGET = {
   goldhen: "log=1&afterglow=run&mode=goldhen",
 };
 
-var AUTOSTART_SECONDS = 5;
+var AUTOSTART_SECONDS = 10;
 var STORE_KEY = "afterglow.choice";
 
 var form = document.getElementById("pick");
@@ -80,19 +80,34 @@ function swapAndReload() {
 
 function cacheNote() {
   if (!cacheEl) return;
-  if (!appCache) { cacheEl.textContent = ""; return; }
-  var text = "";
+  if (!appCache) {
+    cacheEl.textContent = "CACHE: AppCache unavailable";
+    return;
+  }
+  var text = "CACHE: Status unknown";
   try {
-    if (appCache.status === appCache.CHECKING) text = "checking for updates";
-    else if (appCache.status === appCache.DOWNLOADING) text = "loading files - hold on";
-    else if (appCache.status === appCache.UPDATEREADY) text = "newer version cached - reloading";
-    else if (appCache.status === appCache.OBSOLETE) text = "the cache was dropped - the server answers directly";
+    if (appCache.status === appCache.UNCACHED) text = "CACHE: Not installed";
+    else if (appCache.status === appCache.IDLE) text = "CACHE: Ready offline";
+    else if (appCache.status === appCache.CHECKING) text = "CACHE: Checking...";
+    else if (appCache.status === appCache.DOWNLOADING) text = "CACHE: Downloading...";
+    else if (appCache.status === appCache.UPDATEREADY) text = "CACHE: Update ready";
+    else if (appCache.status === appCache.OBSOLETE) text = "CACHE: Unavailable (server only)";
   } catch (e) {}
   cacheEl.textContent = text;
 }
 
-function cacheChanged() {
-  cacheNote();
+function cacheChanged(ev) {
+  if (ev && ev.type === "progress" && cacheEl) {
+    var loaded = Number(ev.loaded) || 0;
+    var total = Number(ev.total) || 0;
+    if (total > 0) {
+cacheEl.textContent = "CACHE: Downloading " + Math.min(100, Math.round(loaded / total * 100)) + "%";
+    } else {
+cacheEl.textContent = "CACHE: " + loaded + " files downloaded";
+    }
+  } else {
+    cacheNote();
+  }
   /* A newer build is on disk. Take it before anything starts. */
   try {
     if (appCache && appCache.status === appCache.UPDATEREADY) {
@@ -165,14 +180,17 @@ function start() {
   /* Not a refusal -- a bounded wait, and offline none at all. */
   if (!offline() && cacheBusy()) {
     waitingForCache = true;
-    countEl.textContent = "waiting for the cache";
+   countEl.textContent = "Waiting for the cache";
     cacheNote();
-    if (cacheTimer === null) {
-      cacheTimer = setTimeout(function () {
-        cacheTimer = null;
-        if (!gone) { countEl.textContent = "cache did not answer - going anyway"; go(); }
-      }, CACHE_WAIT_MS);
+if (cacheTimer === null) {
+  cacheTimer = setTimeout(function () {
+    cacheTimer = null;
+    if (!gone) {
+      countEl.textContent = "Cache did not respond - continuing anyway";
+      go();
     }
+  }, CACHE_WAIT_MS);
+}
     return;
   }
   go();
