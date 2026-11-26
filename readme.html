@@ -164,7 +164,7 @@
 
   <script>
     // Seleciona o idioma pelo parâmetro direto na URL.
-    // Exemplos: /about.html?en, /about.html?pt, /about.html?es
+    // Exemplos: /readme!en, /readme!pt, /readme!es
     const LANGUAGES = {
       en: {
         file: "/README.md",
@@ -184,9 +184,12 @@
     };
 
     async function loadReadme() {
+      // Lê o idioma no final do caminho: /readme!en, /readme!pt ou /readme!es.
+      // Mantém também compatibilidade com os formatos anteriores ?en e ?lang=en.
+      const pathMatch = window.location.pathname.match(/!([a-z]{2})$/i);
       const params = new URLSearchParams(window.location.search);
-      // Aceita ?en, ?pt ou ?es. Também mantém compatibilidade com ?lang=en.
       const requestedLanguage = (
+        (pathMatch && pathMatch[1]) ||
         params.get("lang") ||
         (params.has("pt") ? "pt" : params.has("es") ? "es" : params.has("en") ? "en" : "en")
       ).toLowerCase();
