@@ -1,7 +1,7 @@
 CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
-#VERSION 3.0 - goldhen b18.12 reliability-final support-link-20261003
+#VERSION 3.0 - goldhen b18.14 reliability-final support-link-20261003
 
 CACHE:
 alert.js

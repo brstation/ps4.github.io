@@ -1,5 +1,7 @@
 CACHE MANIFEST
 # version-label-audit-20261021-v3
+# navigation-v2-20261126: 1400 route, goldhen b18.14 labels
+# navigation-v3-20261127: legacy CSS fallback for 5.05 root page
 # navigation-v1-20261021: menu only; host caches install separately
 
 CACHE:

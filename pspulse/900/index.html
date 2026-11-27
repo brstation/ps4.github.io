@@ -182,7 +182,7 @@
         }
     </style>
     <script>
-        if (window.applicationCache.status == '0') {
+        if (window.applicationCache && window.applicationCache.status == '0') {
             window.location.replace("version-selector.html");
         }
     </script>
@@ -204,7 +204,7 @@
             <p class="sub">Online and offline Lapse auto GoldHEN by PlayStation Pulse.</p>
             <ul class="boot">
                 <li>[ <b>ok</b> ] psfree 1.7 chain ready</li>
-                <li>[ <b>ok</b> ] goldhen v2.4b18.12 staged</li>
+                <li>[ <b>ok</b> ] goldhen v2.4b18.14 staged</li>
                 <li>[ <b>ok</b> ] offline cache ready</li>
             </ul>
             <p class="fw-display">FW - <span id="PS4fw"></span></p>

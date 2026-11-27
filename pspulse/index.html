@@ -6,126 +6,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSPULSE // PS4 HOSTS</title>
     <style>
-        :root {
-            --bg: #151515;
-            --panel: #1c1c1c;
-            --panel-2: #242424;
-            --line: #2e2e2e;
-            --line-bright: #454545;
-            --text: #f5f5f5;
-            --muted: #b5b5b5;
-            --dim: #828282;
-            --accent: #a294ff;
-            --accent-dim: #6f63a8;
-        }
-
-        * { box-sizing: border-box; }
-        html { background: var(--bg); }
+        * { -webkit-box-sizing: border-box; box-sizing: border-box; }
+        html { background: #151515; }
         html, body { margin: 0; min-height: 100%; }
         body {
-            background-color: var(--bg);
+            background-color: #151515;
             background-image: linear-gradient(rgba(162, 148, 255, .05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(162, 148, 255, .05) 1px, transparent 1px);
             background-size: 36px 36px;
-            color: var(--text);
+            color: #f5f5f5;
             font: 17px/1.4 Consolas, "Liberation Mono", monospace;
         }
         a { color: inherit; }
 
-        .app { display: flex; flex-direction: column; margin: 0 auto; max-width: 1220px; min-height: 100vh; padding: 14px 26px 12px; }
+        .app {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            margin: 0 auto;
+            max-width: 1220px;
+            min-height: 100vh;
+            padding: 14px 26px 12px;
+        }
 
         /* Top status bar */
         .bar {
+            -webkit-align-items: center;
             align-items: center;
-            border: 1px solid var(--line-bright);
+            border: 1px solid #454545;
+            display: -webkit-flex;
             display: flex;
             font-size: 14px;
+            -webkit-justify-content: space-between;
             justify-content: space-between;
             letter-spacing: .1em;
             padding: 10px 16px;
             text-transform: uppercase;
         }
-        .bar b { color: var(--accent); font-weight: 400; }
-        .bar-ready { color: var(--dim); }
-        .bar-ready::before { color: var(--accent); content: "\25CF "; }
+        .bar b { color: #a294ff; font-weight: 400; }
+        .bar-ready { color: #828282; }
+        .bar-ready::before { color: #a294ff; content: "\25CF "; }
 
-        .layout { display: flex; flex: 1 0 auto; flex-direction: column; padding: 22px 0 0; }
+        .layout {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex: 1 0 auto;
+            flex: 1 0 auto;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            padding: 22px 0 0;
+        }
 
         /* Header */
-        .kicker { color: var(--accent); font-size: 14px; letter-spacing: .14em; margin: 0 0 12px; }
-        h1 { font-size: clamp(38px, 5.4vw, 62px); font-weight: 400; letter-spacing: -.07em; line-height: 1; margin: 0; }
-        h1 em { color: var(--accent); font-style: normal; }
-        .sub { color: var(--muted); font-size: 18px; margin: 14px 0 0; max-width: 720px; }
-        .boot { color: var(--dim); font-size: 14px; list-style: none; margin: 14px 0 0; padding: 0; }
+        .kicker { color: #a294ff; font-size: 14px; letter-spacing: .14em; margin: 0 0 12px; }
+        h1 { font-size: 56px; font-size: clamp(38px, 5.4vw, 62px); font-weight: 400; letter-spacing: -.07em; line-height: 1; margin: 0; }
+        h1 em { color: #a294ff; font-style: normal; }
+        .sub { color: #b5b5b5; font-size: 18px; margin: 14px 0 0; max-width: 720px; }
+        .boot { color: #828282; font-size: 14px; list-style: none; margin: 14px 0 0; padding: 0; }
         .boot li { margin: 3px 0; }
-        .boot b { color: var(--accent); font-weight: 400; }
+        .boot b { color: #a294ff; font-weight: 400; }
 
         /* Menu */
-        .menu { border: 1px solid var(--line); margin-top: 22px; padding: 14px; }
+        .menu { border: 1px solid #2e2e2e; margin-top: 22px; padding: 14px; }
         .menu-top {
+            -webkit-align-items: baseline;
             align-items: baseline;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid #2e2e2e;
+            display: -webkit-flex;
             display: flex;
+            -webkit-justify-content: space-between;
             justify-content: space-between;
             margin-bottom: 11px;
             padding: 0 4px 10px;
         }
-        .menu-title { color: var(--text); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; }
-        .menu-hint { color: var(--dim); font-size: 13px; }
-        .grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .menu-title { color: #f5f5f5; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; }
+        .menu-hint { color: #828282; font-size: 13px; }
+        .grid { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; margin: -4px; }
 
         .row {
+            -webkit-align-items: center;
             align-items: center;
-            background: var(--panel);
-            border: 1px solid var(--line);
+            background: #1c1c1c;
+            border: 1px solid #2e2e2e;
+            display: -webkit-flex;
             display: flex;
+            margin: 4px;
             min-height: 74px;
             padding: 12px 14px;
             text-decoration: none;
+            width: -webkit-calc(50% - 8px);
+            width: calc(50% - 8px);
         }
         .row:hover, .row:focus {
-            background: var(--panel-2);
-            border-color: var(--accent);
+            background: #242424;
+            border-color: #a294ff;
             outline: 0;
         }
-        .row:focus { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
-        .num { color: var(--dim); font-size: 14px; min-width: 42px; }
-        .row:hover .num, .row:focus .num { color: var(--accent); }
-        .name { color: var(--text); display: block; font-size: 20px; line-height: 1.2; }
-        .meta { color: var(--muted); display: block; font-size: 13px; margin-top: 4px; }
-        .go { color: var(--dim); font-size: 13px; margin-left: auto; opacity: 0; padding-left: 12px; white-space: nowrap; }
-        .row:hover .go, .row:focus .go { opacity: 1; color: var(--accent); }
+        .row:focus { -webkit-box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
+        .num { color: #828282; font-size: 14px; min-width: 42px; }
+        .row:hover .num, .row:focus .num { color: #a294ff; }
+        .name { color: #f5f5f5; display: block; font-size: 20px; line-height: 1.2; }
+        .meta { color: #b5b5b5; display: block; font-size: 13px; margin-top: 4px; }
+        .go { color: #828282; font-size: 13px; margin-left: auto; opacity: 0; padding-left: 12px; white-space: nowrap; }
+        .row:hover .go, .row:focus .go { opacity: 1; color: #a294ff; }
 
         /* NodePlay */
         .nodeplay {
+            -webkit-align-items: center;
             align-items: center;
-            background: var(--panel);
-            border: 1px solid var(--line-bright);
+            background: #1c1c1c;
+            border: 1px solid #454545;
+            display: -webkit-flex;
             display: flex;
+            -webkit-justify-content: space-between;
             justify-content: space-between;
             margin-top: 12px;
             min-height: 68px;
             padding: 10px 18px;
             text-decoration: none;
         }
-        .nodeplay:hover, .nodeplay:focus { background: var(--panel-2); border-color: var(--accent); outline: 0; }
-        .nodeplay:focus { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
-        .np-label { color: var(--dim); display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-        .np-name { color: var(--text); display: block; font-size: 24px; margin-top: 2px; }
-        .np-name b { color: var(--accent); font-weight: 400; }
-        .np-open { color: var(--accent); font-size: 14px; }
+        .nodeplay:hover, .nodeplay:focus { background: #242424; border-color: #a294ff; outline: 0; }
+        .nodeplay:focus { -webkit-box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
+        .np-label { color: #828282; display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+        .np-name { color: #f5f5f5; display: block; font-size: 24px; margin-top: 2px; }
+        .np-name b { color: #a294ff; font-weight: 400; }
+        .np-open { color: #a294ff; font-size: 14px; }
 
         /* Footer */
         .foot {
-            border-top: 1px solid var(--line);
-            color: var(--dim);
+            border-top: 1px solid #2e2e2e;
+            color: #828282;
             font-size: 13px;
             margin-top: 16px;
             padding: 12px 4px 2px;
             text-align: center;
         }
-        .foot a { color: var(--muted); }
-        .foot a:hover, .foot a:focus { color: var(--accent); }
+        .foot a { color: #b5b5b5; }
+        .foot a:hover, .foot a:focus { color: #a294ff; }
 
         @media (max-width: 760px) {
             body { font-size: 16px; }
@@ -134,7 +152,7 @@
             .layout { padding-top: 16px; }
             h1 { font-size: 40px; }
             .sub { font-size: 16px; }
-            .grid { grid-template-columns: 1fr; }
+            .row { width: -webkit-calc(100% - 8px); width: calc(100% - 8px); }
             .row { min-height: 64px; }
             .menu-hint { display: none; }
             .np-name { font-size: 20px; }
@@ -153,7 +171,7 @@
             <h1>Choose <em>firmware</em></h1>
             <p class="sub">Pick the host matching the firmware installed on your PlayStation 4.</p>
             <ul class="boot">
-                <li>[ <b>ok</b> ] 7 host routes detected</li>
+                <li>[ <b>ok</b> ] 8 host routes detected</li>
                 <li id="navigation-cache-status">[ <b>...</b> ] checking offline menu cache</li>
             </ul>
 
@@ -163,38 +181,43 @@
                     <span class="menu-hint">&uarr; &darr; move &nbsp; X select</span>
                 </div>
                 <nav class="grid">
-                    <a class="row" href="1352/index.html">
+                    <a class="row" href="1400/index.html">
                         <span class="num">01</span>
+                        <span><span class="name">FW 14.00–14.02</span><span class="meta">Afterglow GoldHEN // offline host</span></span>
+                        <span class="go">[ SELECT ]</span>
+                    </a>
+                    <a class="row" href="1352/index.html">
+                        <span class="num">02</span>
                         <span><span class="name">FW 13.02–13.52</span><span class="meta">SlopKit GoldHEN // offline host</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="1300/index.html">
-                        <span class="num">02</span>
+                        <span class="num">03</span>
                         <span><span class="name">FW 11.00–12.02 / 12.50–13.00</span><span class="meta">SlopKit WebKit // current build</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="css/version-selector.html">
-                        <span class="num">03</span>
+                        <span class="num">04</span>
                         <span><span class="name">FW 6.00–11.02</span><span class="meta">CSSFontFace // GoldHEN host</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="900/version-selector.html">
-                        <span class="num">04</span>
+                        <span class="num">05</span>
                         <span><span class="name">FW 9.00–9.60</span><span class="meta">PSFree / Lapse // GoldHEN host</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="700/version-selector.html">
-                        <span class="num">05</span>
+                        <span class="num">06</span>
                         <span><span class="name">FW 7.00–8.52</span><span class="meta">PSFree / Lapse // GoldHEN host</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="672/index.html">
-                        <span class="num">06</span>
+                        <span class="num">07</span>
                         <span><span class="name">FW 6.72</span><span class="meta">Dedicated host // utility payloads</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>
                     <a class="row" href="505/index.html">
-                        <span class="num">07</span>
+                        <span class="num">08</span>
                         <span><span class="name">FW 5.05</span><span class="meta">Dedicated host // utility payloads</span></span>
                         <span class="go">[ SELECT ]</span>
                     </a>

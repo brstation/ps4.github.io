@@ -2,6 +2,9 @@ CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
 # v2.1 - payload state release 20261003
+# v2.2 - start from the installed cache when a manifest refresh fails 20261126
+# v2.3 - fast offline start, legacy CSS and shorter payload cleanup 20261127
+# v2.4 - enter payload at base + 0x100000 instead of the zero-filled base 20261127
 # PS4 5.05 FW GoldHEN Host
 
 CACHE:

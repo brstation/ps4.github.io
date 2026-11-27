@@ -32,7 +32,7 @@ function goldhen_already() {
     setTimeout(ani2, 4000);
 }
 function load_exploit_done() {
-    setTimeout(function () { showNotice('Jailbreak Success !!! GoldHEN v2.4b18.12 Loaded !!!'); }, 50);
+    setTimeout(function () { showNotice('Jailbreak Success !!! GoldHEN v2.4b18.14 Loaded !!!'); }, 50);
     setTimeout(ani2, 4000);
 }
 function LoadFromGHBLS(PLfile) {

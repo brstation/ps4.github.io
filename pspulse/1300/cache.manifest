@@ -2,6 +2,7 @@ CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # v15 - poops: no auto-reload, cache-only (no online fallback) 20261010
 # v16 - add 11.52 lapse routing 20261022
+# v17 - goldhen b18.14 labels 20261126
 
 CACHE:
 index.html

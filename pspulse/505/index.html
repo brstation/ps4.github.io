@@ -20,7 +20,7 @@
             --red: #ff9b9b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { -webkit-box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; }
         html { background: #151515; }
         html, body { min-height: 100%; }
         body {
@@ -29,7 +29,9 @@
                 linear-gradient(90deg, rgba(162, 148, 255, .05) 1px, transparent 1px);
             background-size: 36px 36px;
             color: #f5f5f5;
+            display: -webkit-flex;
             display: flex;
+            -webkit-flex-direction: column;
             flex-direction: column;
             font: 17px/1.4 Consolas, "Liberation Mono", monospace;
             min-height: 100vh;
@@ -37,14 +39,17 @@
         }
         a { color: inherit; }
 
-        .app { display: flex; flex: 1 0 auto; flex-direction: column; margin: 0 auto; padding: 14px 26px 12px; width: 100%; max-width: 1220px; }
+        .app { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; margin: 0 auto; padding: 14px 26px 12px; width: 100%; max-width: 1220px; }
 
         /* Top status bar */
         .bar {
+            -webkit-align-items: center;
             align-items: center;
             border: 1px solid #454545;
+            display: -webkit-flex;
             display: flex;
             font-size: 14px;
+            -webkit-justify-content: space-between;
             justify-content: space-between;
             letter-spacing: .1em;
             padding: 10px 16px;
@@ -54,7 +59,7 @@
         .bar-fw { color: #828282; }
         .bar-fw::before { color: #a294ff; content: "\25CF "; }
 
-        .layout { display: flex; flex: 1 0 auto; flex-direction: column; padding: 20px 0 0; }
+        .layout { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; padding: 20px 0 0; }
 
         /* Header */
         .kicker { color: #a294ff; font-size: 14px; letter-spacing: .14em; margin: 0 0 12px; }
@@ -108,10 +113,11 @@
             min-height: 48px;
             padding: 10px 14px;
             text-align: left;
+            width: -webkit-calc(25% - 8px);
             width: calc(25% - 8px);
             margin: 4px;
         }
-        .grid-goldhen button { width: calc(50% - 8px); }
+        .grid-goldhen button { width: -webkit-calc(50% - 8px); width: calc(50% - 8px); }
         .grid-goldhen button:hover, .grid-goldhen button:focus,
         .grid button:hover, .grid button:focus {
             background: #242424;
@@ -119,14 +125,17 @@
             color: #a294ff;
             outline: 0;
         }
-        .grid-goldhen button:focus, .grid button:focus { box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
+        .grid-goldhen button:focus, .grid button:focus { -webkit-box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
 
         /* NodePlay */
         .nodeplay {
+            -webkit-align-items: center;
             align-items: center;
             background: #1c1c1c;
             border: 1px solid #454545;
+            display: -webkit-flex;
             display: flex;
+            -webkit-justify-content: space-between;
             justify-content: space-between;
             margin-top: 14px;
             min-height: 68px;
@@ -134,7 +143,7 @@
             text-decoration: none;
         }
         .nodeplay:hover, .nodeplay:focus { background: #242424; border-color: #a294ff; outline: 0; }
-        .nodeplay:focus { box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
+        .nodeplay:focus { -webkit-box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; box-shadow: 0 0 0 2px #151515, 0 0 0 4px #a294ff; }
         .np-label { color: #828282; display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
         .np-name { color: #f5f5f5; display: block; font-size: 24px; margin-top: 2px; }
         .np-name b { color: #a294ff; font-weight: 400; }
@@ -159,12 +168,12 @@
             .layout { padding-top: 14px; }
             h1 { font-size: 38px; }
             .sub { font-size: 16px; }
-            .grid button { width: calc(50% - 8px); }
-            .grid-goldhen button { width: calc(50% - 8px); }
+            .grid button { width: -webkit-calc(50% - 8px); width: calc(50% - 8px); }
+            .grid-goldhen button { width: -webkit-calc(50% - 8px); width: calc(50% - 8px); }
         }
 
         @media (max-width: 430px) {
-            .grid button, .grid-goldhen button { width: calc(100% - 8px); }
+            .grid button, .grid-goldhen button { width: -webkit-calc(100% - 8px); width: calc(100% - 8px); }
             h1 { font-size: 34px; }
         }
     </style>
@@ -257,6 +266,23 @@
                 return true;
             }
 
+            function hasUsableCache() {
+                // AppCache keeps the previous copy when a manifest refresh fails.
+                // UNCACHED/OBSOLETE mean there is nothing safe to start from.
+                if (ac.status === ac.UNCACHED || ac.status === ac.OBSOLETE) return false;
+                if (ac.status === ac.IDLE || ac.status === ac.UPDATEREADY) return true;
+                return storage505Get('cached505', '') === 'yes';
+            }
+
+            function startFromCache(message) {
+                if (ac.status === ac.CHECKING || ac.status === ac.DOWNLOADING) {
+                    try {
+                        if (typeof ac.abort === 'function') ac.abort();
+                    } catch (error) {}
+                }
+                ready(message);
+            }
+
             function ready(message) {
                 if (!finish()) return;
                 storage505Set('cached505', 'yes');
@@ -280,9 +306,24 @@
             }
 
             function cacheError() {
-                if (!finish()) return;
+                if (finished) return;
+                if (ac.status === ac.OBSOLETE) {
+                    finish();
+                    storage505Remove('cached505');
+                    status505('Offline cache is obsolete. Clear browser data and reload.');
+                    return;
+                }
+                if (ac.status === ac.UPDATEREADY) {
+                    updateReady();
+                    return;
+                }
+                if (hasUsableCache()) {
+                    startFromCache('Offline cache check failed. Starting from the installed cache...');
+                    return;
+                }
+                finish();
                 storage505Remove('cached505');
-                status505('Offline cache failed. Check the connection and retry manually.');
+                status505('Offline cache is not installed. Connect once, open this host, wait for "Cache installed", then retry offline.');
             }
 
             ac.addEventListener('downloading', function () {
@@ -308,17 +349,41 @@
                 status505('Offline cache is obsolete. Clear browser data and reload.');
             }, false);
 
+            var cacheInstalled = storage505Get('cached505', '') === 'yes';
+            var offline = false;
+            try { offline = navigator.onLine === false; } catch (error) {}
+
             if (ac.status === ac.UPDATEREADY) {
                 updateReady();
             } else if (ac.status === ac.IDLE) {
                 ready('Offline cache ready. Starting...');
+            } else if (cacheInstalled && offline && hasUsableCache()) {
+                // A completed cache already exists and the console is offline.
+                // Do not wait for a manifest check that cannot succeed.
+                startFromCache('Offline mode. Starting from the installed cache...');
             } else {
                 status505('Waiting for offline cache...');
                 host505Watchdog = setTimeout(function () {
-                    if (!finish()) return;
-                    status505('Cache check timed out. Retry manually.');
-                }, 60000);
+                    if (finished) return;
+                    if (hasUsableCache()) {
+                        startFromCache('Cache check timed out. Starting from the installed cache...');
+                    } else {
+                        finish();
+                        status505('Cache check timed out. Connect once to install the offline cache, then retry.');
+                    }
+                }, cacheInstalled ? 8000 : 60000);
             }
+
+            window.addEventListener('pagehide', function () {
+                // Stop a background manifest refresh that is still pending when
+                // the browser closes; the installed copy stays usable.
+                if (!hasUsableCache()) return;
+                if (ac.status === ac.CHECKING || ac.status === ac.DOWNLOADING) {
+                    try {
+                        if (typeof ac.abort === 'function') ac.abort();
+                    } catch (error) {}
+                }
+            }, false);
         }
     </script>
 
@@ -349,9 +414,9 @@
             <div class="controls" id="controls" style="display: none;">
                 <div class="section-title">GoldHEN</div>
                 <div class="grid-goldhen">
-                    <button onclick="load_goldhen18()" onmouseover="msgs.innerHTML='GoldHEN v2.4b18.12 for 5.05 FW'"
+                    <button onclick="load_goldhen18()" onmouseover="msgs.innerHTML='GoldHEN v2.4b18.14 for 5.05 FW'"
                         onmouseout="msgs.innerHTML='Ready to Jailbreak'">
-                        GoldHEN v2.4b18.12
+                        GoldHEN v2.4b18.14
                     </button>
                     <button onclick="load_goldhen5()" onmouseover="msgs.innerHTML='GoldHEN v2.4b18.10 for 5.05 FW'"
                         onmouseout="msgs.innerHTML='Ready to Jailbreak'">
@@ -521,16 +586,33 @@
                     tmp1.set(padding1, req1.response.byteLength);
                     var shellcode1 = new Uint32Array(tmp1.buffer);
                     var code_addr1 = new int64(0x26100000, 0x00000009);
-                    p.syscall(477, code_addr1, 0x300000, 7, 0x41000, -1, 0);
+                    // runBinloader() already reserved this range. Mapping it
+                    // again only leaks another 3 MiB and can race with the
+                    // loader thread, so reuse the existing mapping.
+                    if (!window.pspulseLoaderMapped) {
+                        var mapped1 = p.syscall(477, code_addr1, 0x300000, 7, 0x41000, -1, 0);
+                        if (mapped1 == '926100000') {
+                            window.pspulseLoaderMapped = true;
+                        }
+                    }
                     for (var i = 0; i < shellcode1.length; i++) {
                         p.write4(code_addr1.add32(0x100000 + i * 4), shellcode1[i]);
                     }
                     runPAYLOAD1 = function () {
-                        p.fcall(code_addr1);
+                        // The payload is written at base + 0x100000, so it must be
+                        // entered there. Calling the base itself would execute the
+                        // zero-filled 1 MiB gap first and can fault on cold boot.
+                        p.fcall(code_addr1.add32(0x100000));
                         PLfile = null;
-                        for (var x = 0; x < 0x300000; x += 8) {
-                            p.write8(code_addr1.add32(x), 0);
+                        // Anonymous mmap pages are already zero-filled. Clear only
+                        // the payload bytes that were written at offset 0x100000
+                        // instead of the whole 3 MiB reservation; this avoids a
+                        // long synchronous stall.
+                        for (var x = 0; x < tmp1.length; x += 8) {
+                            p.write8(code_addr1.add32(0x100000 + x), 0);
                         }
+                        tmp1 = null;
+                        shellcode1 = null;
                         payloadBusy = false;
                         runPAYLOAD1 = null;
                         setTimeout(allset, 50);
@@ -544,8 +626,8 @@
         }
 
         function load_goldhen18() {
-            msgs.innerHTML = "Loading GoldHEN v2.4b18.12... Please Wait";
-            LoadedMSG = "GoldHEN v2.4b18.12 Loaded ✔";
+            msgs.innerHTML = "Loading GoldHEN v2.4b18.14... Please Wait";
+            LoadedMSG = "GoldHEN v2.4b18.14 Loaded ✔";
             PLfile = "goldhen.bin";
             load_payload();
         }

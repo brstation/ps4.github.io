@@ -2,6 +2,7 @@ CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
 #VERSION 2.9 - goldhen b18.10 reliability-final support-link-20261003
+#VERSION 2.10 - appcache guard 20261126
 
 CACHE:
 goldhen10.bin

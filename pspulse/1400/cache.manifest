@@ -1,0 +1,24 @@
+CACHE MANIFEST
+# pspulse-1400-afterglow-v1
+# offline-manifests-v1-20261021
+# host: ps4 14.00-14.02 / slopkit afterglow / goldhen v2.4b18.14
+
+CACHE:
+index.html
+jb.html
+cache.html
+../pspulse.png
+jb.js
+afterglow.js
+core.js
+mem.js
+int64.js
+ps4_offsets.js
+goldhen.bin
+patches/1400.bin
+patches/1402.bin
+
+jb.html?log=1
+
+NETWORK:
+*

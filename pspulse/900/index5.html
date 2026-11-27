@@ -182,7 +182,7 @@
         }
     </style>
     <script>
-        if (window.applicationCache.status == '0') {
+        if (window.applicationCache && window.applicationCache.status == '0') {
             window.location.replace("cache5.html");
         }
     </script>

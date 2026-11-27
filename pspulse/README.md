@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-PlayStation%204-151515?style=for-the-badge&logo=playstation&logoColor=a294ff" alt="Platform: PlayStation 4">
-  <img src="https://img.shields.io/badge/firmware-5.05--13.00-151515?style=for-the-badge&color=a294ff" alt="Firmware range: 5.05 to 13.00">
+  <img src="https://img.shields.io/badge/firmware-5.05--14.02-151515?style=for-the-badge&color=a294ff" alt="Firmware range: 5.05 to 14.02">
   <img src="https://img.shields.io/badge/mode-offline--first-151515?style=for-the-badge&color=242424" alt="Offline-first">
   <img src="https://img.shields.io/badge/UI-terminal-151515?style=for-the-badge&color=a294ff" alt="Terminal-style interface">
 </p>
@@ -16,8 +16,8 @@
 ```text
 $ ./launch --pspulse
 
-[ ok ] 7 host routes detected
-[ ok ] goldhen v2.4b18.12 / v2.4b18.10 staged
+[ ok ] 8 host routes detected
+[ ok ] goldhen v2.4b18.14 / v2.4b18.10 staged
 [ ok ] offline cache ready
 [ ok ] gamepad navigation enabled
 ```
@@ -49,10 +49,11 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 
 - A unified terminal-style firmware router at [`index.html`](./index.html).
 - Dedicated offline host pages for PS4 firmware 5.05 and 6.72.
+- An afterglow kernel host for firmware 14.00–14.02 with GoldHEN v2.4b18.14.
 - PSFree/Lapse host flows for firmware 7.00–8.52 and 9.00–9.60.
 - A CSSFontFace UAF host flow for firmware 6.00–11.02.
 - A SlopKit WebKit research flow for firmware 11.00–12.02 and 12.50–13.00.
-- Repository-bundled GoldHEN v2.4b18.12 and v2.4b18.10 assets where the host supports both builds.
+- Repository-bundled GoldHEN v2.4b18.14 and v2.4b18.10 assets where the host supports both builds.
 - AppCache-based offline operation with firmware-specific cache and manifest files.
 - Firmware-specific payload utilities on the host branches that provide them.
 - A single visual system — dark terminal aesthetic, violet accent, controller-friendly focus — across every selector, cache page, and exploit page.
@@ -61,17 +62,18 @@ PlayStation Pulse is a self-contained collection of static PS4 host pages. One e
 
 | # | Firmware | Entry point | Exploit flow | GoldHEN | Utility payloads |
 |---|---|---|---|---|---|
-| 01 | **13.02–13.52** | `1352/index.html` | SlopKit WebKit (GoldHEN) | `v2.4b18.12` | Upstream payload only |
-| 02 | **11.00–12.02 / 12.50–13.00** | `1300/index.html` | SlopKit WebKit (Lapse / Poops) | `v2.4b18.12` | Upstream payload only |
-| 03 | **6.00–11.02** | `css/version-selector.html` | CSSFontFace UAF + Lapse/NetCtrl | `stable` or `latest` | No separate menu |
-| 04 | **9.00–9.60** | `900/version-selector.html` | PSFree + Lapse | Version selector | Included |
-| 05 | **7.00–8.52** | `700/version-selector.html` | PSFree + Lapse | Version selector | Included |
-| 06 | **6.72** | `672/index.html` | Dedicated host | Directly on page | Included |
-| 07 | **5.05** | `505/index.html` | Dedicated host | Directly on page | Included |
+| 01 | **14.00–14.02** | `1400/index.html` | SlopKit WebKit + afterglow kernel | `v2.4b18.14` | Upstream payload only |
+| 02 | **13.02–13.52** | `1352/index.html` | SlopKit WebKit (GoldHEN) | `v2.4b18.14` | Upstream payload only |
+| 03 | **11.00–12.02 / 12.50–13.00** | `1300/index.html` | SlopKit WebKit (Lapse / Poops) | `v2.4b18.14` | Upstream payload only |
+| 04 | **6.00–11.02** | `css/version-selector.html` | CSSFontFace UAF + Lapse/NetCtrl | `stable` or `latest` | No separate menu |
+| 05 | **9.00–9.60** | `900/version-selector.html` | PSFree + Lapse | Version selector | Included |
+| 06 | **7.00–8.52** | `700/version-selector.html` | PSFree + Lapse | Version selector | Included |
+| 07 | **6.72** | `672/index.html` | Dedicated host | Directly on page | Included |
+| 08 | **5.05** | `505/index.html` | Dedicated host | Directly on page | Included |
 
 The root selector stores the selected firmware locally and routes to the correct branch. Always use the host intended for the exact firmware installed on the console.
 
-Already-loaded guards: the 1300 chains check `getuid`/`setuid(0)` after the userland pivot and exit early with `ALREADY JAILBROKEN` instead of re-running the kernel exploit on an active jailbreak; the 700 and 900 PSFree branches poll the GoldHEN status endpoint (`http://127.0.0.1:9090/status`) for 1.5 s and skip the exploit entirely when GoldHEN answers. Re-opening a host after success is therefore safe by design.
+Already-loaded guards: the 1300 chains check `getuid`/`setuid(0)` after the userland pivot and exit early with `ALREADY JAILBROKEN` instead of re-running the kernel exploit on an active jailbreak; the 700 and 900 PSFree branches poll the GoldHEN status endpoint (`http://127.0.0.1:9090/status`) for 1.5 s and skip the exploit entirely when GoldHEN answers. The 1400 afterglow chain probes `setuid(0)`/`getuid` through the WebKit primitive and skips the kernel stage when the console is already jailbroken. Re-opening a host after success is therefore safe by design.
 
 ## How the host works
 
@@ -80,31 +82,31 @@ $ ./launch --select-host
 
   index.html ──► firmware router
                      │
-      ┌──────────┬──┴─────┬────────┬────────┬────────┬────────┬─────────┐
-      ▼          ▼        ▼        ▼        ▼        ▼        ▼         ▼
-   FW 13.02  FW 11.00  FW 6.00  FW 9.00  FW 7.00  FW 6.72  FW 5.05
-   -13.52    -13.00    -11.02   -9.60    -8.52    host     host
-   selector  selector  selector selector selector
-      │          │         │        │        │        │         │
-      │          │      cache install (payload build choice)
-      ▼          ▼        ▼        ▼        ▼        ▼         ▼
-      └──────────┴────────┴───┬────┴────────┴────────┴─────────┘
-                              ▼
-                 exploit chain ──► HEN / GoldHEN + tools
+      ┌──────────┬──┴───────┬─────────┬────────┬────────┬────────┬────────┬────────┐
+      ▼          ▼          ▼         ▼        ▼        ▼        ▼        ▼        ▼
+   FW 14.00   FW 13.02   FW 11.00  FW 6.00  FW 9.00  FW 7.00  FW 6.72  FW 5.05
+   -14.02     -13.52     -13.00    -11.02   -9.60    -8.52    host     host
+   host       selector   selector  selector selector selector
+      │          │          │         │        │        │        │        │
+      │          │          │      cache install (payload build choice)
+      ▼          ▼          ▼         ▼        ▼        ▼        ▼        ▼
+      └──────────┴──────────┴────┬────┴────────┴────────┴────────┴────────┘
+                                 ▼
+                    exploit chain ──► HEN / GoldHEN + tools
 ```
 
 The project is intentionally static. HTML pages provide the interface, JavaScript modules run the firmware-specific exploit chain, binary files provide GoldHEN/kernel-patch/payload assets, and AppCache files keep the selected flow available after the initial cache installation.
 
 ## GoldHEN versions
 
-The repository contains two GoldHEN choices where supported:
+The repository contains two GoldHEN builds where supported:
 
-- **GoldHEN v2.4b18.12** — a repository-bundled build exposed by the selectors.
-- **GoldHEN v2.4b18.10** — a repository-bundled previous build.
+- **GoldHEN v2.4b18.14** — the current build bundled with every host and exposed by the selectors.
+- **GoldHEN v2.4b18.10** — the repository-bundled previous build, kept as the stable selector option.
 
 The 7.00–8.52 and 9.00–9.60 branches select a GoldHEN build through their version selector and cache page. The CSSFontFace branch uses [`css/version-selector.html`](./css/version-selector.html), which routes to:
 
-- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.12;
+- [`css/latest/index.html`](./css/latest/index.html) for v2.4b18.14;
 - [`css/stable/index.html`](./css/stable/index.html) for v2.4b18.10.
 
 ## Payload tools
@@ -153,7 +155,8 @@ All host branches use relative assets and browser application caching. Cache fil
 | **9.00–9.60** | Select a build in `900/version-selector.html`, then use `cache.html` or `cache5.html` to install `PSPulse.manifest` or `PSPulse5.manifest`. |
 | **CSSFontFace** | Select a build in `css/version-selector.html`; the chosen `stable` or `latest` page uses its own `cache.manifest` with per-file SHA-256 hashes. |
 | **1300** | Open `1300/index.html`; the current build is stored directly in `1300/` and installs its own `cache.manifest` automatically. |
-| **1352** | Open `1352/index.html` (GoldHEN `v2.4b18.12` for 13.02–13.52); the page installs its own `cache.manifest` automatically, cache updates require a tap to reload. |
+| **1352** | Open `1352/index.html` (GoldHEN `v2.4b18.14` for 13.02–13.52); the page installs its own `cache.manifest` automatically, cache updates require a tap to reload. |
+| **1400** | Open `1400/index.html` (GoldHEN `v2.4b18.14` for 14.00–14.02); the page installs its own `cache.manifest` automatically, cache updates require a tap to reload. |
 
 After the first successful cache installation, close and reopen the PS4 browser when the page instructs you to do so. If a page still serves an older layout or script, clear the host's browser data and repeat the cache installation.
 
@@ -264,7 +267,7 @@ PSPULSE // offline ps4 host collection
 
 ## Offline cache update
 
-Previous-build pages now load the existing goldhen10.bin rather than the absent goldhen5.bin. Its Git blob matches css/stable/src/payload.bin. The project owner confirms: goldhen10.bin is b18.10, goldhen.bin is b18.12, css/stable/src/payload.bin is b18.10, and css/latest/src/payload.bin is b18.12. Git blob identities independently confirm these copies are identical within each build. Device compatibility still requires hardware testing. No binaries were modified.
+Previous-build pages load the existing goldhen10.bin rather than the absent goldhen5.bin. Its Git blob matches css/stable/src/payload.bin. The current routes use the b18.14 build: goldhen.bin, 1300/payload.bin and css/latest/src/payload.bin are the same b18.14 blob, while goldhen10.bin and css/stable/src/payload.bin are the same b18.10 blob. Device compatibility still requires hardware testing.
 
 Cache the menu online, then install each required host/version cache online. Test menu navigation and host loading with networking disabled. A cached menu does not install every host cache.
 
@@ -272,10 +275,11 @@ Cache the menu online, then install each required host/version cache online. Tes
 
 | Path | GoldHEN build |
 | --- | --- |
-| `*/goldhen.bin` | b18.12 |
+| `1400/goldhen.bin` | b18.14 |
+| `*/goldhen.bin` | b18.14 |
 | `*/goldhen10.bin` | b18.10 |
-| `css/latest/src/payload.bin` | b18.12 |
+| `css/latest/src/payload.bin` | b18.14 |
 | `css/stable/src/payload.bin` | b18.10 |
-| `1300/payload.bin` | b18.12 (identical Git blob to latest) |
+| `1300/payload.bin` | b18.14 (identical Git blob to latest) |
 
-The suffix `5` in historical filenames (`cache5.html`, `index5.html`, `loader5.js`, `PSPulse5.*`) identifies the previous-build route, now b18.10; it is not a b18.5 version label. Legacy selector input `v2.4b18.5` is normalized to `v2.4b18.10` before storage and navigation. Historical PS4-HEN annotations in firmware diagnostic notes do not determine which binary is loaded; current `1352/goldhen.bin` matches b18.12.
+The suffix `5` in historical filenames (`cache5.html`, `index5.html`, `loader5.js`, `PSPulse5.*`) identifies the previous-build route, now b18.10; it is not a b18.5 version label. Legacy selector input `v2.4b18.5` is normalized to `v2.4b18.10` before storage and navigation. Historical PS4-HEN annotations in firmware diagnostic notes do not determine which binary is loaded; current `1352/goldhen.bin` matches b18.14.

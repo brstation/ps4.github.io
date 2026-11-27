@@ -2,6 +2,7 @@ CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
 # v4 - startup, AppCache and telemetry reliability 20261003
+# v5 - goldhen b18.14 labels 20261126
 
 CACHE:
 index.html

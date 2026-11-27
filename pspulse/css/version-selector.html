@@ -171,12 +171,12 @@
                     <span class="menu-hint">&uarr; &darr; move &nbsp; X select</span>
                 </div>
                 <div class="version-grid">
-                    <div class="version-card latest" onclick="selectVersion('v2.4b18.12')" tabindex="0"
+                    <div class="version-card latest" onclick="selectVersion('v2.4b18.14')" tabindex="0"
                         data-version="latest">
                         <span class="card-index">01</span>
                         <span>
                             <span class="version-badge latest">Latest</span>
-                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.12</span></span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.14</span></span>
                             <span class="version-description">Latest release with improved stability, new features, and better compatibility. Recommended for most users.</span>
                         </span>
                         <span class="card-action">[ SELECT ]</span>
@@ -213,7 +213,7 @@
             try { localStorage.setItem('selectedGoldHENVersion', version); } catch (error) {}
 
             // Redirect to appropriate cache page based on version
-            if (version === 'v2.4b18.12') {
+            if (version === 'v2.4b18.14') {
                 window.location.href = 'latest/index.html';
             } else if (version === 'v2.4b18.10') {
                 window.location.href = 'stable/index.html';
